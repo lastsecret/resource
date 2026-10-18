@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Claude Code CLI 終端命令、啟動參數、slash commands 與 MCP / Plugin 子指令繁體中文速查。"><title>Claude Code CLI 指令大全 · 學習手記</title><link rel="stylesheet" href="styles.css"><script src="claude-code.js" defer></script><style>.command-table{min-width:640px}.command-table td:first-child{width:35%}.command-table td{vertical-align:top}.command-table td:last-child{overflow-wrap:anywhere}.command-table p{margin:8px 0}.command-nav{display:flex;gap:12px;flex-wrap:wrap}.article h1{font-size:clamp(34px,5vw,52px)}</style></head><body><a class="skip" href="#main">跳至內容</a><header><a class="brand" href="index.html"><span class="mark">冊</span> 學習手記</a><nav aria-label="主導覽"><a href="index.html">主題索引</a><a href="#sources">官方來源</a></nav></header><main id="main" class="note-layout"><aside class="toc"><a class="back" href="index.html">← 返回主題索引</a><div class="eyebrow">CLAUDE CODE / REFERENCE</div><a href="#cli">終端機命令</a><a href="#flags">啟動參數</a><a href="#slash">會話內指令</a><a href="#management">MCP、Plugin 與管理子指令</a><a href="#examples">使用範例</a><a href="#sources">來源與範圍</a></aside><article class="article"><div class="eyebrow">AI ENGINEERING / 003</div><h1>Claude Code CLI<br>指令大全<span class="dot">。</span></h1><p class="lead">從啟動、會話管理到工具整合，集中查找命令、參數與用途。</p><div class="meta"><span>查閱日期 2026-10-19</span><span>官方文件快照 · 繁體中文筆記</span></div><div class="callout"><p>本頁完整對照查閱時官方 CLI reference 的命令與參數表，以及 Commands 的全部條目，另補 MCP / Plugin 管理命令。這是文件快照，不代表所有安裝版本皆提供相同功能；平台、方案、供應商、版本與功能開關均會影響可用性。</p><p><code>claude …</code> 在系統終端機執行；<code>/…</code> 在 Claude Code 會話輸入。<code>&lt;arg&gt;</code> 必填，<code>[arg]</code> 選填，<code>|</code> 表示擇一。Skill 是交由模型執行的提示流程，Workflow 是可在背景展開的動態流程。</p></div><label class="search"><span>⌕</span><input id="command-search" type="search" placeholder="搜尋指令、用途或範例…" aria-label="搜尋所有指令"><kbd>/</kbd></label><p id="command-count" class="small" aria-live="polite">共 263 個參考條目（包含別名條目與不同呼叫形式）</p><p id="command-empty" hidden>找不到符合的指令，請試試其他關鍵字。</p>
+<section id="cli" class="command-group"><div class="section-label">CLI</div><h2>終端機命令 <span class="pill">36 條</span></h2><p class="source"><a href="https://code.claude.com/docs/en/cli-reference">官方參考 →</a></p><div class="table-wrap"><table class="command-table"><thead><tr><th scope="col">指令 / 語法</th><th scope="col">用途與差異</th><th scope="col">範例</th></tr>
+</thead><tbody><tr><td><code>claude</code><br><span class="pill">CLI</span></td><td>開啟互動會話。</td><td><code>claude</code></td></tr>
+<tr><td><code>claude &quot;query&quot;</code><br><span class="pill">CLI</span></td><td>帶入初始提示並開啟互動會話。</td><td><code>claude &quot;explain this project&quot;</code></td></tr>
+<tr><td><code>claude -p &quot;query&quot;</code><br><span class="pill">CLI</span></td><td>單次查詢並退出。</td><td><code>claude -p &quot;explain this function&quot;</code></td></tr>
+<tr><td><code>cat file | claude -p &quot;query&quot;</code><br><span class="pill">CLI</span></td><td>將檔案內容經 stdin 交給 Claude 處理。</td><td><code>cat logs.txt | claude -p &quot;explain&quot;</code></td></tr>
+<tr><td><code>claude -c</code><br><span class="pill">CLI</span></td><td>接續目前目錄最近對話。</td><td><code>claude -c</code></td></tr>
+<tr><td><code>claude -c -p &quot;query&quot;</code><br><span class="pill">CLI</span></td><td>以非互動方式接續最近對話。</td><td><code>claude -c -p &quot;Check for type errors&quot;</code></td></tr>
+<tr><td><code>claude -r &quot;&lt;session&gt;&quot; &quot;query&quot;</code><br><span class="pill">CLI</span></td><td>恢復指定 ID 或名稱的會話。</td><td><code>claude -r &quot;auth-refactor&quot; &quot;Finish this PR&quot;</code></td></tr>
+<tr><td><code>claude update</code><br><span class="pill">CLI</span></td><td>更新到最新版本。</td><td><code>claude update</code></td></tr>
+<tr><td><code>claude gateway</code><br><span class="pill">CLI</span></td><td>啟動供管理員部署的自架 gateway；需 --config gateway.yaml。</td><td><code>claude gateway --config gateway.yaml</code></td></tr>
+<tr><td><code>claude install [version]</code><br><span class="pill">CLI</span></td><td>安裝或重裝原生執行檔，可指定 stable、latest 或版本。</td><td><code>claude install stable</code></td></tr>
+<tr><td><code>claude auth login</code><br><span class="pill">CLI</span></td><td>登入；--email 預填、--sso 使用 SSO、--console 使用 API 計費帳號。</td><td><code>claude auth login --console</code></td></tr>
+<tr><td><code>claude auth logout</code><br><span class="pill">CLI</span></td><td>登出帳號。</td><td><code>claude auth logout</code></td></tr>
+<tr><td><code>claude auth status</code><br><span class="pill">CLI</span></td><td>以 JSON 顯示認證狀態；--text 改為文字，退出碼 0 已登入、1 未登入。<p class="small">相關版本差異：v2.1.268；詳見本節官方來源。</p></td><td><code>claude auth status</code></td></tr>
+<tr><td><code>claude agents</code><br><span class="pill">CLI</span></td><td>開啟背景會話監控與派工介面；--json 供腳本使用。</td><td><code>claude agents --json</code></td></tr>
+<tr><td><code>claude attach &lt;id|name&gt;</code><br><span class="pill">CLI</span></td><td>附加既有背景會話至目前終端機。<p class="small">相關版本差異：v2.1.290；詳見本節官方來源。</p></td><td><code>claude attach 7c5dcf5d</code></td></tr>
+<tr><td><code>claude auto-mode defaults</code><br><span class="pill">CLI</span></td><td>列出 auto mode 內建規則；--label 篩選標籤。<p class="small">相關版本差異：v2.1.208；詳見本節官方來源。</p></td><td><code>claude auto-mode defaults --label &#x27;Git Destructive&#x27;</code></td></tr>
+<tr><td><code>claude auto-mode reset</code><br><span class="pill">CLI</span></td><td>移除使用者自訂 autoMode 設定並恢復預設。<p class="small">相關版本差異：v2.1.212；詳見本節官方來源。</p></td><td><code>claude auto-mode reset --yes</code></td></tr>
+<tr><td><code>claude daemon logs</code><br><span class="pill">CLI</span></td><td>持續讀取背景 supervisor 日誌，Ctrl+C 結束。</td><td><code>claude daemon logs</code></td></tr>
+<tr><td><code>claude daemon run</code><br><span class="pill">CLI</span></td><td>在前景啟動背景會話 supervisor。</td><td><code>claude daemon run</code></td></tr>
+<tr><td><code>claude daemon status</code><br><span class="pill">CLI</span></td><td>顯示 supervisor 狀態與 worker 數，未運行時退出碼 1。</td><td><code>claude daemon status</code></td></tr>
+<tr><td><code>claude daemon stop --any</code><br><span class="pill">CLI</span></td><td>停止 supervisor；--keep-workers 保留背景會話。</td><td><code>claude daemon stop --any --keep-workers</code></td></tr>
+<tr><td><code>claude doctor</code><br><span class="pill">CLI</span></td><td>唯讀檢查安裝、設定與遠端控制資格。</td><td><code>claude doctor</code></td></tr>
+<tr><td><code>claude import [source]</code><br><span class="pill">CLI</span></td><td>啟動設定匯入流程；--dry-run 預覽。<p class="small">相關版本差異：v2.1.213；詳見本節官方來源。</p></td><td><code>claude import codex --dry-run</code></td></tr>
+<tr><td><code>claude logs &lt;id|name&gt;</code><br><span class="pill">CLI</span></td><td>顯示背景會話最近輸出。<p class="small">相關版本差異：v2.1.290；詳見本節官方來源。</p></td><td><code>claude logs 7c5dcf5d</code></td></tr>
+<tr><td><code>claude mcp</code><br><span class="pill">CLI</span></td><td>MCP 伺服器管理命令入口。</td><td><code>See the [Claude Code MCP documentation](/docs/en/mcp).</code></td></tr>
+<tr><td><code>claude mcp login &lt;name&gt;</code><br><span class="pill">CLI</span></td><td>對已設定 MCP 執行 OAuth；--no-browser 顯示登入網址。</td><td><code>claude mcp login sentry</code></td></tr>
+<tr><td><code>claude mcp logout &lt;name&gt;</code><br><span class="pill">CLI</span></td><td>清除 MCP OAuth 認證。</td><td><code>claude mcp logout sentry</code></td></tr>
+<tr><td><code>claude plugin</code><br><span class="pill">CLI</span></td><td>Plugin 管理入口，別名 plugins。</td><td><code>claude plugin install code-review@claude-plugins-official</code></td></tr>
+<tr><td><code>claude purge [path]</code><br><span class="pill">CLI</span></td><td>刪除專案本機會話與狀態；--dry-run 預覽，--all 涵蓋全部專案。</td><td><code>claude purge ~/work/repo --dry-run</code></td></tr>
+<tr><td><code>claude remote-control</code><br><span class="pill">CLI</span></td><td>啟動無本地互動會話的 Remote Control server。</td><td><code>claude remote-control --name &quot;My Project&quot;</code></td></tr>
+<tr><td><code>claude respawn &lt;id&gt;</code><br><span class="pill">CLI</span></td><td>重新啟動背景會話並保留對話；--all 處理全部運行中會話。</td><td><code>claude respawn 7c5dcf5d</code></td></tr>
+<tr><td><code>claude rm &lt;id&gt;</code><br><span class="pill">CLI</span></td><td>從列表移除背景會話，逐字稿保留；涉及 worktree 時依提示處理。<p class="small">相關版本差異：v2.1.260、v2.1.268；詳見本節官方來源。</p></td><td><code>claude rm 7c5dcf5d</code></td></tr>
+<tr><td><code>claude self-hosted-runner</code><br><span class="pill">CLI</span></td><td>啟動自架雲端 runner；setup 設定、doctor 診斷、orchestrator 管理按需 runner。<p class="small">相關版本差異：v2.1.224；詳見本節官方來源。</p></td><td><code>claude self-hosted-runner setup</code></td></tr>
+<tr><td><code>claude setup-token</code><br><span class="pill">CLI</span></td><td>為 CI 產生長期 OAuth token，只印出不儲存，需訂閱。</td><td><code>claude setup-token</code></td></tr>
+<tr><td><code>claude stop &lt;id&gt;</code><br><span class="pill">CLI</span></td><td>停止背景會話；別名 kill。</td><td><code>claude stop 7c5dcf5d</code></td></tr>
+<tr><td><code>claude ultrareview [target]</code><br><span class="pill">CLI</span></td><td>非互動深入審查；--json 結構輸出、--timeout 設分鐘，--post 可將結果發到 PR。<p class="small">相關版本差異：v2.1.227；詳見本節官方來源。</p></td><td><code>claude ultrareview 1234 --json</code></td></tr>
+</tbody></table></div></section>
+<section id="flags" class="command-group"><div class="section-label">FLAGS</div><h2>啟動參數 <span class="pill">80 條</span></h2><p class="source"><a href="https://code.claude.com/docs/en/cli-reference">官方參考 →</a></p><div class="table-wrap"><table class="command-table"><thead><tr><th scope="col">指令 / 語法</th><th scope="col">用途與差異</th><th scope="col">範例</th></tr>
+</thead><tbody><tr><td><code>--add-dir</code><br><span class="pill">參數</span></td><td>增加可讀寫目錄。</td><td><code>claude --add-dir ../apps ../lib</code></td></tr>
+<tr><td><code>--advisor &lt;model&gt;</code><br><span class="pill">參數</span></td><td>指定提供建議的第二模型。</td><td><code>claude --advisor opus</code></td></tr>
+<tr><td><code>--agent</code><br><span class="pill">參數</span></td><td>選擇目前會話的 agent 設定。</td><td><code>claude --agent my-custom-agent</code></td></tr>
+<tr><td><code>--agents</code><br><span class="pill">參數</span></td><td>以 JSON 定義 subagents；print 模式亦支援 JSON 檔。<p class="small">相關版本差異：v2.1.281、v2.1.242；詳見本節官方來源。</p></td><td><code>claude --agents &#x27;{&quot;reviewer&quot;:{&quot;description&quot;:&quot;Reviews code&quot;,&quot;prompt&quot;:&quot;You are a code reviewer&quot;}}&#x27;</code></td></tr>
+<tr><td><code>--allow-dangerously-skip-permissions</code><br><span class="pill">參數</span></td><td>將 bypassPermissions 加入模式切換選項，不會立即啟用。</td><td><code>claude --permission-mode plan --allow-dangerously-skip-permissions</code></td></tr>
+<tr><td><code>--allowedTools, --allowed-tools</code><br><span class="pill">參數</span></td><td>指定不需逐次確認的工具規則。</td><td><code>&quot;Bash(git log *)&quot; &quot;Bash(git diff *)&quot; &quot;Read&quot;</code></td></tr>
+<tr><td><code>--append-subagent-system-prompt</code><br><span class="pill">參數</span></td><td>在 print 模式附加所有 subagent 的系統提示。<p class="small">相關版本差異：v2.1.205；詳見本節官方來源。</p></td><td><code>claude -p --append-subagent-system-prompt &quot;Cite file paths in every answer&quot; &quot;query&quot;</code></td></tr>
+<tr><td><code>--append-subagent-system-prompt-file</code><br><span class="pill">參數</span></td><td>從檔案附加 subagent 系統提示，僅 print 模式。<p class="small">相關版本差異：v2.1.261；詳見本節官方來源。</p></td><td><code>claude -p --append-subagent-system-prompt-file ./subagent-rules.txt &quot;query&quot;</code></td></tr>
+<tr><td><code>--append-system-prompt</code><br><span class="pill">參數</span></td><td>附加系統提示文字，保留預設提示。</td><td><code>claude --append-system-prompt &quot;Always use TypeScript&quot;</code></td></tr>
+<tr><td><code>--append-system-prompt-file</code><br><span class="pill">參數</span></td><td>從檔案附加系統提示。</td><td><code>claude --append-system-prompt-file ./extra-rules.txt</code></td></tr>
+<tr><td><code>--autocompact &lt;auto|tokens&gt;</code><br><span class="pill">參數</span></td><td>設定本次會話的自動壓縮門檻。<p class="small">相關版本差異：v2.1.221；詳見本節官方來源。</p></td><td><code>claude --autocompact 500k</code></td></tr>
+<tr><td><code>--ax-screen-reader</code><br><span class="pill">參數</span></td><td>使用適合螢幕閱讀器的平面文字介面。<p class="small">相關版本差異：v2.1.181；詳見本節官方來源。</p></td><td><code>claude --ax-screen-reader</code></td></tr>
+<tr><td><code>--bare</code><br><span class="pill">參數</span></td><td>精簡啟動，跳過多數自動探索的自訂設定。</td><td><code>claude --bare -p &quot;query&quot;</code></td></tr>
+<tr><td><code>--betas</code><br><span class="pill">參數</span></td><td>加入 API beta headers，僅 API key 使用者。</td><td><code>claude --betas interleaved-thinking</code></td></tr>
+<tr><td><code>--bg, --background</code><br><span class="pill">參數</span></td><td>背景啟動會話並立即回傳 ID；不能與 -p 合用。</td><td><code>claude --bg &quot;investigate the flaky test&quot;</code></td></tr>
+<tr><td><code>--channels</code><br><span class="pill">參數</span></td><td>啟用指定 MCP channel 通知，屬研究預覽功能。</td><td><code>claude --channels plugin:my-notifier@my-marketplace</code></td></tr>
+<tr><td><code>--chrome</code><br><span class="pill">參數</span></td><td>啟用 Chrome 整合。</td><td><code>claude --chrome</code></td></tr>
+<tr><td><code>--cloud</code><br><span class="pill">參數</span></td><td>建立雲端工作；搭配 -p 亦可對既有雲端會話送訊息。</td><td><code>claude --cloud &quot;Fix the login bug&quot;</code></td></tr>
+<tr><td><code>--continue, -c</code><br><span class="pill">參數</span></td><td>接續目前目錄最近的對話。<p class="small">相關版本差異：v2.1.257；詳見本節官方來源。</p></td><td><code>claude --continue</code></td></tr>
+<tr><td><code>--dangerously-load-development-channels</code><br><span class="pill">參數</span></td><td>允許開發中的非白名單 channels；互動確認後啟用。</td><td><code>claude --dangerously-load-development-channels server:webhook</code></td></tr>
+<tr><td><code>--dangerously-skip-permissions</code><br><span class="pill">參數</span></td><td>以 bypassPermissions 模式略過授權提示。</td><td><code>claude --dangerously-skip-permissions</code></td></tr>
+<tr><td><code>--debug</code><br><span class="pill">參數</span></td><td>啟用除錯；分類過濾使用 --debug=mcp,startup 形式。</td><td><code>claude --debug=&#x27;mcp,startup&#x27;</code></td></tr>
+<tr><td><code>--debug-file &lt;path&gt;</code><br><span class="pill">參數</span></td><td>將除錯紀錄寫入指定路徑。</td><td><code>claude --debug-file /tmp/claude-debug.log</code></td></tr>
+<tr><td><code>--desktop</code><br><span class="pill">參數</span></td><td>在 Desktop 開啟專案後退出終端 CLI。<p class="small">相關版本差異：v2.1.285；詳見本節官方來源。</p></td><td><code>claude --desktop</code></td></tr>
+<tr><td><code>--disable-slash-commands</code><br><span class="pill">參數</span></td><td>停用本次會話 skills 與 commands。</td><td><code>claude --disable-slash-commands</code></td></tr>
+<tr><td><code>--disallowedTools, --disallowed-tools</code><br><span class="pill">參數</span></td><td>拒絕匹配的工具操作；只指定工具名稱時移除該工具。</td><td><code>&quot;Bash(git log *)&quot; &quot;Bash(git diff *)&quot; &quot;Edit&quot;</code></td></tr>
+<tr><td><code>--effort</code><br><span class="pill">參數</span></td><td>設定本次會話推理投入程度，支援值依模型而異。<p class="small">相關版本差異：v2.1.203；詳見本節官方來源。</p></td><td><code>claude --effort high</code></td></tr>
+<tr><td><code>--enable-auto-mode</code><br><span class="pill">參數</span></td><td>已於 v2.1.111 移除；改用 --permission-mode auto。<p class="small">相關版本差異：v2.1.111；詳見本節官方來源。</p></td><td><code>claude --permission-mode auto</code></td></tr>
+<tr><td><code>--environment &lt;environment-id&gt;</code><br><span class="pill">參數</span></td><td>在指定 self-hosted 雲端環境建立會話。<p class="small">相關版本差異：v2.1.224；詳見本節官方來源。</p></td><td><code>claude -p &quot;Fix the login bug&quot; --environment ccpool_abc123</code></td></tr>
+<tr><td><code>--exclude-dynamic-system-prompt-sections</code><br><span class="pill">參數</span></td><td>將使用者動態上下文移出系統提示以改善快取重用。</td><td><code>claude -p --exclude-dynamic-system-prompt-sections &quot;query&quot;</code></td></tr>
+<tr><td><code>--exec</code><br><span class="pill">參數</span></td><td>與 --bg 合用，執行背景 shell 工作。</td><td><code>claude --bg --exec &#x27;pytest -x&#x27;</code></td></tr>
+<tr><td><code>--fallback-model</code><br><span class="pill">參數</span></td><td>設定模型不可用時依序嘗試的備援模型。</td><td><code>claude --fallback-model sonnet,haiku</code></td></tr>
+<tr><td><code>--fork-session</code><br><span class="pill">參數</span></td><td>恢復對話時建立新的 session ID。</td><td><code>claude --resume abc123 --fork-session</code></td></tr>
+<tr><td><code>--forward-subagent-text</code><br><span class="pill">參數</span></td><td>在 stream-json 傳回 subagent 文字與思考訊息。<p class="small">相關版本差異：v2.1.211；詳見本節官方來源。</p></td><td><code>claude -p --output-format stream-json --verbose --forward-subagent-text &quot;query&quot;</code></td></tr>
+<tr><td><code>--from-pr</code><br><span class="pill">參數</span></td><td>篩選與指定 PR 或 MR 相關的會話。</td><td><code>claude --from-pr 123</code></td></tr>
+<tr><td><code>--ide</code><br><span class="pill">參數</span></td><td>啟動時自動連接唯一可用的 IDE。</td><td><code>claude --ide</code></td></tr>
+<tr><td><code>--init</code><br><span class="pill">參數</span></td><td>在 print 模式先執行 init Setup hooks。</td><td><code>claude -p --init &quot;query&quot;</code></td></tr>
+<tr><td><code>--init-only</code><br><span class="pill">參數</span></td><td>執行 Setup 與 SessionStart hooks 後退出。</td><td><code>claude --init-only</code></td></tr>
+<tr><td><code>--include-hook-events</code><br><span class="pill">參數</span></td><td>在 stream-json 加入額外 hook 生命週期事件。</td><td><code>claude -p --output-format stream-json --verbose --include-hook-events &quot;query&quot;</code></td></tr>
+<tr><td><code>--include-partial-messages</code><br><span class="pill">參數</span></td><td>在 print + stream-json 加入串流片段事件。</td><td><code>claude -p --output-format stream-json --verbose --include-partial-messages &quot;query&quot;</code></td></tr>
+<tr><td><code>--input-format</code><br><span class="pill">參數</span></td><td>print 模式輸入格式：text 或 stream-json。</td><td><code>claude -p --output-format json --input-format stream-json</code></td></tr>
+<tr><td><code>--json-schema</code><br><span class="pill">參數</span></td><td>print 模式按 JSON Schema 約束結果。</td><td><code>claude -p --json-schema &#x27;{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{...}}&#x27; &quot;query&quot;</code></td></tr>
+<tr><td><code>--maintenance</code><br><span class="pill">參數</span></td><td>在 print 模式先執行 maintenance Setup hooks。</td><td><code>claude -p --maintenance &quot;query&quot;</code></td></tr>
+<tr><td><code>--max-budget-usd</code><br><span class="pill">參數</span></td><td>限制 print 模式估計 API 成本；估值可能超過門檻且不等於帳單。<p class="small">相關版本差異：v2.1.217；詳見本節官方來源。</p></td><td><code>claude -p --max-budget-usd 5.00 &quot;query&quot;</code></td></tr>
+<tr><td><code>--max-turns</code><br><span class="pill">參數</span></td><td>限制 print 模式 agent 回合數，達上限以錯誤退出。</td><td><code>claude -p --max-turns 3 &quot;query&quot;</code></td></tr>
+<tr><td><code>--mcp-config</code><br><span class="pill">參數</span></td><td>從 JSON 檔或字串載入 MCP 設定。<p class="small">相關版本差異：v2.1.221；詳見本節官方來源。</p></td><td><code>claude --mcp-config ./mcp.json</code></td></tr>
+<tr><td><code>--model</code><br><span class="pill">參數</span></td><td>選擇模型別名或完整模型 ID。</td><td><code>claude --model claude-sonnet-5</code></td></tr>
+<tr><td><code>--name, -n</code><br><span class="pill">參數</span></td><td>指定會話名稱，方便恢復。</td><td><code>claude -n &quot;my-feature-work&quot;</code></td></tr>
+<tr><td><code>--no-chrome</code><br><span class="pill">參數</span></td><td>停用 Chrome 整合。</td><td><code>claude --no-chrome</code></td></tr>
+<tr><td><code>--no-session-persistence</code><br><span class="pill">參數</span></td><td>print 模式不儲存會話，之後無法恢復。</td><td><code>claude -p --no-session-persistence &quot;query&quot;</code></td></tr>
+<tr><td><code>--output-format</code><br><span class="pill">參數</span></td><td>print 輸出格式：text、json、stream-json。</td><td><code>claude -p &quot;query&quot; --output-format json</code></td></tr>
+<tr><td><code>--permission-mode</code><br><span class="pill">參數</span></td><td>指定 default、acceptEdits、plan、auto、dontAsk 或 bypassPermissions 等模式。<p class="small">相關版本差異：v2.1.200；詳見本節官方來源。</p></td><td><code>claude --permission-mode plan</code></td></tr>
+<tr><td><code>--permission-prompt-tool</code><br><span class="pill">參數</span></td><td>以指定 MCP 工具處理非互動授權。<p class="small">相關版本差異：v2.1.199；詳見本節官方來源。</p></td><td><code>claude -p --permission-prompt-tool mcp_auth_tool &quot;query&quot;</code></td></tr>
+<tr><td><code>--permission-prompts</code><br><span class="pill">參數</span></td><td>print 模式使用 host 處理授權，或 none 自動拒絕無人可答的要求。<p class="small">相關版本差異：v2.1.259；詳見本節官方來源。</p></td><td><code>claude -p --permission-prompts none &quot;query&quot;</code></td></tr>
+<tr><td><code>--plugin-dir</code><br><span class="pill">參數</span></td><td>本次載入 plugin 目錄或 zip；多個路徑重複此旗標。<p class="small">相關版本差異：v2.1.265；詳見本節官方來源。</p></td><td><code>claude --plugin-dir ./my-plugin</code></td></tr>
+<tr><td><code>--plugin-url</code><br><span class="pill">參數</span></td><td>本次從 URL 下載並載入 plugin zip。</td><td><code>claude --plugin-url https://example.com/plugin.zip</code></td></tr>
+<tr><td><code>--print, -p</code><br><span class="pill">參數</span></td><td>輸出結果後退出，適合腳本與管線。</td><td><code>claude -p &quot;query&quot;</code></td></tr>
+<tr><td><code>--prompt-suggestions</code><br><span class="pill">參數</span></td><td>在 verbose stream-json 輸出建議的下一個提示。</td><td><code>claude -p --prompt-suggestions --output-format stream-json --verbose &quot;query&quot;</code></td></tr>
+<tr><td><code>--ref &lt;branch&gt;</code><br><span class="pill">參數</span></td><td>搭配 --environment 指定新雲端會話的起始 git ref。</td><td><code>claude -p &quot;Run the smoke test&quot; --environment ccpool_abc123 --ref main</code></td></tr>
+<tr><td><code>--remote</code><br><span class="pill">參數</span></td><td>已棄用的 --cloud 別名。</td><td><code>claude --remote &quot;Fix the login bug&quot;</code></td></tr>
+<tr><td><code>--remote-control, --rc</code><br><span class="pill">參數</span></td><td>啟動互動會話並開啟遠端控制，可指定名稱。</td><td><code>claude --remote-control &quot;My Project&quot;</code></td></tr>
+<tr><td><code>--remote-control-session-name-prefix &lt;prefix&gt;</code><br><span class="pill">參數</span></td><td>設定遠端控制自動會話名稱的前綴。</td><td><code>claude remote-control --remote-control-session-name-prefix dev-box</code></td></tr>
+<tr><td><code>--replay-user-messages</code><br><span class="pill">參數</span></td><td>在雙向 stream-json 重送 stdin 使用者訊息作為確認。</td><td><code>claude -p --input-format stream-json --output-format stream-json --verbose --replay-user-messages</code></td></tr>
+<tr><td><code>--restricted</code><br><span class="pill">參數</span></td><td>以限制模式啟動，限制工具、設定載入與檔案範圍。<p class="small">相關版本差異：v2.1.248；詳見本節官方來源。</p></td><td><code>claude --restricted -p &quot;query&quot;</code></td></tr>
+<tr><td><code>--resume, -r</code><br><span class="pill">參數</span></td><td>以 ID、名稱或逐字稿路徑恢復對話；不指定則開啟選擇器。<p class="small">相關版本差異：v2.1.223、v2.1.285；詳見本節官方來源。</p></td><td><code>claude --resume auth-refactor</code></td></tr>
+<tr><td><code>--safe-mode</code><br><span class="pill">參數</span></td><td>停用多數自訂內容以排查設定問題；受管政策仍適用。</td><td><code>claude --safe-mode</code></td></tr>
+<tr><td><code>--session-id</code><br><span class="pill">參數</span></td><td>指定 UUID 格式的 session ID。</td><td><code>claude --session-id &quot;550e8400-e29b-41d4-a716-446655440000&quot;</code></td></tr>
+<tr><td><code>--setting-sources</code><br><span class="pill">參數</span></td><td>選擇 user、project、local 設定來源。</td><td><code>claude --setting-sources user,project</code></td></tr>
+<tr><td><code>--settings</code><br><span class="pill">參數</span></td><td>從 JSON 檔或字串覆寫本次設定。</td><td><code>claude --settings ./settings.json</code></td></tr>
+<tr><td><code>--strict-mcp-config</code><br><span class="pill">參數</span></td><td>僅使用 --mcp-config 指定的 MCP 來源。</td><td><code>claude --strict-mcp-config --mcp-config ./mcp.json</code></td></tr>
+<tr><td><code>--system-prompt</code><br><span class="pill">參數</span></td><td>取代整份預設系統提示。</td><td><code>claude --system-prompt &quot;You are a Python expert&quot;</code></td></tr>
+<tr><td><code>--system-prompt-file</code><br><span class="pill">參數</span></td><td>以檔案取代預設系統提示。</td><td><code>claude --system-prompt-file ./custom-prompt.txt</code></td></tr>
+<tr><td><code>--system-prompt-snapshot</code><br><span class="pill">參數</span></td><td>off 每次重建系統提示；on 重用已記錄快照。<p class="small">相關版本差異：v2.1.257；詳見本節官方來源。</p></td><td><code>claude --system-prompt-snapshot off</code></td></tr>
+<tr><td><code>--teleport</code><br><span class="pill">參數</span></td><td>在本機恢復雲端會話。</td><td><code>claude --teleport</code></td></tr>
+<tr><td><code>--teammate-mode</code><br><span class="pill">參數</span></td><td>設定 agent team 顯示方式：in-process、auto、tmux 或 iterm2。</td><td><code>claude --teammate-mode auto</code></td></tr>
+<tr><td><code>--tmux</code><br><span class="pill">參數</span></td><td>搭配 worktree 建立 tmux；classic 使用傳統 tmux。</td><td><code>claude -w feature-auth --tmux</code></td></tr>
+<tr><td><code>--tools</code><br><span class="pill">參數</span></td><td>限制內建工具集合，空字串停用；不直接限制 MCP 工具。</td><td><code>claude --tools &quot;Bash,Edit,Read&quot;</code></td></tr>
+<tr><td><code>--verbose</code><br><span class="pill">參數</span></td><td>輸出詳細的逐回合紀錄。</td><td><code>claude --verbose</code></td></tr>
+<tr><td><code>--version, -v</code><br><span class="pill">參數</span></td><td>印出版本號。</td><td><code>claude -v</code></td></tr>
+<tr><td><code>--worktree, -w</code><br><span class="pill">參數</span></td><td>在隔離 git worktree 工作，可指定名稱或 PR。<p class="small">相關版本差異：v2.1.233；詳見本節官方來源。</p></td><td><code>claude -w feature-auth</code></td></tr>
+</tbody></table></div></section>
+<section id="slash" class="command-group"><div class="section-label">SLASH</div><h2>會話內指令 <span class="pill">119 條</span></h2><p class="source"><a href="https://code.claude.com/docs/en/commands">官方參考 →</a></p><div class="table-wrap"><table class="command-table"><thead><tr><th scope="col">指令 / 語法</th><th scope="col">用途與差異</th></tr>
+</thead><tbody><tr><td><code>/add-dir &lt;path&gt;</code><br><span class="pill">內建</span></td><td>增加本次會話可讀寫的工作目錄，不代表載入該處全部設定。<p class="small">相關版本差異：v2.1.234；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/advisor [model|off]</code><br><span class="pill">內建</span></td><td>選擇提供任務建議的第二個模型，或以 off 關閉。<p class="small">相關版本差異：v2.1.260；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/agents</code><br><span class="pill">內建</span></td><td>提示如何建立與管理 subagent；舊版提供互動管理介面。<p class="small">相關版本差異：v2.1.197；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/artifact-capabilities</code><br><span class="pill">Skill</span></td><td>載入 artifact 可用的執行環境能力與連接器參考。</td></tr>
+<tr><td><code>/artifact-diagramming</code><br><span class="pill">Skill</span></td><td>載入 artifact 圖解與 SVG 可讀性設計指南。<p class="small">相關版本差異：v2.1.221；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/artifacts</code><br><span class="pill">內建</span></td><td>列出、附加、開啟與分享你可存取的 artifact。<p class="small">相關版本差異：v2.1.208、v2.1.216；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/auto-mode-setup</code><br><span class="pill">內建</span></td><td>草擬 auto mode 環境規則，審閱後儲存。<p class="small">相關版本差異：v2.1.228、v2.1.233；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/autocompact [auto|&lt;tokens&gt;]</code><br><span class="pill">內建</span></td><td>設定自動壓縮門檻，例如 500k；auto 恢復模型預設。<p class="small">相關版本差異：v2.1.221；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/autofix-pr [prompt]</code><br><span class="pill">內建</span></td><td>啟動雲端會話，追蹤目前分支 PR 的 CI 與審查意見並推送修正。</td></tr>
+<tr><td><code>/background [prompt]</code><br><span class="pill">內建</span></td><td>將目前會話轉到背景執行，釋放終端機。<p class="small">別名：/bg</p></td></tr>
+<tr><td><code>/batch &lt;instruction&gt;</code><br><span class="pill">Skill</span></td><td>規劃大量變更並在各自 worktree 平行實作、測試與發佈。<p class="small">相關版本差異：v2.1.281；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/branch [name]</code><br><span class="pill">內建</span></td><td>分支目前對話並切入分支；原對話仍可恢復。</td></tr>
+<tr><td><code>/btw [question]</code><br><span class="pill">內建</span></td><td>提出不加入主要對話歷史的旁支問題。<p class="small">相關版本差異：v2.1.212；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/bug [report]</code><br><span class="pill">內建</span></td><td>開啟問題回報與分享對話介面，送出前選擇內容並確認。<p class="small">別名：/share</p><p class="small">相關版本差異：v2.1.229、v2.1.232、v2.1.212；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/cd &lt;path&gt;</code><br><span class="pill">內建</span></td><td>切換會話的工作目錄並保留對話。</td></tr>
+<tr><td><code>/chrome</code><br><span class="pill">內建</span></td><td>設定 Claude in Chrome 整合。</td></tr>
+<tr><td><code>/claude-api [migrate|upgrade|managed-agents-onboard|prompt-audit|cost-optimize|build-eval|hillclimb|preserved-thinking-migration]</code><br><span class="pill">Skill</span></td><td>載入 Claude API 與 Managed Agents 參考；可指定遷移、升級、提示審核、成本與 eval 等工作。</td></tr>
+<tr><td><code>/claude-in-chrome [task]</code><br><span class="pill">Skill</span></td><td>透過 Chrome 整合執行瀏覽器操作與網頁測試。</td></tr>
+<tr><td><code>/clear [name]</code><br><span class="pill">內建</span></td><td>清空上下文並開始新對話；可為舊對話命名以便恢復。<p class="small">別名：/reset、/new</p></td></tr>
+<tr><td><code>/code-review [low|medium|high|xhigh|max|ultra] [--fix] [--comment] [--max-findings n|all|default] [pr#|branch|path]</code><br><span class="pill">Skill</span></td><td>檢查 diff、PR、分支或路徑的正確性；--fix 修正、--comment 發表結果，ultra 使用雲端深入審查。<p class="small">別名：/review</p><p class="small">相關版本差異：v2.1.257、v2.1.227；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/color [color|default]</code><br><span class="pill">內建</span></td><td>選擇提示列顏色；default 還原，不帶參數則隨機。</td></tr>
+<tr><td><code>/compact [instructions]</code><br><span class="pill">內建</span></td><td>摘要既有對話並釋放上下文，可指定摘要重點。</td></tr>
+<tr><td><code>/config [key=value ...]</code><br><span class="pill">內建</span></td><td>開啟設定面板，或以 key=value 直接修改設定；--help 列出可用鍵。<p class="small">別名：/settings</p></td></tr>
+<tr><td><code>/context [all]</code><br><span class="pill">內建</span></td><td>顯示上下文組成與改善建議，all 展開細節。</td></tr>
+<tr><td><code>/copy [N]</code><br><span class="pill">內建</span></td><td>複製最近或第 N 則回覆，也可挑選區塊寫入檔案。</td></tr>
+<tr><td><code>/cost</code><br><span class="pill">內建</span></td><td>usage 的別名，查看使用量。</td></tr>
+<tr><td><code>/dataviz [request]</code><br><span class="pill">Skill</span></td><td>載入圖表、儀表板、配色與無障礙視覺設計指南。</td></tr>
+<tr><td><code>/debug [description]</code><br><span class="pill">Skill</span></td><td>開始記錄除錯資訊，並根據 session log 排查問題。</td></tr>
+<tr><td><code>/deep-research &lt;question&gt;</code><br><span class="pill">Workflow</span></td><td>以動態 workflow 平行搜尋、交叉查證並生成附來源報告。</td></tr>
+<tr><td><code>/design [brief]</code><br><span class="pill">Skill</span></td><td>依 brief 建立可編輯的 Claude Design 畫板 artifact。<p class="small">相關版本差異：v2.1.265；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/design-login</code><br><span class="pill">內建</span></td><td>授權 claude.ai 設計系統存取。</td></tr>
+<tr><td><code>/design-sync [hint]</code><br><span class="pill">Skill</span></td><td>轉換 repo 的 React 設計系統並上傳 Claude Design，讓設計使用實際元件。</td></tr>
+<tr><td><code>/desktop</code><br><span class="pill">內建</span></td><td>在 Claude Desktop 開啟目前專案或會話。<p class="small">別名：/app</p></td></tr>
+<tr><td><code>/diff</code><br><span class="pill">內建</span></td><td>檢視目前工作變更。</td></tr>
+<tr><td><code>/doctor [prompt-audit [path]]</code><br><span class="pill">Skill</span></td><td>檢查安裝與設定並可修復；prompt-audit 檢查提示設定。<p class="small">別名：/checkup</p><p class="small">相關版本差異：v2.1.283；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/effort [level|auto|status|ultracode [on|off]]</code><br><span class="pill">內建</span></td><td>調整推理投入程度、查看狀態或切換 ultracode，支援值依模型而異。<p class="small">相關版本差異：v2.1.284、v2.1.242；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/exit</code><br><span class="pill">內建</span></td><td>離開 CLI；附加背景會話時會分離而不停止它。<p class="small">別名：/quit</p></td></tr>
+<tr><td><code>/export [filename]</code><br><span class="pill">內建</span></td><td>匯出目前對話，可指定檔名。</td></tr>
+<tr><td><code>/fast [on|off]</code><br><span class="pill">內建</span></td><td>切換 fast mode；可用性與費率依方案及模型而異。<p class="small">相關版本差異：v2.1.242；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/feedback [report]</code><br><span class="pill">內建</span></td><td>開啟產品回饋；有待審草稿時可先檢視、編輯與決定是否送出。</td></tr>
+<tr><td><code>/fewer-permission-prompts</code><br><span class="pill">Skill</span></td><td>分析逐字稿中常見唯讀工具呼叫，更新專案 allowlist 以減少授權提示。</td></tr>
+<tr><td><code>/focus</code><br><span class="pill">內建</span></td><td>在全螢幕模式切換精簡專注檢視。<p class="small">相關版本差異：v2.1.281；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/fork [prompt]</code><br><span class="pill">內建</span></td><td>複製目前對話為新的背景會話，原會話繼續使用。<p class="small">相關版本差異：v2.1.221、v2.1.212、v2.1.161、v2.1.211；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/goal [condition|clear]</code><br><span class="pill">內建</span></td><td>設定持續工作的完成條件；clear 移除，無參數查看目標。</td></tr>
+<tr><td><code>/heapdump</code><br><span class="pill">內建</span></td><td>輸出 heap snapshot 與記憶體診斷；snapshot 含對話與認證，回報問題時僅附 diagnostics.json。</td></tr>
+<tr><td><code>/help</code><br><span class="pill">內建</span></td><td>顯示互動操作與指令說明。</td></tr>
+<tr><td><code>/hooks</code><br><span class="pill">內建</span></td><td>檢視生命週期 hook 設定。</td></tr>
+<tr><td><code>/ide</code><br><span class="pill">內建</span></td><td>管理 IDE 連線整合。</td></tr>
+<tr><td><code>/import [codex|gemini|cursor] [--dry-run] [--yes]</code><br><span class="pill">內建</span></td><td>匯入 Codex、Gemini 或 Cursor 設定；--dry-run 預覽、--yes 略過確認。<p class="small">相關版本差異：v2.1.213、v2.1.265；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/init</code><br><span class="pill">內建</span></td><td>建立專案起始 CLAUDE.md。</td></tr>
+<tr><td><code>/insights</code><br><span class="pill">內建</span></td><td>分析使用歷史並產生使用習慣與改善報告。</td></tr>
+<tr><td><code>/install-github-app</code><br><span class="pill">內建</span></td><td>設定 Claude GitHub App 整合。</td></tr>
+<tr><td><code>/install-slack-app</code><br><span class="pill">內建</span></td><td>設定 Claude Slack App 整合。</td></tr>
+<tr><td><code>/keybindings</code><br><span class="pill">內建</span></td><td>開啟快捷鍵設定。</td></tr>
+<tr><td><code>/list-agents</code><br><span class="pill">內建</span></td><td>列出可傳訊的 subagent、隊友與其他會話。<p class="small">別名：/peers</p><p class="small">相關版本差異：v2.1.224、v2.1.239；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/login</code><br><span class="pill">內建</span></td><td>登入帳號。</td></tr>
+<tr><td><code>/logout</code><br><span class="pill">內建</span></td><td>登出帳號。</td></tr>
+<tr><td><code>/loop [interval] [prompt]</code><br><span class="pill">Skill</span></td><td>在本次會話按指定間隔重複執行提示。<p class="small">別名：/proactive</p></td></tr>
+<tr><td><code>/mcp [reconnect (&lt;server&gt;|all)|enable|disable [&lt;server&gt;|all]]</code><br><span class="pill">內建</span></td><td>管理 MCP 連線、認證與 reconnect、enable、disable。</td></tr>
+<tr><td><code>/memory</code><br><span class="pill">內建</span></td><td>檢視與編輯專案記憶及 CLAUDE.md。</td></tr>
+<tr><td><code>/mobile</code><br><span class="pill">內建</span></td><td>顯示行動 App 下載資訊。<p class="small">別名：/ios、/android</p></td></tr>
+<tr><td><code>/model [model]</code><br><span class="pill">內建</span></td><td>選擇或切換目前會話的模型。<p class="small">相關版本差異：v2.1.242、v2.1.205；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/output-style [style]</code><br><span class="pill">內建</span></td><td>選擇回應輸出風格。<p class="small">相關版本差異：v2.1.269；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/passes</code><br><span class="pill">內建</span></td><td>符合資格的帳號可分享 Claude Code 試用。</td></tr>
+<tr><td><code>/permissions</code><br><span class="pill">內建</span></td><td>檢視與修改工具授權規則。<p class="small">別名：/allowed-tools</p><p class="small">相關版本差異：v2.1.234；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/plan [description]</code><br><span class="pill">內建</span></td><td>切換計畫模式，可附上要規劃的工作描述。</td></tr>
+<tr><td><code>/plugin [subcommand]</code><br><span class="pill">內建</span></td><td>開啟 plugin 管理介面或執行子指令。</td></tr>
+<tr><td><code>/plugin-authoring</code><br><span class="pill">內建</span></td><td>載入 plugin 開發參考與結構指南。<p class="small">相關版本差異：v2.1.287；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/powerup</code><br><span class="pill">內建</span></td><td>透過互動示範認識功能。</td></tr>
+<tr><td><code>/pr-comments [PR]</code><br><span class="pill">內建</span></td><td>已於 v2.1.91 移除；改以自然語言請 Claude 讀取 PR 留言。<p class="small">相關版本差異：v2.1.91；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/privacy-settings</code><br><span class="pill">內建</span></td><td>檢視與調整隱私偏好。</td></tr>
+<tr><td><code>/radio</code><br><span class="pill">內建</span></td><td>在瀏覽器開啟 Claude FM 音樂。</td></tr>
+<tr><td><code>/rate-limit-options</code><br><span class="pill">內建</span></td><td>顯示用量上限後的等待、加購額度與升級選項。<p class="small">相關版本差異：v2.1.234；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/recap</code><br><span class="pill">內建</span></td><td>產生目前會話的一行摘要。</td></tr>
+<tr><td><code>/release-notes</code><br><span class="pill">內建</span></td><td>查看版本更新內容。</td></tr>
+<tr><td><code>/reload-plugins [--force]</code><br><span class="pill">內建</span></td><td>重新載入 plugin；--force 強制重新整理。<p class="small">相關版本差異：v2.1.260；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/reload-skills</code><br><span class="pill">內建</span></td><td>重新掃描可用 skills。</td></tr>
+<tr><td><code>/remote-control</code><br><span class="pill">內建</span></td><td>啟用從網頁或行動 App 操作目前本地會話。<p class="small">別名：/rc</p></td></tr>
+<tr><td><code>/remote-env</code><br><span class="pill">內建</span></td><td>選擇 CLI 建立雲端會話時使用的預設環境。</td></tr>
+<tr><td><code>/rename [name]</code><br><span class="pill">內建</span></td><td>為目前會話命名。<p class="small">相關版本差異：v2.1.221；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/resume [session]</code><br><span class="pill">內建</span></td><td>恢復舊會話；可用名稱或識別碼指定。<p class="small">別名：/continue</p><p class="small">相關版本差異：v2.1.285；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/review [low|medium|high|xhigh|max|ultra] [--fix] [--comment] [--max-findings n|all|default] [pr#|branch|path]</code><br><span class="pill">內建</span></td><td>code-review 的別名，參數與行為相同。<p class="small">相關版本差異：v2.1.223、v2.1.186、v2.1.201；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/rewind</code><br><span class="pill">內建</span></td><td>回到檢查點，還原程式碼或對話，也可摘要部分歷史。<p class="small">別名：/checkpoint、/undo</p></td></tr>
+<tr><td><code>/run</code><br><span class="pill">Skill</span></td><td>啟動並操作專案 App，觀察變更是否實際運作。</td></tr>
+<tr><td><code>/run-skill-generator</code><br><span class="pill">Skill</span></td><td>建立專案專用 skill，教導 run 與 verify 如何建置、啟動及操作 App。</td></tr>
+<tr><td><code>/sandbox</code><br><span class="pill">內建</span></td><td>設定 shell sandbox 與隔離規則。</td></tr>
+<tr><td><code>/schedule [description]</code><br><span class="pill">內建</span></td><td>建立、修改、列出或執行在雲端運作的 routines。<p class="small">別名：/routines</p></td></tr>
+<tr><td><code>/scroll-speed</code><br><span class="pill">內建</span></td><td>調整終端介面捲動速度。</td></tr>
+<tr><td><code>/security-review</code><br><span class="pill">內建</span></td><td>分析目前變更的安全漏洞。</td></tr>
+<tr><td><code>/setup-bedrock</code><br><span class="pill">內建</span></td><td>互動設定 Amazon Bedrock 認證、region 與模型。</td></tr>
+<tr><td><code>/setup-vertex</code><br><span class="pill">內建</span></td><td>互動設定 Google Cloud 認證、project、region 與模型。</td></tr>
+<tr><td><code>/simplify [target]</code><br><span class="pill">Skill</span></td><td>檢查目標程式碼的重用性、品質與效率並改善。</td></tr>
+<tr><td><code>/skill-doctor</code><br><span class="pill">內建</span></td><td>檢視各 skill 的上下文成本與使用頻率。<p class="small">相關版本差異：v2.1.252；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/skills</code><br><span class="pill">內建</span></td><td>檢視可用 skills。</td></tr>
+<tr><td><code>/slides [brief]</code><br><span class="pill">Skill</span></td><td>依 brief 建立 Claude Slides 簡報 artifact。<p class="small">相關版本差異：v2.1.265；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/stats</code><br><span class="pill">內建</span></td><td>查看使用統計與活動趨勢。</td></tr>
+<tr><td><code>/status</code><br><span class="pill">內建</span></td><td>查看版本、模型、帳號與環境狀態。<p class="small">相關版本差異：v2.1.221；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/statusline</code><br><span class="pill">內建</span></td><td>設定終端狀態列顯示內容。</td></tr>
+<tr><td><code>/stickers</code><br><span class="pill">內建</span></td><td>查看 Claude Code 貼紙資訊。</td></tr>
+<tr><td><code>/stop</code><br><span class="pill">內建</span></td><td>停止附加中的背景會話，保留逐字稿與 worktree。</td></tr>
+<tr><td><code>/subtask &lt;task&gt;</code><br><span class="pill">內建</span></td><td>派出支線工作給 subagent，結果回報到目前對話。<p class="small">相關版本差異：v2.1.212、v2.1.161、v2.1.211；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/tasks</code><br><span class="pill">內建</span></td><td>查看本次會話背景工作與 subagent 狀態。</td></tr>
+<tr><td><code>/team-onboarding</code><br><span class="pill">內建</span></td><td>依近期使用紀錄產生團隊上手指南。</td></tr>
+<tr><td><code>/teleport</code><br><span class="pill">內建</span></td><td>將雲端會話帶回本地終端機。</td></tr>
+<tr><td><code>/terminal-setup</code><br><span class="pill">內建</span></td><td>設定終端機支援的換行與快捷鍵。</td></tr>
+<tr><td><code>/theme</code><br><span class="pill">內建</span></td><td>選擇終端介面主題。</td></tr>
+<tr><td><code>/tui [default|fullscreen]</code><br><span class="pill">內建</span></td><td>切換預設或全螢幕呈現模式。</td></tr>
+<tr><td><code>/ultraplan &lt;prompt&gt;</code><br><span class="pill">內建</span></td><td>已移除；改用 /plan 計畫模式。舊版曾將規劃交由雲端處理。</td></tr>
+<tr><td><code>/ultrareview [PR or branch]</code><br><span class="pill">內建</span></td><td>在雲端對 PR 或分支執行深入審查。</td></tr>
+<tr><td><code>/update-config [request]</code><br><span class="pill">Skill</span></td><td>以自然語言調整 Claude Code 設定。</td></tr>
+<tr><td><code>/upgrade</code><br><span class="pill">內建</span></td><td>開啟方案升級選項。</td></tr>
+<tr><td><code>/usage</code><br><span class="pill">內建</span></td><td>查看帳號用量、額度與重設資訊。</td></tr>
+<tr><td><code>/usage-credits</code><br><span class="pill">內建</span></td><td>管理額外使用額度。<p class="small">相關版本差異：v2.1.205；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/verify</code><br><span class="pill">Skill</span></td><td>建置、啟動及觀察 App，以驗證變更的實際結果。</td></tr>
+<tr><td><code>/vim</code><br><span class="pill">內建</span></td><td>已於 v2.1.92 移除；改用 /config → Editor mode。<p class="small">相關版本差異：v2.1.92；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/voice [hold|tap|off]</code><br><span class="pill">內建</span></td><td>切換語音輸入：按住、點按或關閉。</td></tr>
+<tr><td><code>/web-setup</code><br><span class="pill">內建</span></td><td>使用本機 gh 認證連接雲端會話所需 GitHub 帳號。</td></tr>
+<tr><td><code>/workflow-authoring</code><br><span class="pill">Skill</span></td><td>載入動態 workflow 腳本 API 與開發參考。<p class="small">相關版本差異：v2.1.248；詳見本節官方來源。</p></td></tr>
+<tr><td><code>/workflows</code><br><span class="pill">內建</span></td><td>查看、暫停、恢復與儲存 workflow。</td></tr>
+</tbody></table></div></section>
+<section id="management" class="command-group"><div class="section-label">MANAGEMENT</div><h2>MCP、Plugin 與管理子指令 <span class="pill">28 條</span></h2><p class="source"><a href="https://code.claude.com/docs/en/plugins/cli-reference">官方參考 →</a></p><div class="table-wrap"><table class="command-table"><thead><tr><th scope="col">指令 / 語法</th><th scope="col">用途與差異</th></tr>
+</thead><tbody><tr><td><code>claude auto-mode config</code><br><span class="pill">管理</span></td><td>查看套用設定後的有效 auto mode 規則。</td></tr>
+<tr><td><code>claude mcp add &lt;name&gt; ...</code><br><span class="pill">管理</span></td><td>新增 stdio、HTTP 或 SSE 伺服器；--transport 指定傳輸，--scope 選 local、project 或 user。</td></tr>
+<tr><td><code>claude mcp add-json &lt;name&gt; &lt;json&gt;</code><br><span class="pill">管理</span></td><td>以 JSON 新增 MCP 設定。</td></tr>
+<tr><td><code>claude mcp add-from-claude-desktop</code><br><span class="pill">管理</span></td><td>從 Claude Desktop 匯入 MCP 伺服器。</td></tr>
+<tr><td><code>claude mcp list</code><br><span class="pill">管理</span></td><td>列出設定與連線狀態。</td></tr>
+<tr><td><code>claude mcp get &lt;name&gt;</code><br><span class="pill">管理</span></td><td>查看指定伺服器的設定。</td></tr>
+<tr><td><code>claude mcp remove &lt;name&gt;</code><br><span class="pill">管理</span></td><td>移除指定 scope 的伺服器設定。</td></tr>
+<tr><td><code>claude mcp reset-project-choices</code><br><span class="pill">管理</span></td><td>重設專案 .mcp.json 的核准選擇。</td></tr>
+<tr><td><code>claude mcp serve</code><br><span class="pill">管理</span></td><td>讓 Claude Code 作為 stdio MCP server。</td></tr>
+<tr><td><code>claude plugin init &lt;name&gt;</code><br><span class="pill">管理</span></td><td>建立 plugin 起始目錄與結構。</td></tr>
+<tr><td><code>claude plugin install &lt;plugin&gt;</code><br><span class="pill">管理</span></td><td>安裝 plugin，可指定 user、project 或 local scope。</td></tr>
+<tr><td><code>claude plugin uninstall &lt;plugin&gt;</code><br><span class="pill">管理</span></td><td>解除安裝；--keep-data 保留資料。</td></tr>
+<tr><td><code>claude plugin enable &lt;plugin&gt;</code><br><span class="pill">管理</span></td><td>啟用已安裝 plugin。</td></tr>
+<tr><td><code>claude plugin disable [plugin]</code><br><span class="pill">管理</span></td><td>停用 plugin，保留安裝內容。</td></tr>
+<tr><td><code>claude plugin update &lt;plugin&gt;</code><br><span class="pill">管理</span></td><td>更新已安裝 plugin。</td></tr>
+<tr><td><code>claude plugin list</code><br><span class="pill">管理</span></td><td>列出已安裝 plugin，可輸出 JSON。</td></tr>
+<tr><td><code>claude plugin details &lt;name&gt;</code><br><span class="pill">管理</span></td><td>查看 plugin 詳細資訊。</td></tr>
+<tr><td><code>claude plugin configure &lt;plugin&gt;</code><br><span class="pill">管理</span></td><td>設定 plugin 使用者欄位，可透過 --values-stdin 輸入。</td></tr>
+<tr><td><code>claude plugin prune</code><br><span class="pill">管理</span></td><td>清理不再使用的快取；--dry-run 預覽。</td></tr>
+<tr><td><code>claude plugin eval [target]</code><br><span class="pill">管理</span></td><td>執行 plugin 評估案例。</td></tr>
+<tr><td><code>claude plugin eval init [name]</code><br><span class="pill">管理</span></td><td>建立 plugin eval 案例起始檔。</td></tr>
+<tr><td><code>claude plugin tag [path]</code><br><span class="pill">管理</span></td><td>準備 plugin 發佈版本標記。</td></tr>
+<tr><td><code>claude plugin test [directory]</code><br><span class="pill">管理</span></td><td>互動測試 plugin 目錄。</td></tr>
+<tr><td><code>claude plugin validate &lt;path&gt;</code><br><span class="pill">管理</span></td><td>驗證 manifest、路徑與 marketplace；--strict 將警告視為失敗。</td></tr>
+<tr><td><code>claude plugin marketplace add &lt;source&gt;</code><br><span class="pill">管理</span></td><td>加入 plugin marketplace 來源。</td></tr>
+<tr><td><code>claude plugin marketplace list</code><br><span class="pill">管理</span></td><td>列出 marketplace。</td></tr>
+<tr><td><code>claude plugin marketplace remove &lt;name&gt;</code><br><span class="pill">管理</span></td><td>移除 marketplace 來源。</td></tr>
+<tr><td><code>claude plugin marketplace update [name]</code><br><span class="pill">管理</span></td><td>更新一個或全部 marketplace 索引。</td></tr>
+</tbody></table></div></section>
+<section id="examples"><div class="section-label">QUICK START</div><h2>常見工作範例</h2><h3>互動開發與恢復會話</h3><pre><code>claude "說明這個專案的架構"
+claude --permission-mode plan
+claude --continue
+claude --resume auth-refactor
+claude --worktree feature-auth</code></pre><h3>單次查詢與腳本輸出</h3><pre><code>cat logs.txt | claude -p "整理錯誤原因"
+claude -p "分析專案" --output-format json
+claude -p "檢查變更" --max-turns 5 --max-budget-usd 2
+claude -p "說明架構" --tools "Read"</code></pre><p class="small">--tools 限制內建工具；若也要拒絕 MCP 工具，需另設 --disallowedTools "mcp__*"。</p><h3>會話內常用流程</h3><pre><code>/init
+/memory
+/plan 實作登入流程
+/context
+/compact 保留需求與尚未完成的工作
+/diff
+/code-review
+/verify
+/resume</code></pre><h3>MCP 與 Plugin</h3><pre><code>claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
+claude mcp login sentry
+claude mcp list
+claude plugin install code-review@claude-plugins-official
+claude plugin list</code></pre></section>
+<section id="sources"><div class="section-label">SOURCES &amp; SCOPE</div><h2>來源與完整性範圍</h2><p>以 Anthropic 官方文件為準，逐項撰寫用途摘要；命令列語法保留英文。每節表格列出該文件的全部命令條目，MCP 與 Plugin 子指令另行補充；未收錄未公開的內部命令，也無法枚舉個別專案自行新增的 skills、plugins 或 MCP prompts。</p><p>會話輸入 <code>/</code> 查看當下可用清單；自訂指令可能來自 <code>.claude/skills/&lt;name&gt;/SKILL.md</code>、舊式 <code>.claude/commands/</code> 或 plugin。部分內建命令因環境限制不會顯示；請對照來源的版本與可用性說明。</p><p>CLI 診斷可先執行 <code>claude --version</code>、<code>claude --help</code>；子指令選項可用 <code>claude mcp --help</code>、<code>claude plugin --help</code> 查詢。官方特別註明 --help 並不列出所有已公開旗標。--help / -h 是查詢說明的通用選項，未列入官方旗標主表。</p><p>容易混淆：<code>claude agents</code> 管理背景會話，<code>/agents</code> 提示管理 subagent 設定；<code>/branch</code> 分支對話，<code>/fork</code> 複製到背景，<code>--worktree</code> 隔離 git 工作目錄；<code>/loop</code> 是本次會話排程，<code>/schedule</code> 是雲端 routine。</p><ul class="sources"><li><a href="https://code.claude.com/docs/en/cli-reference">CLI reference</a></li><li><a href="https://code.claude.com/docs/en/commands">Commands</a></li><li><a href="https://code.claude.com/docs/en/mcp">MCP</a></li><li><a href="https://code.claude.com/docs/en/plugins/cli-reference">Plugin CLI reference</a></li></ul></section><a class="return" href="index.html">← 返回主題索引</a></article></main><footer><span>學習手記 / 查閱 2026-10-19</span><a href="#main">回到頂端 ↑</a></footer></body></html>

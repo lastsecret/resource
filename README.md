@@ -5,6 +5,8 @@
 - `index.html`：主題索引
 - `mattpocock.html`：27 個官方 README skills、用途與社群流程
 - `superpowers.html`：15 個官方 README skills、用途與社群流程
+- `claude-code.html`：Claude Code CLI 命令、參數、slash commands 與 MCP / Plugin 子指令
+- `claude-code.js`：指令搜尋、結果計數與搜尋快捷鍵
 - `styles.css`：共用樣式與行動版版面
 - `notes.js`：主題搜尋、skill 搜尋與分類篩選（不影響無 JavaScript 時閱讀）
 
