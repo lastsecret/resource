@@ -1,0 +1,8 @@
+{
+  "name": "spring-boot-modernizer",
+  "version": "2.0.0",
+  "description": "Evidence-first Spring Boot 3.5 to 4 migration with OpenRewrite, Java LSP, approval gates and repeatable verification",
+  "author": {
+    "name": "Spring Modernization Team"
+  }
+}

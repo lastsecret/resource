@@ -1,0 +1,3 @@
+# Java LSP integration contract
+
+Java LSP (JDT LS) must be installed and reachable as a Claude Code LSP plugin/tool separately; declaring an agent or Skill does **not** auto-enable a language server. Inspect available tools first. If enabled, use diagnostics on touched classes, go-to-definition for ambiguous API resolutions, references for migration-impact scope and re-diagnostics after edits. All diagnostics must be checked against Maven compile, because LSP workspace state/cache can be stale. If absent, explicitly record `LSP_UNAVAILABLE` and use Maven compiler/test output plus repository search. Do not fabricate LSP calls.
