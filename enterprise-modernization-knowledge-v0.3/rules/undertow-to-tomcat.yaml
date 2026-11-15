@@ -1,0 +1,187 @@
+schema_version: '0.2'
+knowledge_pack: spring-boot-3-to-4
+generated_on: '2026-11-13'
+scope: 3.5.x -> 4.0.x; resolve exact Hibernate / Boot dependencies
+rules:
+- id: WEB-UNDERTOW-001
+  title: Spring Boot 4 移除 Embedded Undertow
+  category: REMOVED_PLATFORM_SUPPORT
+  severity: HIGH
+  evidence_class: DOCUMENTED_CHANGE
+  documented_change: Spring Boot 4 Servlet baseline 6.1；內嵌 Undertow Starter / 自動配置支援已移除。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - resolved runtime uses spring-boot-starter-undertow or io.undertow artifacts
+    - application is Servlet MVC or Servlet-based server
+  investigation:
+    must_resolve:
+    - actual embedded/external server
+    - POM exclusions and transitive server artifacts
+    - Undertow-only Java customizers / Handler / ServletExtension / XNIO
+    - deployment mode JAR or WAR
+    - Servlet 6.1 readiness
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - REPLACE_EMBEDDED_SERVER_WITH_TOMCAT_11
+  - EVALUATE_JETTY_12_1
+  - MANUAL_ARCHITECTURE_REVIEW
+  verification:
+    required:
+    - BOOT_STARTUP
+    - SERVLET_REGISTRATION
+    - HTTP_CONTRACT_DIFF
+    - SMOKE_TEST
+    - SECURITY_FILTER_CHAIN
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - BOOT4_MIGRATION
+  - BOOT4_REQUIREMENTS
+  - SPRING7_RELEASE
+  workflow_phase: PREFLIGHT
+  review_status: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  caveat: 選擇 Tomcat 是本專案建議路線，不是 Hibernate 或 Spring Boot 無條件要求；外部容器另行檢查。
+- id: WEB-UNDERTOW-002
+  title: Undertow Worker / IO 設定不能直接換算成 Tomcat 執行緒
+  category: SERVER_CONCURRENCY_SEMANTICS
+  severity: HIGH
+  evidence_class: ENGINEERING_RISK_TO_VALIDATE
+  documented_change: Undertow 的 IO/Worker 模型與 Tomcat Connector / Executor 模型不同；設定鍵與資源行為不具一對一語意。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - server.undertow.threads.worker or server.undertow.threads.io
+    - custom XNIO worker or UndertowBuilderCustomizer
+    - existing throughput/SLA requirement
+  investigation:
+    must_resolve:
+    - effective Undertow worker/io counts and blocking handlers
+    - sync HTTP wait, synchronized lock and @Transactional boundaries
+    - Tomcat threads.max/min-spare, max-connections, accept-count and executor
+    - CPU/quota/container memory
+    - virtual threads enabled or not
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - SET_TOMCAT_CAPACITY_BY_BENCHMARK
+  - KEEP_CONFIG_ONLY_IF_NO_FUNCTIONAL_EQUIVALENT_NEEDED
+  - INTRODUCE_ADMISSION_CONTROL_WITH_REVIEW
+  verification:
+    required:
+    - BASELINE_LOAD_PROFILE
+    - LOAD_SAME_TRAFFIC_MIX
+    - ACTIVE_THREADS_AND_QUEUE
+    - P95_P99
+    - REJECTION_RATE
+    - HEALTH_UNDER_OVERLOAD
+    - MEMORY_HEADROOM
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - BOOT35_PROPERTIES
+  - BOOT4_PROPERTIES
+  workflow_phase: PLAN
+  review_status: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  caveat: 不以 thread 數相等推定吞吐、記憶體或健康狀態相等。
+- id: WEB-UNDERTOW-003
+  title: HTTP 請求解析與限制在換容器後需逐項檢查
+  category: HTTP_BEHAVIOR_RISK
+  severity: HIGH
+  evidence_class: ENGINEERING_RISK_TO_VALIDATE
+  documented_change: 兩種 Servlet 容器在 URI 編碼、encoded slash、Headers、Cookie、multipart、timeouts 等邊界行為可能不同。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - Undertow request handling properties or custom handlers
+    - Servlet REST API endpoints
+  investigation:
+    must_resolve:
+    - effective proxy/ingress normalization
+    - server.max-http-request-header-size actual semantics
+    - URL encoded slash and semicolon handling
+    - max parameters/cookies/headers/form body
+    - forwarded headers and authentication filters
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - CONFIGURE_TARGET_SERVER_CASE_BY_CASE
+  - PRESERVE_PROXY_CONTRACT
+  - REQUEST_MANUAL_REVIEW_FOR_SECURITY_SENSITIVE_BEHAVIOR
+  verification:
+    required:
+    - HTTP_BOUNDARY_GOLDENS
+    - ENCODED_PATH_QUERY
+    - OVERSIZED_HEADER
+    - OVERSIZED_BODY
+    - FORWARDED_HEADERS
+    - ERROR_STATUS_MAPPING
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - BOOT35_PROPERTIES
+  - BOOT4_PROPERTIES
+  workflow_phase: ASSESS
+  review_status: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+- id: WEB-UNDERTOW-004
+  title: Tomcat 11 Connector / graceful shutdown / health 壓測基準
+  category: OPERATIONAL_BEHAVIOR_RISK
+  severity: HIGH
+  evidence_class: ENGINEERING_RISK_TO_VALIDATE
+  documented_change: 更換容器後，健康檢查、連線重用、關閉時排空與過載行為須以同條件重測。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - embedded Undertow replaced by Tomcat
+    - application uses health checks or ingress readiness
+  investigation:
+    must_resolve:
+    - actual liveness/readiness URLs and management port
+    - graceful shutdown / terminationGracePeriod
+    - keep-alive and connection-timeout
+    - worker saturation and actuator isolation
+    - GC and heap pressure
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - TUNE_TARGET_ONLY_AFTER_MEASUREMENT
+  - RESERVE_HEALTH_CAPACITY
+  - UPDATE_DEPLOYMENT_SETTINGS_AFTER_APPROVAL
+  verification:
+    required:
+    - HEALTH_REACHABLE_UNDER_LOAD
+    - GRACEFUL_SHUTDOWN_IN_FLIGHT
+    - KEEPALIVE_CONTRACT
+    - RESOURCE_BUDGET
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - BOOT4_MIGRATION
+  - BOOT4_PROPERTIES
+  workflow_phase: ASSESS
+  review_status: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
