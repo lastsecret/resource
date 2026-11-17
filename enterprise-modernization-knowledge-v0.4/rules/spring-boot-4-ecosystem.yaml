@@ -1,14 +1,15 @@
-schema_version: '0.3'
+schema_version: '0.4'
 knowledge_pack: spring-boot-3-to-4
-scope: Spring Boot 3.5.x -> 4.0.x, Java 21; exact component versions required
+scope: Spring Boot 3.5.x -> 4.0.x; Java target is resolved from migration config; exact component versions required
 rules:
-- id: SEC7-DSL-001
-  title: HttpSecurity Lambda DSL
-  category: BREAKING_API
+- id: ECO4-SPRINGDOC-001
+  title: springdoc-openapi 2→3 支援矩陣
+  category: THIRD_PARTY_COMPATIBILITY
   severity: HIGH
   priority: P0
   evidence_class: DOCUMENTED_CHANGE
-  documented_change_or_risk: 舊無 Lambda 的鏈式 Security DSL 在 Security 7 不再有效，需改為 Lambda DSL；自訂 DSL 的 apply 改 with。
+  documented_change_or_risk: springdoc 官網相容矩陣：Boot 3 使用 springdoc 2.x，Boot 4.0 使用 3.0.x，Boot 4.1 可使用 3.1.x–3.2.x；依精確
+    Boot 版本選相容線。
   applicability:
     source_spring_boot: 3.5.x
     target_spring_boot: 4.0.x
@@ -17,24 +18,23 @@ rules:
     confidence_without_project_inspection: UNKNOWN
   investigation:
     detect_signals:
-    - HttpSecurity .and()
-    - .authorizeHttpRequests()
-    - .apply(custom DSL)
+    - org.springdoc:springdoc-openapi*
     must_resolve:
-    - all filterChains
-    - '@Order'
-    - custom DSL behavior
-    - exception handlers
+    - effective springdoc group
+    - version
+    - webmvc/webflux starter
+    - Swagger annotations
     effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
     unknown_policy: REVIEW_REQUIRED
   candidate_decisions:
-  - MIGRATE_TO_LAMBDA_PRESERVING_ORDER
-  - USE_WITH_FOR_CUSTOM_DSL
+  - ALIGN_VERSION
+  - SELECT_CORRECT_UI_STARTER
   verification:
     required:
-    - compile
-    - authorization matrix
-    - filter order
+    - GET /v3/api-docs
+    - Swagger UI
+    - schema diff
+    - error on startup
     pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
     actual_result: NOT_RUN
   prohibited:
@@ -43,451 +43,15 @@ rules:
   - AUTO_APPROVE_SECURITY_CHANGE
   - CLAIM_PASS_FROM_BUILD_ONLY
   sources:
-  - SEC7_CONFIG_PREP
+  - SPRINGDOC_FAQ
   review_status: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
-- id: SEC7-ACCESS-002
-  title: 舊 AccessDecision API 拆出相容模組
-  category: DEPENDENCY_CHANGE
-  severity: HIGH
-  priority: P0
-  evidence_class: DOCUMENTED_CHANGE
-  documented_change_or_risk: AccessDecisionManager / AccessDecisionVoter 等移到 spring-security-access legacy module，長期應規劃
-    AuthorizationManager。
-  applicability:
-    source_spring_boot: 3.5.x
-    target_spring_boot: 4.0.x
-    requires_feature_presence: true
-    component_versions: resolve exact effective versions and dependency graph
-    confidence_without_project_inspection: UNKNOWN
-  investigation:
-    detect_signals:
-    - AccessDecisionManager
-    - AccessDecisionVoter
-    - FilterSecurityInterceptor
-    must_resolve:
-    - active voters
-    - access expressions
-    - custom metadata source
-    - alternatives
-    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
-    unknown_policy: REVIEW_REQUIRED
-  candidate_decisions:
-  - ADD_LEGACY_MODULE_TEMPORARILY
-  - MIGRATE_AUTHORIZATION_MANAGER_WITH_TEST
-  verification:
-    required:
-    - compile
-    - same allow/deny matrix
-    - denial response
-    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
-    actual_result: NOT_RUN
-  prohibited:
-  - UNCONDITIONAL_PATCH
-  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
-  - AUTO_APPROVE_SECURITY_CHANGE
-  - CLAIM_PASS_FROM_BUILD_ONLY
-  sources:
-  - SEC7_AUTH_MIGRATION
-  review_status: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
-- id: SEC7-MATCHER-003
-  title: RequestMatcher / DispatcherType / FilterChain 順序
-  category: SECURITY_POLICY_RISK
-  severity: CRITICAL
-  priority: P0
-  evidence_class: DOCUMENTED_CHANGE
-  documented_change_or_risk: 舊 shouldFilterAllDispatcherTypes API 的準備指南建議改 dispatcherTypeMatchers；任何路徑匹配重構必須驗證實際授權效果。
-  applicability:
-    source_spring_boot: 3.5.x
-    target_spring_boot: 4.0.x
-    requires_feature_presence: true
-    component_versions: resolve exact effective versions and dependency graph
-    confidence_without_project_inspection: UNKNOWN
-  investigation:
-    detect_signals:
-    - requestMatchers
-    - securityMatcher
-    - shouldFilterAllDispatcherTypes
-    - dispatcherTypeMatchers
-    must_resolve:
-    - servletPath/contextPath
-    - proxy
-    - chains ordering
-    - ERROR/FORWARD/ASYNC dispatch
-    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
-    unknown_policy: REVIEW_REQUIRED
-  candidate_decisions:
-  - MIGRATE_API_WITH_MATRIX
-  - EXPLICIT_DISPATCHER_POLICY
-  - REVIEW_ANY_NEW_PUBLIC_ROUTE
-  verification:
-    required:
-    - anonymous,user,admin matrix
-    - encoded path
-    - dispatcher behavior
-    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
-    actual_result: NOT_RUN
-  prohibited:
-  - UNCONDITIONAL_PATCH
-  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
-  - AUTO_APPROVE_SECURITY_CHANGE
-  - CLAIM_PASS_FROM_BUILD_ONLY
-  sources:
-  - SEC7_CONFIG_PREP
-  - SEC7_AUTH_REQUEST
-  review_status: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
-- id: SEC7-METHOD-004
-  title: '@PreAuthorize 參數與 Method Security'
-  category: AUTHORIZATION_RISK
-  severity: HIGH
-  priority: P0
-  evidence_class: DOCUMENTED_CHANGE
-  documented_change_or_risk: SpEL 依賴方法參數名稱時需要編譯保留 -parameters；Security 7 對部分 Advisor 客製化有調整。
-  applicability:
-    source_spring_boot: 3.5.x
-    target_spring_boot: 4.0.x
-    requires_feature_presence: true
-    component_versions: resolve exact effective versions and dependency graph
-    confidence_without_project_inspection: UNKNOWN
-  investigation:
-    detect_signals:
-    - '@PreAuthorize(#id)'
-    - '@PostAuthorize'
-    - AuthorizationAdvisorProxyFactory
-    must_resolve:
-    - compiler -parameters
-    - AOP proxying
-    - custom method interceptors
-    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
-    unknown_policy: REVIEW_REQUIRED
-  candidate_decisions:
-  - PRESERVE_PARAMETER_METADATA
-  - REWIRE_CUSTOM_ADVISORS_IF_USED
-  verification:
-    required:
-    - method call role + ownership matrix
-    - proxy crossing
-    - parameter name tests
-    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
-    actual_result: NOT_RUN
-  prohibited:
-  - UNCONDITIONAL_PATCH
-  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
-  - AUTO_APPROVE_SECURITY_CHANGE
-  - CLAIM_PASS_FROM_BUILD_ONLY
-  sources:
-  - SEC7_AUTH_PREP
-  review_status: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
-- id: SEC7-JACKSON-005
-  title: Spring Security Jackson 2→3 Session/Token
-  category: SERIALIZATION_CHANGE
-  severity: HIGH
-  priority: P0
-  evidence_class: DOCUMENTED_CHANGE
-  documented_change_or_risk: SecurityJackson2Modules 與 Jackson2 ObjectMapper 應改為 Jackson3 JsonMapper.Builder / SecurityJacksonModules；來源與目標序列化應以真實資料驗證。
-  applicability:
-    source_spring_boot: 3.5.x
-    target_spring_boot: 4.0.x
-    requires_feature_presence: true
-    component_versions: resolve exact effective versions and dependency graph
-    confidence_without_project_inspection: UNKNOWN
-  investigation:
-    detect_signals:
-    - SecurityJackson2Modules
-    - SecurityJacksonModules
-    - ObjectMapper
-    - Session serializer
-    must_resolve:
-    - actual session serializer
-    - Redis payload
-    - custom polymorphic modules
-    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
-    unknown_policy: REVIEW_REQUIRED
-  candidate_decisions:
-  - MIGRATE_SECURITY_JACKSON
-  - REVIEW_SESSION_MIGRATION
-  - NO_CHANGE_IF_UNUSED
-  verification:
-    required:
-    - deserialize old sessions
-    - roundtrip security context
-    - reject disallowed types
-    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
-    actual_result: NOT_RUN
-  prohibited:
-  - UNCONDITIONAL_PATCH
-  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
-  - AUTO_APPROVE_SECURITY_CHANGE
-  - CLAIM_PASS_FROM_BUILD_ONLY
-  sources:
-  - SEC7_MIGRATION
-  review_status: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
-- id: SEC7-JWT-006
-  title: Nimbus JWT typ Header 驗證
-  category: TOKEN_VALIDATION_CHANGE
-  severity: CRITICAL
-  priority: P0
-  evidence_class: DOCUMENTED_CHANGE
-  documented_change_or_risk: Security 7 將 typ 驗證整合到 JwtTypeValidator，相關預設驗證與客製驗證配置需重新比對。
-  applicability:
-    source_spring_boot: 3.5.x
-    target_spring_boot: 4.0.x
-    requires_feature_presence: true
-    component_versions: resolve exact effective versions and dependency graph
-    confidence_without_project_inspection: UNKNOWN
-  investigation:
-    detect_signals:
-    - NimbusJwtDecoder
-    - JwtValidators
-    - JwtTypeValidator
-    - validateTypes
-    - jwtProcessorCustomizer
-    must_resolve:
-    - issuer
-    - allowed typ list
-    - custom JwtDecoder beans
-    - jwk keys and errors
-    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
-    unknown_policy: REVIEW_REQUIRED
-  candidate_decisions:
-  - PRESERVE_APPROVED_TYP_POLICY
-  - AVOID_DUPLICATE_VALIDATION
-  verification:
-    required:
-    - JWT and missing typ, JWT typ, custom typ, invalid signature, expired
-    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
-    actual_result: NOT_RUN
-  prohibited:
-  - UNCONDITIONAL_PATCH
-  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
-  - AUTO_APPROVE_SECURITY_CHANGE
-  - CLAIM_PASS_FROM_BUILD_ONLY
-  sources:
-  - SEC7_OAUTH_PREP
-  - SEC7_OAUTH_MIGRATION
-  review_status: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
-- id: SEC7-JWK-007
-  title: Nimbus JWT JWK 連線逾時
-  category: NETWORK_BEHAVIOR_CHANGE
-  severity: HIGH
-  priority: P0
-  evidence_class: DOCUMENTED_CHANGE
-  documented_change_or_risk: Security 7 的 NimbusJwtDecoder 預設 JWK 抓取連線與讀取 timeout 從 500ms 調整為 30s（未自訂 RestOperations
-    時）。
-  applicability:
-    source_spring_boot: 3.5.x
-    target_spring_boot: 4.0.x
-    requires_feature_presence: true
-    component_versions: resolve exact effective versions and dependency graph
-    confidence_without_project_inspection: UNKNOWN
-  investigation:
-    detect_signals:
-    - NimbusJwtDecoder.withIssuerLocation
-    - JWK Set
-    must_resolve:
-    - custom RestOperations
-    - http client
-    - retries and gateway timeout
-    - availability SLA
-    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
-    unknown_policy: REVIEW_REQUIRED
-  candidate_decisions:
-  - SET_SCOPED_TIMEOUT_TO_SOURCE_CONTRACT
-  - ACCEPT_NEW_TIMEOUT_IF_APPROVED
-  verification:
-    required:
-    - JWK slow, timeout, outage
-    - downstream thread and health impact
-    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
-    actual_result: NOT_RUN
-  prohibited:
-  - UNCONDITIONAL_PATCH
-  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
-  - AUTO_APPROVE_SECURITY_CHANGE
-  - CLAIM_PASS_FROM_BUILD_ONLY
-  sources:
-  - SEC7_OAUTH_MIGRATION
-  review_status: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
-- id: SEC7-OPAQUE-008
-  title: Opaque Token Introspection Credentials Encoding
-  category: TOKEN_INTEGRATION_CHANGE
-  severity: CRITICAL
-  priority: P0
-  evidence_class: DOCUMENTED_CHANGE
-  documented_change_or_risk: Opaque token support 會編碼 Client ID/Secret；若舊專案自行編碼，需避免雙重編碼。
-  applicability:
-    source_spring_boot: 3.5.x
-    target_spring_boot: 4.0.x
-    requires_feature_presence: true
-    component_versions: resolve exact effective versions and dependency graph
-    confidence_without_project_inspection: UNKNOWN
-  investigation:
-    detect_signals:
-    - introspectionClientCredentials
-    - OpaqueTokenIntrospector
-    - SpringOpaqueTokenIntrospector
-    must_resolve:
-    - identity server required encoding
-    - special chars in credentials
-    - custom client
-    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
-    unknown_policy: REVIEW_REQUIRED
-  candidate_decisions:
-  - REMOVE_REDUNDANT_ENCODING_IF_PROVEN
-  - KEEP_CUSTOM_IMPLEMENTATION_IF_REQUIRED
-  verification:
-    required:
-    - introspection request auth header
-    - URL unsafe secret
-    - 200/401/errors
-    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
-    actual_result: NOT_RUN
-  prohibited:
-  - UNCONDITIONAL_PATCH
-  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
-  - AUTO_APPROVE_SECURITY_CHANGE
-  - CLAIM_PASS_FROM_BUILD_ONLY
-  sources:
-  - SEC7_OAUTH_PREP
-  review_status: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
-- id: SEC7-CONTEXT-009
-  title: 自訂 Filter 與 SecurityContext 儲存
-  category: SESSION_PERSISTENCE_RISK
-  severity: HIGH
-  priority: P0
-  evidence_class: COMPATIBILITY_ASSESSMENT
-  documented_change_or_risk: 自訂 Filter 手動設定 SecurityContext 時需確認是否透過 SecurityContextRepository 持久化；不能假定 Security
-    7 引入此變更。
-  applicability:
-    source_spring_boot: 3.5.x
-    target_spring_boot: 4.0.x
-    requires_feature_presence: true
-    component_versions: resolve exact effective versions and dependency graph
-    confidence_without_project_inspection: UNKNOWN
-  investigation:
-    detect_signals:
-    - OncePerRequestFilter
-    - SecurityContextHolder.setContext
-    - SecurityContextRepository
-    must_resolve:
-    - filter chain
-    - session policy stateless/stateful
-    - explicit save and repository
-    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
-    unknown_policy: REVIEW_REQUIRED
-  candidate_decisions:
-  - RESTORE_SOURCE_CONTEXT_PERSISTENCE
-  - NO_CHANGE_IF_STATELESS
-  verification:
-    required:
-    - same session subsequent request
-    - logout
-    - concurrent requests
-    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
-    actual_result: NOT_RUN
-  prohibited:
-  - UNCONDITIONAL_PATCH
-  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
-  - AUTO_APPROVE_SECURITY_CHANGE
-  - CLAIM_PASS_FROM_BUILD_ONLY
-  sources:
-  - SEC7_SESSION_REF
-  review_status: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
-- id: SEC7-CSRF-010
-  title: CSRF / CORS / Cookie / Session 政策
-  category: SECURITY_POLICY_RISK
-  severity: HIGH
-  priority: P0
-  evidence_class: COMPATIBILITY_ASSESSMENT
-  documented_change_or_risk: Security Policy 的有效結果受 Filter 與 Servlet Container 改動影響；此規則是驗證風險盤點，不主張 Security 7 必然修改各預設值。
-  applicability:
-    source_spring_boot: 3.5.x
-    target_spring_boot: 4.0.x
-    requires_feature_presence: true
-    component_versions: resolve exact effective versions and dependency graph
-    confidence_without_project_inspection: UNKNOWN
-  investigation:
-    detect_signals:
-    - csrf
-    - cors
-    - cookie
-    - sessionManagement
-    - SameSite
-    - CookieCsrfTokenRepository
-    must_resolve:
-    - effective chain
-    - reverse proxy
-    - servlet container
-    - session storage
-    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
-    unknown_policy: REVIEW_REQUIRED
-  candidate_decisions:
-  - PRESERVE_EXISTING_SECURITY_POLICY
-  - MANUAL_APPROVAL_FOR_DEVIATION
-  verification:
-    required:
-    - GET/POST with/without CSRF, preflight, credentials, cookie attributes
-    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
-    actual_result: NOT_RUN
-  prohibited:
-  - UNCONDITIONAL_PATCH
-  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
-  - AUTO_APPROVE_SECURITY_CHANGE
-  - CLAIM_PASS_FROM_BUILD_ONLY
-  sources:
-  - SEC7_AUTH_REQUEST
-  - BOOT4_MIGRATION
-  review_status: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
-- id: SEC7-TEST-011
-  title: Security Test Starter 與 Mock User 測試
-  category: TEST_SETUP_CHANGE
-  severity: HIGH
-  priority: P0
-  evidence_class: DOCUMENTED_CHANGE
-  documented_change_or_risk: Boot 4 有技術專屬 Test Starter；測試 classpath 和 MockMvc wiring 必須核對，避免授權測試假性缺席。
-  applicability:
-    source_spring_boot: 3.5.x
-    target_spring_boot: 4.0.x
-    requires_feature_presence: true
-    component_versions: resolve exact effective versions and dependency graph
-    confidence_without_project_inspection: UNKNOWN
-  investigation:
-    detect_signals:
-    - spring-security-test
-    - spring-boot-starter-security-test
-    - '@WithMockUser'
-    - MockMvc
-    must_resolve:
-    - test module
-    - auto configuration
-    - profiles
-    - method security setup
-    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
-    unknown_policy: REVIEW_REQUIRED
-  candidate_decisions:
-  - ALIGN_SECURITY_TEST_STARTER
-  - RESTORE_SECURITY_TEST_SETUP
-  verification:
-    required:
-    - security test discovery
-    - MockMvc 401/403/200
-    - auth mock isolation
-    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
-    actual_result: NOT_RUN
-  prohibited:
-  - UNCONDITIONAL_PATCH
-  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
-  - AUTO_APPROVE_SECURITY_CHANGE
-  - CLAIM_PASS_FROM_BUILD_ONLY
-  sources:
-  - BOOT4_MIGRATION
-  review_status: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
-- id: SEC7-AUTHZSRV-012
-  title: OAuth2 Authorization Server 與 Token 格式
-  category: AUTHORIZATION_SERVER_RISK
+- id: ECO4-SPRINGDOC-002
+  title: OpenAPI Schema / 自訂 Converter / Security Scheme
+  category: API_CONTRACT_RISK
   severity: HIGH
   priority: P1
-  evidence_class: DOCUMENTED_CHANGE
-  documented_change_or_risk: Security 7 的 Authorization Server 預設使用 Jackson 3；如果原系統有 JWT/consent/authorization 持久化需驗證跨版本讀寫。
+  evidence_class: COMPATIBILITY_ASSESSMENT
+  documented_change_or_risk: springdoc 的生成文件仰賴實際 Runtime Bean 與 Converter；升級後需比較 OpenAPI 契約，不應只確認 UI 能開。
   applicability:
     source_spring_boot: 3.5.x
     target_spring_boot: 4.0.x
@@ -496,22 +60,24 @@ rules:
     confidence_without_project_inspection: UNKNOWN
   investigation:
     detect_signals:
-    - spring-security-oauth2-authorization-server
-    - OAuth2AuthorizationService
-    - Redis/JDBC token serialization
+    - OpenApiCustomizer
+    - GroupedOpenApi
+    - HttpMessageConverter
+    - '@SecurityScheme'
     must_resolve:
-    - registered client schema
-    - signing keys
-    - persistence serializer
-    - session/cookie
+    - endpoints selected
+    - Spring MVC converter ordering
+    - group definitions
     effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
     unknown_policy: REVIEW_REQUIRED
   candidate_decisions:
-  - MIGRATE_SERIALIZATION_WITH_BACKWARD_READ
-  - REVIEW_TOKEN_INVALIDATION_PLAN
+  - PRESERVE_API_SCHEMA
+  - REVIEW_DECLARED_BREAKING_DIFF
   verification:
     required:
-    - existing refresh tokens, auth code flow, key rotation, token refresh
+    - canonicalized JSON schema diff
+    - Swagger endpoints auth
+    - typed date/enum
     pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
     actual_result: NOT_RUN
   prohibited:
@@ -520,5 +86,452 @@ rules:
   - AUTO_APPROVE_SECURITY_CHANGE
   - CLAIM_PASS_FROM_BUILD_ONLY
   sources:
+  - SPRINGDOC_FAQ
+  review_status: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+- id: ECO4-CLOUD-003
+  title: Spring Cloud Release Train 對應 Boot 4
+  category: BOM_COMPATIBILITY
+  severity: HIGH
+  priority: P0
+  evidence_class: DOCUMENTED_CHANGE
+  documented_change_or_risk: Spring Cloud 官方相容表：2025.0.x 對應 Boot 3.5；2025.1.x 對應 Boot 4.0，以及從 2025.1.2 起對應 Boot
+    4.1。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - org.springframework.cloud:spring-cloud-dependencies
+    - OpenFeign
+    - Gateway
+    - Config
+    - Discovery
+    must_resolve:
+    - effective BOM
+    - Cloud components
+    - config precedence
+    - optional compatibility checks
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - ALIGN_CLOUD_RELEASE_TRAIN
+  - NO_BLIND_VERSION_BUMP
+  verification:
+    required:
+    - dependency tree
+    - context
+    - remote config
+    - discovery
+    - Feign contract
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - SPRING_CLOUD_COMPAT
+  review_status: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+- id: ECO4-CLOUD-004
+  title: OpenFeign/Gateway/Config Client 的傳遞行為
+  category: INTEGRATION_RISK
+  severity: HIGH
+  priority: P1
+  evidence_class: COMPATIBILITY_ASSESSMENT
+  documented_change_or_risk: Spring Cloud 與 Boot 的共同升級可能影響 HTTP client、timeout、Retry 和 Config 導入；需依實際元件測量，不能宣稱統一變更。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - '@FeignClient'
+    - Spring Cloud Gateway
+    - spring.config.import
+    - DiscoveryClient
+    must_resolve:
+    - actual HTTP client
+    - request interceptors
+    - trace headers
+    - retries and timeouts
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RESTORE_SOURCE_HTTP_CONTRACT
+  - REVIEW_RETRY_AMPLIFICATION
+  verification:
+    required:
+    - upstream timeout
+    - retry count
+    - X-Trace-Id
+    - unavailable config
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - SPRING_CLOUD_COMPAT
+  review_status: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+- id: ECO4-BATCH-005
+  title: Spring Batch Metadata JDBC 的明確選擇
+  category: DEFAULT_BEHAVIOR_CHANGE
+  severity: CRITICAL
+  priority: P0
+  evidence_class: DOCUMENTED_CHANGE
+  documented_change_or_risk: Boot 4 的一般 spring-boot-starter-batch 可不依賴 DB，若原系統依靠 JDBC JobRepository，應選 spring-boot-starter-batch-jdbc
+    以保留 metadata 持久化。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - spring-boot-starter-batch
+    - JdbcJobRepository
+    - JobExplorer
+    must_resolve:
+    - existing job metadata database
+    - restartability
+    - transaction manager
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - SELECT_BATCH_JDBC_STARTER_IF_PERSISTENCE_REQUIRED
+  verification:
+    required:
+    - job restart after crash
+    - execution metadata rows
+    - duplicate job params
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - BOOT4_MIGRATION
+  review_status: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+- id: ECO4-BATCH-006
+  title: Batch Step / Reader / Writer / ExecutionContext
+  category: BATCH_SEMANTICS_RISK
+  severity: HIGH
+  priority: P1
+  evidence_class: COMPATIBILITY_ASSESSMENT
+  documented_change_or_risk: Spring Batch major 升級需檢查自訂 Readers/Writers、JobRepository 和 ExecutionContext 格式；具體差異須依版本與使用點確認。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - ItemReader
+    - ItemWriter
+    - StepBuilder
+    - ExecutionContext
+    - JobRepository
+    must_resolve:
+    - reader checkpoint
+    - job parameters
+    - existing metadata
+    - serialization
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - PRESERVE_RESTART_SEMANTICS
+  - REVIEW_HISTORICAL_METADATA
+  verification:
+    required:
+    - restart from mid-chunk, retries, skip, exactly-once effect
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - BOOT4_MIGRATION
+  review_status: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+- id: ECO4-REDIS-007
+  title: Spring Session Redis 儲存格式與 TTL
+  category: SESSION_COMPATIBILITY_RISK
+  severity: HIGH
+  priority: P0
+  evidence_class: COMPATIBILITY_ASSESSMENT
+  documented_change_or_risk: Spring Boot 4 Session Data Redis 模組化後，要檢查 Redis Session serializer、namespace、cookie、TTL
+    與安全上下文的讀寫能力。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - spring-session-data-redis
+    - RedisIndexedSessionRepository
+    - RedisSerializer
+    must_resolve:
+    - actual serializer
+    - namespace
+    - expiration mode
+    - session lifecycle
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - PRESERVE_SESSION_READ_COMPAT
+  - PLAN_INVALIDATION_IF_UNAVOIDABLE
+  verification:
+    required:
+    - read pre-upgrade session
+    - TTL
+    - logout
+    - login
+    - replica failover
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - BOOT4_MIGRATION
   - SEC7_MIGRATION
+  review_status: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+- id: ECO4-REDIS-008
+  title: Spring Data Redis Serializer / Cache / Lock
+  category: REDIS_BEHAVIOR_RISK
+  severity: HIGH
+  priority: P1
+  evidence_class: COMPATIBILITY_ASSESSMENT
+  documented_change_or_risk: Spring Boot 4 對 Spring Data Redis 的版本管理變化，需要逐項檢查自訂序列化、Lock key、過期與事務；不預設所有 Redis 行為改變。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - RedisTemplate
+    - StringRedisTemplate
+    - RedisCacheManager
+    - RedisLockRegistry
+    - Redisson
+    must_resolve:
+    - effective serializers
+    - key prefix
+    - TTL
+    - Sentinel vs Cluster
+    - transaction & scripts
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - KEEP_WIRE_FORMAT
+  - VERIFY_LOCK_SEMANTICS
+  - NO_CHANGE_IF_MATCH
+  verification:
+    required:
+    - legacy key read
+    - expiry
+    - lock contention
+    - failover
+    - no EVAL assumption
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - BOOT4_MIGRATION
+  review_status: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+- id: ECO4-GRAPHQL-009
+  title: GraphQL Schema 與 Java Enum/String 轉換
+  category: API_BINDING_RISK
+  severity: HIGH
+  priority: P0
+  evidence_class: COMPATIBILITY_ASSESSMENT
+  documented_change_or_risk: Schema String/Enum、Java Enum 自訂 fromValue 與 DataFetcher/Converter 是不同層的輸入轉換；先確認實際 Runtime
+    Wiring 與既有行為。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - schema.graphqls
+    - enum
+    - '@Argument'
+    - fromValue
+    - RuntimeWiringConfigurer
+    must_resolve:
+    - schema types
+    - custom scalar/coercing
+    - Spring conversion service
+    - path variables
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - REGISTER_SCOPED_COERCION_OR_CONVERTER
+  - NO_CHANGE_IF_MATCH
+  verification:
+    required:
+    - TW01->TW
+    - invalid enum
+    - 'null'
+    - lists
+    - GraphQL errors
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - BOOT4_MIGRATION
+  review_status: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+- id: ECO4-VALIDATION-010
+  title: Jakarta Validation / Method Validation 與錯誤契約
+  category: VALIDATION_RISK
+  severity: HIGH
+  priority: P0
+  evidence_class: COMPATIBILITY_ASSESSMENT
+  documented_change_or_risk: Boot 4 Modularization 可使 validation starter 缺漏；同時需要比對校驗觸發時機、錯誤碼和 MessageInterpolator。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - spring-boot-starter-validation
+    - '@Valid'
+    - '@Validated'
+    - ConstraintValidator
+    must_resolve:
+    - provider
+    - group sequences
+    - controller methods
+    - locale messages
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RESTORE_VALIDATION_PROVIDER
+  - PRESERVE_VALIDATION_ERRORS
+  verification:
+    required:
+    - invalid fields, nested validation, parameter validation, HTTP error body
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - BOOT4_MIGRATION
+  review_status: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+- id: ECO4-OBSERV-011
+  title: Micrometer / Tracing / MDC / Trace Header
+  category: OBSERVABILITY_INTEGRATION_RISK
+  severity: HIGH
+  priority: P1
+  evidence_class: COMPATIBILITY_ASSESSMENT
+  documented_change_or_risk: Boot 4 將 Metrics/Tracing 模組化；需要確認既有 X-Trace-Id 與標準 traceparent 的接收、傳遞及非同步執行緒 MDC。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - micrometer-tracing
+    - ObservationRegistry
+    - RestTemplate
+    - X-Trace-Id
+    must_resolve:
+    - observations
+    - interceptors
+    - servlet filters
+    - thread/task executors
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - PRESERVE_TRACE_PROPAGATION
+  - ADD_SCOPED_CONTEXT_PROPAGATION
+  verification:
+    required:
+    - inbound/outbound header trace
+    - log correlation across threads
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - BOOT4_MIGRATION
+  review_status: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+- id: ECO4-TEST-012
+  title: MockMvc 測試設定調整
+  category: TEST_BREAKING_CHANGE
+  severity: HIGH
+  priority: P0
+  evidence_class: DOCUMENTED_CHANGE
+  documented_change_or_risk: Boot 4 的 @SpringBootTest 不再隱含提供 MockMvc 支援，需要加入 @AutoConfigureMockMvc；測試模組應依技術選擇。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - '@SpringBootTest'
+    - '@AutoConfigureMockMvc'
+    - MockMvc
+    must_resolve:
+    - test classpath
+    - old bootstrap
+    - htmlUnit settings
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - ADD_AUTO_CONFIGURE_MOCKMVC_IF_REQUIRED
+  verification:
+    required:
+    - compile and run actual MockMvc tests
+    - require expected assertions run
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - BOOT4_MIGRATION
   review_status: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING

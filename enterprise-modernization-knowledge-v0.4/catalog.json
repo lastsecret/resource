@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.3",
+  "schema_version": "0.4",
   "knowledge_pack": "spring-boot-3-to-4",
   "count": 63,
   "rules": [
@@ -508,5 +508,6 @@
       "verification": "NOT_RUN"
     }
   ],
-  "verified_execution_count": 0
+  "verified_execution_count": 0,
+  "java_scope": "resolved from Migration Config per run"
 }

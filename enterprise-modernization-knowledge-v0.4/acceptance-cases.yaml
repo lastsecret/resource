@@ -1,4 +1,4 @@
-schema_version: '0.3'
+schema_version: '0.4'
 status: SPECIFICATION_ONLY_NOT_EXECUTED
 cases:
 - id: T-UTW-01
@@ -449,4 +449,61 @@ cases:
   given: Source map-underscore-to-camel-case=false explicitly; new default differs in hypothetical environment
   expected_assessment_or_observation: Preserve effective false and measure, never blindly enable camel case
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
+  actual_result: NOT_RUN
+- id: T-JAVA-01
+  rule_ref: RUNTIME-JAVA-PARAMETERIZED
+  given: Java 17 source, target mode preserve, Boot 4.0.x
+  expected_assessment_or_observation: Resolve target Java=17; check component minima; do not auto-upgrade; preserve
+    behavior
+  gate_policy: CHECK_TARGET_JDK_AND_VERIFY_RUNTIME
+  actual_result: NOT_RUN
+- id: T-JAVA-02
+  rule_ref: RUNTIME-JAVA-PARAMETERIZED
+  given: Java 21 source, target mode preserve, Boot 4.0.x
+  expected_assessment_or_observation: Resolve target Java=21; no changes to compiler/CI/Docker unless necessary
+    and approved
+  gate_policy: CHECK_TARGET_JDK_AND_VERIFY_RUNTIME
+  actual_result: NOT_RUN
+- id: T-JAVA-03
+  rule_ref: RUNTIME-JAVA-PARAMETERIZED
+  given: Java 11 source, preserve Java 11, target Boot 4.0.x
+  expected_assessment_or_observation: BLOCK because target Spring Boot minimum Java 17
+  gate_policy: BLOCK_IF_BELOW_MINIMUM
+  actual_result: NOT_RUN
+- id: T-JAVA-04
+  rule_ref: RUNTIME-JAVA-PARAMETERIZED
+  given: Java 17 source, explicit target Java 21, no user approval
+  expected_assessment_or_observation: BLOCK_AND_REVIEW; never auto-raise JDK
+  gate_policy: BLOCK_UNAPPROVED_CHANGE
+  actual_result: NOT_RUN
+- id: T-JAVA-05
+  rule_ref: RUNTIME-JAVA-PARAMETERIZED
+  given: Java 17 source, explicit target Java 21, approved
+  expected_assessment_or_observation: Allow preliminary version compatibility checks, still require code/CI/runtime
+    and behavior tests
+  gate_policy: REQUIRE_RUNTIME_EVIDENCE
+  actual_result: NOT_RUN
+- id: T-JAVA-06
+  rule_ref: RUNTIME-JAVA-PARAMETERIZED
+  given: Tool JDK 21, target/runtime Java 17, compiler release 17
+  expected_assessment_or_observation: Do not confuse tool JDK with product JDK; require actual Java 17 run
+  gate_policy: SEPARATE_TOOL_AND_RUNTIME
+  actual_result: NOT_RUN
+- id: T-JAVA-07
+  rule_ref: RUNTIME-JAVA-PARAMETERIZED
+  given: Target Java 17 but bytecode major 65 or CI runtime 21
+  expected_assessment_or_observation: BLOCK until target release and actual runtime are aligned
+  gate_policy: BLOCK_BYTECODE_OR_RUNTIME_MISMATCH
+  actual_result: NOT_RUN
+- id: T-JAVA-08
+  rule_ref: RUNTIME-JAVA-PARAMETERIZED
+  given: Unknown exact dependency line or missing private library bytecode requirements
+  expected_assessment_or_observation: REVIEW_REQUIRED; do not claim dependency compatibility from partial matrix
+  gate_policy: REVIEW_IF_UNKNOWN
+  actual_result: NOT_RUN
+- id: T-JAVA-09
+  rule_ref: RUNTIME-JAVA-PARAMETERIZED
+  given: Unapproved OpenRewrite recipe alters java.version, gradle toolchain or Docker image
+  expected_assessment_or_observation: BLOCK_AND_REVIEW; record attempted change and ask for approval
+  gate_policy: BLOCK_UNAPPROVED_CHANGE
   actual_result: NOT_RUN

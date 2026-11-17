@@ -1,6 +1,6 @@
-schema_version: '0.3'
+schema_version: '0.4'
 knowledge_pack: spring-boot-3-to-4
-scope: Spring Boot 3.5.x -> 4.0.x, Java 21; exact component versions required
+scope: Spring Boot 3.5.x -> 4.0.x; Java target is resolved from migration config; exact component versions required
 rules:
 - id: MYB4-STARTER-001
   title: MyBatis Starter 版本相容性

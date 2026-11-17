@@ -2,7 +2,7 @@
 
 > 狀態：需求初稿（待確認／待實驗驗證）；日期：2026-11-13  
 > 原則：本文件是**產品與行為契約**，不是實作設計。CLI、IDE、Web、Desktop、Claude Code、其他 Agent、OpenRewrite、JDT LS 都是可替換的技術選項。  
-> 首個參考場景：Java 21、Spring Boot 3.5.x → 4.0.x，包含 Jackson 2→3、Hibernate 6→7 等相容性議題。其他版本路徑必須明確申告適用性，不能推定支援。
+> 首個參考場景：由 Migration Config 指定 Java 來源與目標版本、Spring Boot 3.5.x → 4.0.x，包含 Jackson 2→3、Hibernate 6→7 等相容性議題。其他版本路徑必須明確申告適用性，不能推定支援。
 
 ## 0. 核心定義
 

@@ -1,6 +1,6 @@
 # Spring Boot 3 → 4 Knowledge Pack v0.3 新增說明
 
-> 對應 Spring Boot 3.5.x → 4.0.x、Java 21。既有 v0.2 文件原樣保留；本文件為新增規則索引與解讀重點。**規則文件不是已通過測試的遷移 Recipe。**
+> 對應 Spring Boot 3.5.x → 4.0.x；Java 目標由每次 Migration Config 決定。既有 v0.2 文件原樣保留；本文件為新增規則索引與解讀重點。**規則文件不是已通過測試的遷移 Recipe。**
 
 ## 1. 根本判斷原則
 
