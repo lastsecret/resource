@@ -1,0 +1,729 @@
+schema_version: '0.5'
+knowledge_pack: spring-boot-3-to-4
+scope: Spring Boot 3.5.x -> 4.0.x; Java target is resolved from migration config; exact component versions
+  required
+rules:
+- id: MYB4-STARTER-001
+  title: MyBatis Starter 版本相容性
+  category: DEPENDENCY_CHANGE
+  severity: HIGH
+  priority: P0
+  documented_change_or_risk: MyBatis-Spring-Boot-Starter 3.0 系列對應 Boot 3.2–3.5；4.0 系列對應 Boot 4.0；MyBatis-Spring
+    4.0 對應 Spring Framework 7；MyBatis Core 仍為 3.5 系列。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - org.mybatis.spring.boot:mybatis-spring-boot-starter
+    - org.mybatis:mybatis-spring
+    - org.mybatis:mybatis
+    must_resolve:
+    - exact Boot Framework
+    - starter
+    - MyBatis-Spring
+    - MyBatis Core and BOM versions; Nexus availability
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - ALIGN_VERIFIED_VERSION_MATRIX
+  - REVIEW_OVERRIDES
+  - KEEP_CORE_3_5_IF_SUPPORTED
+  verification:
+    required:
+    - dependency convergence
+    - context startup
+    - mapper select
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - MYBATIS_STARTER_REQ
+  - MYBATIS_SPRING_REQ
+  migration_evidence_v0_5:
+    classification: BREAKING_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: MYBATIS_STARTER_REQ
+        section: Requirements compatibility matrix
+      - source_id: MYBATIS_SPRING_REQ
+        section: REVIEW_REQUIRED
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+  rule_type: BREAKING_CHANGE
+  actionable: false
+- id: MYB4-MAPPER-002
+  title: Mapper 掃描與 XML 資源載入
+  category: INTEGRATION_RISK
+  severity: HIGH
+  priority: P0
+  documented_change_or_risk: Starter 會掃描 Mapper 並建立 SqlSessionTemplate；自訂 MapperFactoryBean 可能改變自動掃描是否啟動。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - '@MapperScan'
+    - '@Mapper'
+    - MapperFactoryBean
+    - mapper-locations
+    must_resolve:
+    - base packages
+    - XML glob
+    - active profiles
+    - resource inclusion in jar and external resources
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - mapper bean count
+    - mapped statement list
+    - SQL smoke with parameters
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - MYBATIS_STARTER_DOC
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: MYBATIS_STARTER_DOC
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: COMPATIBILITY_ASSESSMENT
+  legacy_review_status_v0_4: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: MYB4-HANDLER-003
+  title: 自訂 TypeHandler / Enum / NULL / 時間型別
+  category: DATA_MAPPING_RISK
+  severity: HIGH
+  priority: P0
+  documented_change_or_risk: 自訂 TypeHandler 與預設 JDBC TypeHandler 需依實際欄位與 Mapper 確認；不能因 major 升級推論一定改變。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - TypeHandler
+    - '@MappedTypes'
+    - '@MappedJdbcTypes'
+    - javaType
+    - jdbcType
+    must_resolve:
+    - TypeHandler precedence
+    - per-mapper binding
+    - database driver
+    - actual SQL types
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - null, non-null, enum unknown, DATE/TIMESTAMP read-write golden records
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - MYBATIS_STARTER_DOC
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: MYBATIS_STARTER_DOC
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: COMPATIBILITY_ASSESSMENT
+  legacy_review_status_v0_4: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: MYB4-CONFIG-004
+  title: MyBatis 有效設定與預設值
+  category: CONFIGURATION_RISK
+  severity: HIGH
+  priority: P0
+  documented_change_or_risk: MyBatis configuration.*、XML config-location 和 Java ConfigurationCustomizer 會影響結果；configuration.*
+    與 config-location 不可同時使用。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - mybatis.configuration.*
+    - config-location
+    - ConfigurationCustomizer
+    must_resolve:
+    - active profile
+    - XML config
+    - programmatic overrides
+    - mybatis bean instance
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - config effective dump
+    - same input field mapping, timeout and cache behavior
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - MYBATIS_STARTER_DOC
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: MYBATIS_STARTER_DOC
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: MYB4-MULTIDS-005
+  title: 多 DataSource 的 SqlSessionFactory 與交易邊界
+  category: TRANSACTION_RISK
+  severity: HIGH
+  priority: P0
+  documented_change_or_risk: 手動設定 SqlSessionFactory 時，部分 Starter 自動配置行為不會自動套用，需檢查 VFS、Factory、Template 和 TransactionManager
+    關聯。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - SqlSessionFactoryBean
+    - SqlSessionTemplate
+    - '@MapperScan sqlSessionFactoryRef'
+    - '@Transactional'
+    must_resolve:
+    - all datasources
+    - mapper to factory binding
+    - transaction manager qualifiers
+    - SpringBootVFS
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - write to correct datasource
+    - nested rollback
+    - read-only tx
+    - jar packaging
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - MYBATIS_STARTER_DOC
+  - MYBATIS_SPRING_REQ
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: MYBATIS_STARTER_DOC
+        section: REVIEW_REQUIRED
+      - source_id: MYBATIS_SPRING_REQ
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: MYB4-BATCH-006
+  title: ExecutorType.BATCH / Flush / Rollback
+  category: BEHAVIOR_CONTRACT_RISK
+  severity: HIGH
+  priority: P1
+  documented_change_or_risk: BATCH 與 SIMPLE/REUSE 執行模型不同；升級要測 SQL 副作用，不能只確認 Mapper 可啟動。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - ExecutorType.BATCH
+    - SqlSession.flushStatements
+    - batch executor
+    must_resolve:
+    - source executor type
+    - transaction boundary
+    - batch size and driver
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - batch row counts
+    - generated keys
+    - commit/rollback
+    - duplicate-key partial failure
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - MYBATIS_STARTER_DOC
+  - MYBATIS_SPRING_REQ
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: MYBATIS_STARTER_DOC
+        section: REVIEW_REQUIRED
+      - source_id: MYBATIS_SPRING_REQ
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: COMPATIBILITY_ASSESSMENT
+  legacy_review_status_v0_4: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: MYB4-SQL-007
+  title: Dynamic SQL、Provider 與攔截器
+  category: SQL_SEMANTICS_RISK
+  severity: HIGH
+  priority: P1
+  documented_change_or_risk: 檢查動態 SQL 與 Interceptor 對生成語句的影響，尤其有資料庫方言與租戶條件時。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - <if>
+    - <where>
+    - <foreach>
+    - '@SelectProvider'
+    - Interceptor
+    - StatementHandler
+    must_resolve:
+    - active XML
+    - provider variants
+    - dialect
+    - pagination plugin order
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - SQL with parameter set
+    - explain on real dialect
+    - rows, order, pagination
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - MYBATIS_STARTER_DOC
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: MYBATIS_STARTER_DOC
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: COMPATIBILITY_ASSESSMENT
+  legacy_review_status_v0_4: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: MYB4-RESULT-008
+  title: ResultMap / 自動映射 / 欄位別名
+  category: RESULT_MAPPING_RISK
+  severity: HIGH
+  priority: P0
+  documented_change_or_risk: 對 DTO/POJO 的映射必須對照來源有效設定，例如 mapUnderscoreToCamelCase；不能預先強制啟用。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - resultMap
+    - resultType
+    - map-underscore-to-camel-case
+    - autoMappingBehavior
+    must_resolve:
+    - column alias
+    - ctor mapping
+    - type aliases
+    - effective Configuration
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - result object JSON
+    - null column
+    - joined duplicate names
+    - constructor mapping
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - MYBATIS_STARTER_DOC
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: MYBATIS_STARTER_DOC
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: COMPATIBILITY_ASSESSMENT
+  legacy_review_status_v0_4: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: MYB4-PLUS-009
+  title: MyBatis-Plus Boot 4 Starter 與衝突
+  category: THIRD_PARTY_COMPATIBILITY
+  severity: HIGH
+  priority: P1
+  documented_change_or_risk: MyBatis-Plus 官方為 Boot 4 提供 mybatis-plus-spring-boot4-starter；同時引入其他 MyBatis starter
+    可能出現版本/Bean 衝突。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - com.baomidou:mybatis-plus*
+    - org.mybatis.spring.boot:*
+    must_resolve:
+    - effective version
+    - mybatis-plus plugin order
+    - custom injectors
+    - multi starter duplicates
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - startup
+    - CRUD
+    - pagination count
+    - optimistic locking
+    - logical-delete
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - MYBATIS_PLUS_INSTALL
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: MYBATIS_PLUS_INSTALL
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+  rule_type: VALIDATION_ONLY
+  actionable: false
+evidence_policy: EVIDENCE-POLICY.md

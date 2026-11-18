@@ -1,0 +1,54 @@
+schema_version: '0.4'
+policy_id: RUNTIME-JAVA-PARAMETERIZED
+scope: Spring Boot 3.5.x to 4.0.x, with migration-specific Java baseline
+inputs:
+  source_java: migration.source.java.feature_version
+  target_java_mode: migration.target.java.mode  # preserve | explicit
+  target_java_explicit: migration.target.java.feature_version
+  java_change_approved: migration.target.java.change_approved
+  tool_java: migration.toolchain.migration_tool_jdk
+  build_release: migration.toolchain.compiler_release
+  runtime_java: migration.toolchain.runtime_jdk
+  target_components: migration.components
+resolution:
+  preserve: target_java = source_java
+  explicit: target_java = target_java_explicit
+  if_source_unknown: REVIEW_REQUIRED
+  if_target_explicit_without_approval_and_different_from_source: BLOCK_AND_REVIEW
+compatibility:
+  java_minimums: compatibility/java-minimums.json
+  check: resolved_target_java >= each_component_java_minimum
+  unknown_component_version: REVIEW_REQUIRED
+  missing_component_or_transitive_dependency_evidence: REVIEW_REQUIRED
+preflight:
+  checks:
+    - record_source_java_and_evidence
+    - resolve_effective_target_java
+    - inspect_effective_pom_gradle_compiler_toolchain
+    - inspect_ci_docker_runtime_jdks
+    - inspect_resolved_dependency_graph_and_all_bytecode
+    - confirm_private_nexus_artifacts_available
+  on_unknown: REVIEW_REQUIRED
+  on_known_incompatible: BLOCK
+rewrite_guards:
+  require_approval_for_any_source_to_target_java_change: true
+  forbid_unapproved_modification_of:
+    - java.version
+    - maven.compiler.release
+    - maven.compiler.source
+    - maven.compiler.target
+    - gradle.toolchain
+    - ci_jdk
+    - docker_base_java
+  on_violation: BLOCK_AND_REVIEW
+verification:
+  bytecode_major_formula: java_feature_version + 44
+  verify_actual_classfile_and_transitive_dependencies: true
+  verify_actual_target_runtime_execution: true
+  verify_compilation_release_matches_target: true
+  verify_behavior_against_source_baseline: true
+  verification_status: NOT_RUN
+notes:
+  - Migration tool JDK can be higher than target JDK, subject to actual tooling support.
+  - Passing version preflight does not mean migration tests or runtime startup have passed.
+  - Only component release lines present in the matrix are documentation-grounded for this pack; do not infer other lines.

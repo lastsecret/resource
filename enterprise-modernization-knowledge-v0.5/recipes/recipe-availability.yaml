@@ -1,0 +1,39 @@
+schema_version: '0.5'
+checked_on: '2026-11-18'
+rules:
+- component: HikariCP
+  source: 6.x
+  target: 7.x
+  dedicated_recipe:
+    status: NOT_FOUND_IN_REVIEWED_PUBLIC_CATALOG
+    recipe_id: null
+  generic_recipe: org.openrewrite.maven.UpgradeDependencyVersion
+  runtime_effect: DECLARATION_ONLY
+  usage: ONLY_IF_DIRECT_PIN_OR_APPROVED_OVERRIDE; PREFER_BOOT_BOM
+  can_auto_apply: false
+  sources:
+  - REWRITE_MAVEN_UPGRADE
+  - HIKARI_CHANGES
+- component: Oracle JDBC
+  source: 23.7.x
+  target: 23.9.x
+  dedicated_recipe:
+    status: NOT_FOUND_IN_REVIEWED_PUBLIC_CATALOG
+    recipe_id: null
+  generic_recipe: org.openrewrite.maven.UpgradeDependencyVersion
+  runtime_effect: DECLARATION_ONLY
+  usage: ONLY_IF_DIRECT_PIN_OR_APPROVED_OVERRIDE; PREFER_BOOT_OR_VENDOR_BOM
+  can_auto_apply: false
+  sources:
+  - REWRITE_MAVEN_UPGRADE
+  - ORACLE_JDBC_BOM
+- component: Spring Boot
+  source: 3.5.x
+  target: 4.0.x
+  dedicated_recipe:
+    status: DOCUMENTED
+    recipe_id: org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_0
+  usage: FIRST_VERIFY_INSTALLED_RECIPE_ARTIFACT_AND_NEXUS_ACCESS; INSPECT_RECIPE_CONTENT; DRY_RUN
+  can_auto_apply: false
+  sources:
+  - REWRITE_BOOT4

@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.4",
+  "migration_id": "demo-java11-blocked",
+  "source": {
+    "spring_boot_version": "3.5.7",
+    "java": {
+      "feature_version": 11,
+      "evidence": "project baseline: pom.xml + source runtime observation (example; not verified)"
+    }
+  },
+  "target": {
+    "spring_boot_version": "4.0.9",
+    "java": {
+      "mode": "preserve",
+      "feature_version": null,
+      "change_approved": false
+    }
+  },
+  "toolchain": {
+    "migration_tool_jdk": 21,
+    "compiler_release": 11,
+    "runtime_jdk": 11,
+    "ci_jdk": 11,
+    "docker_jdk": 11
+  },
+  "components": [
+    {
+      "id": "spring-boot",
+      "version": "4.0.9"
+    },
+    {
+      "id": "spring-security",
+      "version": "7.0.0"
+    },
+    {
+      "id": "hibernate-orm",
+      "version": "7.0.10.Final"
+    },
+    {
+      "id": "mybatis-spring-boot-starter",
+      "version": "4.0.0"
+    }
+  ]
+}

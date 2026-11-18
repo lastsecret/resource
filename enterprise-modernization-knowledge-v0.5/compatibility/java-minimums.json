@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.4",
+  "description": "Java minimums for the listed component release lines. Minimum alone does not prove runtime compatibility. Exact transitive dependencies must be inspected.",
+  "status": "DOCUMENTATION_GROUNDED_NO_RUNTIME_TEST",
+  "verified_on": "2026-11-17",
+  "components": [
+    {
+      "id": "spring-boot",
+      "version_series": "4.0",
+      "java_minimum": 17,
+      "source": "https://docs.spring.io/spring-boot/4.0/system-requirements.html"
+    },
+    {
+      "id": "spring-framework",
+      "version_series": "7.0",
+      "java_minimum": 17,
+      "source": "https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-7.0-Release-Notes"
+    },
+    {
+      "id": "spring-security",
+      "version_series": "7.0",
+      "java_minimum": 17,
+      "source": "https://docs.spring.io/spring-security/reference/7.0/prerequisites.html"
+    },
+    {
+      "id": "hibernate-orm",
+      "version_series": "7.0",
+      "java_minimum": 17,
+      "source": "https://docs.hibernate.org/orm/7.0/migration-guide/"
+    },
+    {
+      "id": "hibernate-orm",
+      "version_series": "7.1",
+      "java_minimum": 17,
+      "source": "https://hibernate.org/orm/releases/7.1/"
+    },
+    {
+      "id": "mybatis-spring-boot-starter",
+      "version_series": "4.0",
+      "java_minimum": 17,
+      "source": "https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/"
+    }
+  ]
+}

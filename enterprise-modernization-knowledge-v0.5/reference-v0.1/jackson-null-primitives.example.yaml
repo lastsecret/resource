@@ -1,0 +1,106 @@
+schema_version: '0.1'
+rule:
+  id: JACKSON-DESER-NULL-PRIMITIVE-001
+  title: JSON null to Java primitive int
+  category: DEFAULT_BEHAVIOR_CHANGE
+  direction: DESERIALIZATION
+  ecosystem: java
+  applies_to:
+    source:
+      library: jackson-databind
+      major: 2
+    target:
+      library: jackson-databind
+      major: 3
+  behavior:
+    condition:
+      json_property_value: null
+      java_target_type: int
+      feature: FAIL_ON_NULL_FOR_PRIMITIVES
+    library_defaults:
+      source:
+        effective_when_unoverridden: false
+        result: VALUE_0
+      target:
+        effective_when_unoverridden: true
+        result: ERROR
+  investigation:
+    required_scope:
+    - module
+    - environment
+    - spring_profile
+    - mapper_or_converter
+    - call_path
+    required_observations:
+    - resolved dependency version
+    - configuration files and import chain
+    - external property source and precedence
+    - Bean / mapper / customizer setup
+    - effective runtime behavior when statically uncertain
+    unknown_policy: BLOCK_AUTO_FIX_AND_REQUEST_EVIDENCE
+    explicit_config_precedence: RESOLVE_ACTUAL_RUNTIME_EFFECTIVE_VALUE
+    default_fallback_policy: ONLY_IF_NO_ACTIVE_OVERRIDE_IS_CONFIRMED
+  recommendation_policy:
+    preserve_existing_behavior: true
+    prefer: MINIMAL_SCOPED_CHANGE
+    alternatives:
+    - NO_CHANGE
+    - TARGET_CONFIGURATION_CHANGE
+    - LOCAL_CODE_CHANGE
+    - MANUAL_REVIEW
+    prohibit:
+    - UNCONDITIONAL_GLOBAL_DEFAULT_OVERRIDE
+    - ASSUMING_ABSENT_CONFIG_WHEN_EXTERNAL_CONFIG_UNAVAILABLE
+    - CLAIM_PASS_WITHOUT_EVIDENCE
+  spring_boot_note: spring.jackson.use-jackson2-defaults=true can approximate previous Boot auto-configured
+    mapper defaults; it is not universal behavioral equivalence.
+  verification:
+    required:
+    - SOURCE_BASELINE
+    - TARGET_BEHAVIOR
+    - CONFIG_SCOPE_REVIEW
+    golden_cases:
+    - input_json: '{"quantity":null}'
+      field_type: int
+      expected_source_result: DETERMINED_FROM_EFFECTIVE_SOURCE_CONFIG
+    - input_json: '{}'
+      field_type: int
+      expected_source_result: MEASURE_SEPARATELY
+    - input_json: '{"quantity":0}'
+      field_type: int
+      expected_source_result: MEASURE_SEPARATELY
+  references:
+  - type: OFFICIAL_JAVADOC
+    url: https://javadoc.io/static/tools.jackson.core/jackson-databind/3.0.0/tools.jackson.databind/tools/jackson/databind/DeserializationFeature.html
+  - type: OFFICIAL_JAVADOC
+    url: https://fasterxml.github.io/jackson-databind/javadoc/2.0/com/fasterxml/jackson/databind/DeserializationFeature.html
+  - type: SPRING_REFERENCE
+    url: https://docs.spring.io/spring-boot/reference/features/json.html
+acceptance_scenarios:
+- id: AT-01
+  source_config: ABSENT_CONFIRMED
+  expected_source: VALUE_0
+  target_default: ERROR
+  decision: PRESERVE_SOURCE_BEHAVIOR
+- id: AT-02
+  source_config: EXPLICIT_TRUE_EFFECTIVE
+  expected_source: ERROR
+  target_default: ERROR
+  decision: NO_CHANGE_IF_TARGET_EFFECTIVE_MATCHES
+- id: AT-03
+  source_config: EXPLICIT_FALSE_EFFECTIVE
+  expected_source: VALUE_0
+  target_default: ERROR
+  decision: PRESERVE_SOURCE_BEHAVIOR
+- id: AT-04
+  source_config: UNKNOWN_EXTERNAL_OVERRIDE
+  expected_source: UNKNOWN
+  decision: REVIEW_REQUIRED
+- id: AT-05
+  source_config: MULTIPLE_PROFILES_WITH_DIFFERENT_VALUES
+  decision: ANALYZE_PER_PROFILE
+- id: AT-06
+  source_config: CUSTOM_MAPPER_OVERRIDES_PROPERTIES
+  decision: INSPECT_EFFECTIVE_MAPPER_OR_PROBE
+evidence_policy_v0_5: EVIDENCE-POLICY.md
+example_only: true

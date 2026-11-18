@@ -1,0 +1,15 @@
+# EXAMPLE ONLY. DO NOT ACTIVATE WITHOUT EXPLICIT APPROVAL.
+# If a dependency is managed by a Spring Boot or Oracle BOM, do not force-pin it.
+# A version declaration upgrade does not confirm API or behavior equivalence.
+type: specs.openrewrite.org/v1beta/recipe
+name: corp.example.ExplicitDBVersionsAfterApproval
+displayName: Explicit HikariCP / Oracle JDBC versions after approval
+recipeList:
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: com.zaxxer
+      artifactId: HikariCP
+      newVersion: 7.0.2
+  - org.openrewrite.maven.UpgradeDependencyVersion:
+      groupId: com.oracle.database.jdbc
+      artifactId: ojdbc11
+      newVersion: 23.9.0.25.07

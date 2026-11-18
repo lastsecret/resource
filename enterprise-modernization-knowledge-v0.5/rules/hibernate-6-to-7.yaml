@@ -1,0 +1,933 @@
+schema_version: '0.5'
+knowledge_pack: spring-boot-3-to-4
+generated_on: '2026-11-13'
+scope: 3.5.x -> 4.0.x; resolve exact Hibernate / Boot dependencies
+rules:
+- id: HIB7-NATIVE-DATETIME-001
+  title: Native SQL 無顯式映射時時間型別由 java.sql 改為 java.time
+  category: DEFAULT_BEHAVIOR_CHANGE
+  severity: HIGH
+  documented_change: Hibernate 7 無 @SqlResultSetMapping 的 native query 預設時間結果型別改為 LocalDate/LocalTime/LocalDateTime；舊版預設為
+    java.sql.Date/Time/Timestamp。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - nativeQuery=true or createNativeQuery()
+    - scalar temporal SQL columns or Object[] / Tuple casts
+  investigation:
+    must_resolve:
+    - actual Hibernate ORM versions
+    - native query projection and @SqlResultSetMapping / addScalar / DTO mapping
+    - JDBC driver metadata and SQL casts
+    - consumer cast / conversion path
+    - hibernate.query.native.prefer_jdbc_datetime_types actual value
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - NO_CHANGE_IF_RESULT_CONTRACT_ALREADY_COMPATIBLE
+  - ADAPT_LOCAL_RESULT_MAPPING
+  - RETAIN_LEGACY_RESULT_TYPES_WITH_EXPLICIT_CONFIG_AFTER_REVIEW
+  verification:
+    required:
+    - NATIVE_QUERY_SCALAR_TYPES
+    - OBJECT_ARRAY_CAST
+    - DTO_PROJECTION
+    - NULL_AND_TIME_COMPONENT
+    - ORIGINAL_SQL_DATABASE
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - HIB7_MIGRATION
+  workflow_phase: ASSESS
+  caveat: 規則只針對沒有明確 result mapping 的 native query 預設；不可把所有 @Query 或 JPQL 都當成受影響。
+  migration_evidence_v0_5:
+    classification: BEHAVIOR_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: HIB7_MIGRATION
+        section: Temporal Types Returned by Native Queries
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: BEHAVIOR_CHANGE
+  actionable: false
+- id: HIB7-ORACLE-DATE-002
+  title: Oracle DATE + LocalDate / LocalDateTime 需基於真實 DB 與映射觀察
+  category: DB_VENDOR_SPECIFIC_RISK
+  severity: HIGH
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - database vendor Oracle and DATE columns
+    - Entity LocalDate/LocalDateTime or @Query DTO projections
+  investigation:
+    must_resolve:
+    - column DDL and actual stored value
+    - JPQL vs native query vs entity attribute
+    - '@Column/@JdbcTypeCode/@Temporal/converter and SQL cast'
+    - actual Oracle JDBC driver version
+    - source actual result type / precision
+    - query method declared return type
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - ORACLE_DATE_DATE_ONLY
+    - ORACLE_DATE_NONZERO_TIME
+    - ENTITY_ATTRIBUTE_VS_NATIVE_SCALAR
+    - JPQL_PROJECTION
+    - NULL_HANDLING
+    - TIMESTAMP_PRECISION
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - HIB7_MIGRATION
+  - HIB7_ORACLE
+  workflow_phase: ASSESS
+  caveat: 不能用 H2 的 Oracle Mode 證明 Oracle JDBC / Hibernate 實際映射相容。
+  databases:
+  - Oracle
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: HIB7_MIGRATION
+        section: REVIEW_REQUIRED
+      - source_id: HIB7_ORACLE
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: ENGINEERING_RISK_TO_VALIDATE
+  legacy_unverified_claim_v0_4: Oracle DATE 同時保存日期與時分秒；映射到 Java LocalDate、LocalDateTime 或 scalar query 的行為受到
+    SQL、JDBC、Hibernate 映射及顯式設定影響，不能一概認定 Hibernate 7 必定例外。
+  verification_rationale: NO_EXACT_VERSION_DELTA_ESTABLISHED
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: HIB7-CASCADE-MAPSID-003
+  title: '@Id / @MapsId 隱含 cascade PERSIST 不再存在'
+  category: BEHAVIORAL_CHANGE
+  severity: HIGH
+  documented_change: Hibernate 7 不再對 @Id、@MapsId 關聯自動隱含 cascade=PERSIST；依賴此行為者要評估明確 CascadeType.PERSIST。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - '@MapsId or association with @Id'
+    - persist aggregate with referenced transient entities
+  investigation:
+    must_resolve:
+    - actual association cascade annotations
+    - entity lifecycle and save order
+    - generated id strategy and foreign key constraints
+    - tenant transaction boundaries
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - ADD_EXPLICIT_PERSIST_CASCADE_IF_REQUIRED
+  - PERSIST_CHILD_SEPARATELY
+  - MANUAL_DOMAIN_REVIEW
+  verification:
+    required:
+    - PARENT_CHILD_CREATE
+    - FK_INTEGRITY
+    - ROLLBACK_ON_ERROR
+    - DUPLICATE_INSERT_GUARD
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - HIB7_MIGRATION
+  workflow_phase: ASSESS
+  migration_evidence_v0_5:
+    classification: BEHAVIOR_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: HIB7_MIGRATION
+        section: Cascading Persistence for @Id and @MapsId Attributes
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: BEHAVIOR_CHANGE
+  actionable: false
+- id: HIB7-DETACHED-004
+  title: Detached entity refresh/lock 行為更嚴格
+  category: BEHAVIORAL_CHANGE
+  severity: HIGH
+  documented_change: Hibernate 7 對 Detached entity 的 refresh/lock 對齊 Jakarta Persistence 規範；舊行為允許的設定 hibernate.allow_refresh_detached_entity
+    已移除。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - EntityManager.refresh/lock or Session.refresh/lock
+    - objects may cross transaction/session boundaries
+  investigation:
+    must_resolve:
+    - entity managed/detached state at invocation
+    - custom persistence context lifecycle
+    - legacy hibernate.allow_refresh_detached_entity
+    - transaction propagation
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - REATTACH_OR_FIND_MANAGED_INSTANCE
+  - REDESIGN_LIFECYCLE_AFTER_REVIEW
+  - NO_CHANGE_IF_ALWAYS_MANAGED
+  verification:
+    required:
+    - MANAGED_REFRESH
+    - DETACHED_REFRESH_EXPECTED_EXCEPTION
+    - DETACHED_LOCK
+    - TRANSACTION_BOUNDARY
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - HIB7_MIGRATION
+  workflow_phase: ASSESS
+  migration_evidence_v0_5:
+    classification: BEHAVIOR_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: HIB7_MIGRATION
+        section: Refreshing/Locking Detached Entities
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: BEHAVIOR_CHANGE
+  actionable: false
+- id: HIB7-RAW-HQL-005
+  title: 隱含 SELECT 且未指定結果型別的部分 HQL 變得不允許
+  category: QUERY_SEMANTICS_CHANGE
+  severity: HIGH
+  documented_change: Hibernate 7 不再接受部分有歧義、沒有 select 且未提供 result type 的 createQuery() 查詢。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - Session.createQuery(String) no Class argument
+    - HQL with multiple roots or joins and implicit select
+  investigation:
+    must_resolve:
+    - HQL AST and query shape
+    - actual result class expected
+    - explicit SELECT / typed query availability
+    - runtime query test
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - ADD_EXPLICIT_SELECT
+  - USE_TYPED_CREATEQUERY
+  - MANUAL_REVIEW_IF_AMBIGUOUS
+  verification:
+    required:
+    - COMPILE_QUERY
+    - RESULT_SHAPE
+    - ROW_COUNT
+    - NULL_JOIN_CASE
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - HIB7_MIGRATION
+  workflow_phase: ASSESS
+  migration_evidence_v0_5:
+    classification: BREAKING_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: HIB7_MIGRATION
+        section: Query with Implicit SELECT and No Explicit Result Type
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: BREAKING_CHANGE
+  actionable: false
+- id: HIB7-IMMUTABLE-006
+  title: Immutable Entity bulk update/delete 預設改成報錯
+  category: DEFAULT_BEHAVIOR_CHANGE
+  severity: HIGH
+  documented_change: Hibernate 7 對 immutable entity 的 bulk update/delete，預設由 warning/允許改為 exception。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - '@Immutable entity'
+    - HQL bulk update/delete of same entity
+  investigation:
+    must_resolve:
+    - hibernate.query.immutable_entity_update_query_handling_mode effective setting
+    - actual affected entity
+    - intent of data mutation
+    - source logs vs target behavior
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - REFACTOR_BULK_MUTATION
+  - RETAIN_ALLOW_ONLY_WITH_APPROVAL
+  - NO_CHANGE_IF_UNUSED
+  verification:
+    required:
+    - BULK_UPDATE_IMMUTABLE
+    - EXPECTED_EXCEPTION
+    - ROW_COUNT
+    - TRANSACTION_ROLLBACK
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - HIB7_MIGRATION
+  workflow_phase: ASSESS
+  migration_evidence_v0_5:
+    classification: BEHAVIOR_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: HIB7_MIGRATION
+        section: Update queries affecting immutable entities
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: BEHAVIOR_CHANGE
+  actionable: false
+- id: HIB7-STATELESS-007
+  title: StatelessSession cache 與 JDBC batching 語義改變
+  category: DEFAULT_BEHAVIOR_CHANGE
+  severity: HIGH
+  documented_change: Hibernate 7 StatelessSession 預設可利用二級快取，hibernate.jdbc.batch_size 不再直接控制 StatelessSession
+    的 JDBC batching。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - StatelessSession
+    - second-level cache configured or batch_size used
+  investigation:
+    must_resolve:
+    - StatelessSession lifecycle and cache mode
+    - cache providers
+    - batch_size and setJdbcBatchSize
+    - actual SQL round trips
+    - memory/throughput/consistency
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - EXPLICIT_CACHE_MODE
+  - USE_NEW_BATCH_APIS_IF_APPROPRIATE
+  - VERIFY_NO_CHANGE_IF_FEATURE_UNUSED
+  verification:
+    required:
+    - CACHE_HIT_MISS
+    - STALE_DATA
+    - JDBC_BATCH_COUNTS
+    - THROUGHPUT_AND_MEMORY
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - HIB7_MIGRATION
+  workflow_phase: ASSESS
+  migration_evidence_v0_5:
+    classification: BEHAVIOR_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: HIB7_MIGRATION
+        section: StatelessSession Behavior
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: BEHAVIOR_CHANGE
+  actionable: false
+- id: HIB7-API-REMOVAL-008
+  title: Hibernate Session 舊生命週期 API 移除
+  category: BREAKING_API
+  severity: HIGH
+  documented_change: Session#load、save、update、saveOrUpdate、delete 等方法在 Hibernate 7 受到移除；應依 transient/detached/managed
+    語義分別轉換。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - calls to Hibernate Session#load/save/update/saveOrUpdate/delete
+    - custom Hibernate access layer
+  investigation:
+    must_resolve:
+    - receiver static type and overload
+    - entity state at each call
+    - save returned identifier dependency
+    - persist vs merge state transitions
+    - cascade semantics
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - GET_REFERENCE_FOR_LOAD
+  - PERSIST_NEW
+  - MERGE_DETACHED
+  - REMOVE_ENTITY
+  - MANUAL_REVIEW
+  verification:
+    required:
+    - COMPILE
+    - ID_GENERATION
+    - DETACHED_MERGE
+    - CASCADE
+    - RETURN_VALUE_EXPECTATIONS
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - HIB7_MIGRATION
+  workflow_phase: ASSESS
+  migration_evidence_v0_5:
+    classification: BREAKING_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: HIB7_MIGRATION
+        section: Changes to API
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: BREAKING_CHANGE
+  actionable: false
+- id: HIB7-ORACLE-DDL-009
+  title: Oracle TIMESTAMP 與浮點欄位預設 DDL 可能變更
+  category: SCHEMA_GENERATION_CHANGE
+  severity: HIGH
+  documented_change: Hibernate 7 修改 Oracle TIMESTAMP 預設 DDL 精度為 9，Java float/double 的 Oracle 預設 DDL 型別改為 binary_float/binary_double。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - Oracle + schema-generation or migration diff
+    - LocalDateTime/Timestamp and float/double mapped fields
+  investigation:
+    must_resolve:
+    - actual DDL generation strategy
+    - existing production schema
+    - Liquibase/Flyway migration policy
+    - precision expectations
+    - hibernate.dialect.oracle.use_binary_floats
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - KEEP_EXISTING_SCHEMA_WITH_VERIFICATION
+  - CONTROL_DDL_EXPLICITLY
+  - PLAN_EXPLICIT_DB_MIGRATION_ONLY_IF_NEEDED
+  verification:
+    required:
+    - SCHEMA_DIFF_NO_AUTO_APPLY
+    - TIMESTAMP_PRECISION
+    - FLOAT_ROUND_TRIP
+    - DB_MIGRATION_REHEARSAL
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - HIB7_MIGRATION
+  workflow_phase: ASSESS
+  caveat: 官方指出 precision 變化只影響 DDL 產生；不能據此宣稱所有既有資料讀取行為已改變。
+  databases:
+  - Oracle
+  migration_evidence_v0_5:
+    classification: BEHAVIOR_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: HIB7_MIGRATION
+        section: Changes Affecting DDL
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: BEHAVIOR_CHANGE
+  actionable: false
+- id: HIB7-ARRAY-010
+  title: MySQL / MariaDB 陣列映射 DDL 由 VARBINARY 改為 JSON_ARRAY
+  category: SCHEMA_AND_DATA_CHANGE
+  severity: HIGH
+  documented_change: Hibernate 7 MySQL/MariaDB basic array 預設對應 JSON_ARRAY，而非舊版 VARBINARY；牽涉歷史資料格式相容。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - basic array mappings with MySQL or MariaDB
+  investigation:
+    must_resolve:
+    - hibernate.type.preferred_array_jdbc_type effective value
+    - existing storage format
+    - schema generation and old-row decode
+    - application query JSON usage
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - KEEP_VARBINARY_TEMPORARILY_IF_NEEDED
+  - PLAN_DATA_MIGRATION_WITH_BACKUP
+  - NO_CHANGE_IF_NO_ARRAY_MAPPINGS
+  verification:
+    required:
+    - READ_OLD_ROWS
+    - WRITE_NEW_ROWS
+    - ROLLBACK_AND_BACKUP
+    - DDL_DIFF
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - HIB7_MIGRATION
+  workflow_phase: ASSESS
+  databases:
+  - MySQL
+  - MariaDB
+  migration_evidence_v0_5:
+    classification: BEHAVIOR_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: HIB7_MIGRATION
+        section: Array Mapping Changes
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: BEHAVIOR_CHANGE
+  actionable: false
+- id: HIB7-CRITERIA-011
+  title: Criteria 子類型屬性需明確 treat
+  category: QUERY_SEMANTICS_CHANGE
+  severity: HIGH
+  documented_change: Hibernate 7 Criteria API 不再自動將父類 Path / Join 隱式轉為子類以讀取屬性。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - CriteriaBuilder Path.get / From.join with subtype-only attributes
+  investigation:
+    must_resolve:
+    - entity inheritance mapping
+    - declared Path type
+    - target attribute owning subtype
+    - existing Criteria result set
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - ADD_EXPLICIT_CRITERIABUILDER_TREAT
+  - REWORK_QUERY
+  - NO_CHANGE_IF_NOT_APPLICABLE
+  verification:
+    required:
+    - COMPILE_CRITERIA
+    - MULTI_SUBTYPE_RESULT
+    - FILTER_AND_SORT
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - HIB7_MIGRATION
+  workflow_phase: ASSESS
+  migration_evidence_v0_5:
+    classification: BREAKING_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: HIB7_MIGRATION
+        section: Criteria API and Implicit Treats
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: BREAKING_CHANGE
+  actionable: false
+- id: HIB7-VALIDATION-012
+  title: ValidationMode AUTO 建立 ValidatorFactory 失敗時例外上拋
+  category: ERROR_BEHAVIOR_CHANGE
+  severity: MEDIUM
+  documented_change: Hibernate 7 若 AUTO 模式存在 Bean Validation Provider 但建立 ValidatorFactory 出錯，會拋出該錯誤。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - Bean Validation provider
+    - AUTO validation mode and custom validator factory
+  investigation:
+    must_resolve:
+    - validation mode and provider setup
+    - startup error handling
+    - custom ValidatorFactory
+    - effective configuration per environment
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - FIX_PROVIDER_INITIALIZATION
+  - EXPLICITLY_CONFIGURE_INTENDED_VALIDATION
+  - NO_CHANGE_IF_NOT_APPLICABLE
+  verification:
+    required:
+    - STARTUP_VALIDATOR_OK
+    - STARTUP_MISCONFIG_ERROR
+    - PROFILE_MATRIX
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - HIB7_MIGRATION
+  workflow_phase: ASSESS
+  migration_evidence_v0_5:
+    classification: BEHAVIOR_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: HIB7_MIGRATION
+        section: ValidationMode#AUTO
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: BEHAVIOR_CHANGE
+  actionable: false
+evidence_policy: EVIDENCE-POLICY.md

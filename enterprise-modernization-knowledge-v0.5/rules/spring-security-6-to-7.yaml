@@ -1,0 +1,947 @@
+schema_version: '0.5'
+knowledge_pack: spring-boot-3-to-4
+scope: Spring Boot 3.5.x -> 4.0.x; Java target is resolved from migration config; exact component versions
+  required
+rules:
+- id: SEC7-DSL-001
+  title: HttpSecurity Lambda DSL
+  category: BREAKING_API
+  severity: HIGH
+  priority: P0
+  documented_change_or_risk: 舊無 Lambda 的鏈式 Security DSL 在 Security 7 不再有效，需改為 Lambda DSL；自訂 DSL 的 apply 改 with。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - HttpSecurity .and()
+    - .authorizeHttpRequests()
+    - .apply(custom DSL)
+    must_resolve:
+    - all filterChains
+    - '@Order'
+    - custom DSL behavior
+    - exception handlers
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - MIGRATE_TO_LAMBDA_PRESERVING_ORDER
+  - USE_WITH_FOR_CUSTOM_DSL
+  verification:
+    required:
+    - compile
+    - authorization matrix
+    - filter order
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - SEC7_CONFIG_PREP
+  migration_evidence_v0_5:
+    classification: BREAKING_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: REQUIRES_CLAIM_LEVEL_SOURCE_REVIEW
+    evidence:
+      references:
+      - source_id: SEC7_CONFIG_PREP
+        section: REVIEW_REQUIRED
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+  rule_type: BREAKING_CHANGE
+  actionable: false
+- id: SEC7-ACCESS-002
+  title: 舊 AccessDecision API 拆出相容模組
+  category: DEPENDENCY_CHANGE
+  severity: HIGH
+  priority: P0
+  documented_change_or_risk: AccessDecisionManager / AccessDecisionVoter 等移到 spring-security-access legacy
+    module，長期應規劃 AuthorizationManager。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - AccessDecisionManager
+    - AccessDecisionVoter
+    - FilterSecurityInterceptor
+    must_resolve:
+    - active voters
+    - access expressions
+    - custom metadata source
+    - alternatives
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - ADD_LEGACY_MODULE_TEMPORARILY
+  - MIGRATE_AUTHORIZATION_MANAGER_WITH_TEST
+  verification:
+    required:
+    - compile
+    - same allow/deny matrix
+    - denial response
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - SEC7_AUTH_MIGRATION
+  migration_evidence_v0_5:
+    classification: BREAKING_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: REQUIRES_CLAIM_LEVEL_SOURCE_REVIEW
+    evidence:
+      references:
+      - source_id: SEC7_AUTH_MIGRATION
+        section: REVIEW_REQUIRED
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+  rule_type: BREAKING_CHANGE
+  actionable: false
+- id: SEC7-MATCHER-003
+  title: RequestMatcher / DispatcherType / FilterChain 順序
+  category: SECURITY_POLICY_RISK
+  severity: CRITICAL
+  priority: P0
+  documented_change_or_risk: 舊 shouldFilterAllDispatcherTypes API 的準備指南建議改 dispatcherTypeMatchers；任何路徑匹配重構必須驗證實際授權效果。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - requestMatchers
+    - securityMatcher
+    - shouldFilterAllDispatcherTypes
+    - dispatcherTypeMatchers
+    must_resolve:
+    - servletPath/contextPath
+    - proxy
+    - chains ordering
+    - ERROR/FORWARD/ASYNC dispatch
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - anonymous,user,admin matrix
+    - encoded path
+    - dispatcher behavior
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - SEC7_CONFIG_PREP
+  - SEC7_AUTH_REQUEST
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: SEC7_CONFIG_PREP
+        section: REVIEW_REQUIRED
+      - source_id: SEC7_AUTH_REQUEST
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: SEC7-METHOD-004
+  title: '@PreAuthorize 參數與 Method Security'
+  category: AUTHORIZATION_RISK
+  severity: HIGH
+  priority: P0
+  documented_change_or_risk: SpEL 依賴方法參數名稱時需要編譯保留 -parameters；Security 7 對部分 Advisor 客製化有調整。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - '@PreAuthorize(#id)'
+    - '@PostAuthorize'
+    - AuthorizationAdvisorProxyFactory
+    must_resolve:
+    - compiler -parameters
+    - AOP proxying
+    - custom method interceptors
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - method call role + ownership matrix
+    - proxy crossing
+    - parameter name tests
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - SEC7_AUTH_PREP
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: SEC7_AUTH_PREP
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: SEC7-JACKSON-005
+  title: Spring Security Jackson 2→3 Session/Token
+  category: SERIALIZATION_CHANGE
+  severity: HIGH
+  priority: P0
+  documented_change_or_risk: SecurityJackson2Modules 與 Jackson2 ObjectMapper 應改為 Jackson3 JsonMapper.Builder
+    / SecurityJacksonModules；來源與目標序列化應以真實資料驗證。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - SecurityJackson2Modules
+    - SecurityJacksonModules
+    - ObjectMapper
+    - Session serializer
+    must_resolve:
+    - actual session serializer
+    - Redis payload
+    - custom polymorphic modules
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - MIGRATE_SECURITY_JACKSON
+  - REVIEW_SESSION_MIGRATION
+  - NO_CHANGE_IF_UNUSED
+  verification:
+    required:
+    - deserialize old sessions
+    - roundtrip security context
+    - reject disallowed types
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - SEC7_MIGRATION
+  migration_evidence_v0_5:
+    classification: BREAKING_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: SEC7_MIGRATION
+        section: Migrate from Jackson 2 to Jackson 3
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+  rule_type: BREAKING_CHANGE
+  actionable: false
+- id: SEC7-JWT-006
+  title: Nimbus JWT typ Header 驗證
+  category: TOKEN_VALIDATION_CHANGE
+  severity: CRITICAL
+  priority: P0
+  documented_change_or_risk: Security 7 將 typ 驗證整合到 JwtTypeValidator，相關預設驗證與客製驗證配置需重新比對。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - NimbusJwtDecoder
+    - JwtValidators
+    - JwtTypeValidator
+    - validateTypes
+    - jwtProcessorCustomizer
+    must_resolve:
+    - issuer
+    - allowed typ list
+    - custom JwtDecoder beans
+    - jwk keys and errors
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - PRESERVE_APPROVED_TYP_POLICY
+  - AVOID_DUPLICATE_VALIDATION
+  verification:
+    required:
+    - JWT and missing typ, JWT typ, custom typ, invalid signature, expired
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - SEC7_OAUTH_PREP
+  - SEC7_OAUTH_MIGRATION
+  migration_evidence_v0_5:
+    classification: BEHAVIOR_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: REQUIRES_CLAIM_LEVEL_SOURCE_REVIEW
+    evidence:
+      references:
+      - source_id: SEC7_OAUTH_PREP
+        section: REVIEW_REQUIRED
+      - source_id: SEC7_OAUTH_MIGRATION
+        section: REVIEW_REQUIRED
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+  rule_type: BEHAVIOR_CHANGE
+  actionable: false
+- id: SEC7-JWK-007
+  title: Nimbus JWT JWK 連線逾時
+  category: NETWORK_BEHAVIOR_CHANGE
+  severity: HIGH
+  priority: P0
+  documented_change_or_risk: Security 7 的 NimbusJwtDecoder 預設 JWK 抓取連線與讀取 timeout 從 500ms 調整為 30s（未自訂 RestOperations
+    時）。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - NimbusJwtDecoder.withIssuerLocation
+    - JWK Set
+    must_resolve:
+    - custom RestOperations
+    - http client
+    - retries and gateway timeout
+    - availability SLA
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - SET_SCOPED_TIMEOUT_TO_SOURCE_CONTRACT
+  - ACCEPT_NEW_TIMEOUT_IF_APPROVED
+  verification:
+    required:
+    - JWK slow, timeout, outage
+    - downstream thread and health impact
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - SEC7_OAUTH_MIGRATION
+  migration_evidence_v0_5:
+    classification: BEHAVIOR_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: REQUIRES_CLAIM_LEVEL_SOURCE_REVIEW
+    evidence:
+      references:
+      - source_id: SEC7_OAUTH_MIGRATION
+        section: REVIEW_REQUIRED
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+  rule_type: BEHAVIOR_CHANGE
+  actionable: false
+- id: SEC7-OPAQUE-008
+  title: Opaque Token Introspection Credentials Encoding
+  category: TOKEN_INTEGRATION_CHANGE
+  severity: CRITICAL
+  priority: P0
+  documented_change_or_risk: Opaque token support 會編碼 Client ID/Secret；若舊專案自行編碼，需避免雙重編碼。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - introspectionClientCredentials
+    - OpaqueTokenIntrospector
+    - SpringOpaqueTokenIntrospector
+    must_resolve:
+    - identity server required encoding
+    - special chars in credentials
+    - custom client
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - REMOVE_REDUNDANT_ENCODING_IF_PROVEN
+  - KEEP_CUSTOM_IMPLEMENTATION_IF_REQUIRED
+  verification:
+    required:
+    - introspection request auth header
+    - URL unsafe secret
+    - 200/401/errors
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - SEC7_OAUTH_PREP
+  migration_evidence_v0_5:
+    classification: BEHAVIOR_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: REQUIRES_CLAIM_LEVEL_SOURCE_REVIEW
+    evidence:
+      references:
+      - source_id: SEC7_OAUTH_PREP
+        section: REVIEW_REQUIRED
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+  rule_type: BEHAVIOR_CHANGE
+  actionable: false
+- id: SEC7-CONTEXT-009
+  title: 自訂 Filter 與 SecurityContext 儲存
+  category: SESSION_PERSISTENCE_RISK
+  severity: HIGH
+  priority: P0
+  documented_change_or_risk: 自訂 Filter 手動設定 SecurityContext 時需確認是否透過 SecurityContextRepository 持久化；不能假定 Security
+    7 引入此變更。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - OncePerRequestFilter
+    - SecurityContextHolder.setContext
+    - SecurityContextRepository
+    must_resolve:
+    - filter chain
+    - session policy stateless/stateful
+    - explicit save and repository
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - same session subsequent request
+    - logout
+    - concurrent requests
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - SEC7_SESSION_REF
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: SEC7_SESSION_REF
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: COMPATIBILITY_ASSESSMENT
+  legacy_review_status_v0_4: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: SEC7-CSRF-010
+  title: CSRF / CORS / Cookie / Session 政策
+  category: SECURITY_POLICY_RISK
+  severity: HIGH
+  priority: P0
+  documented_change_or_risk: Security Policy 的有效結果受 Filter 與 Servlet Container 改動影響；此規則是驗證風險盤點，不主張 Security
+    7 必然修改各預設值。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - csrf
+    - cors
+    - cookie
+    - sessionManagement
+    - SameSite
+    - CookieCsrfTokenRepository
+    must_resolve:
+    - effective chain
+    - reverse proxy
+    - servlet container
+    - session storage
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - GET/POST with/without CSRF, preflight, credentials, cookie attributes
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - SEC7_AUTH_REQUEST
+  - BOOT4_MIGRATION
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: SEC7_AUTH_REQUEST
+        section: REVIEW_REQUIRED
+      - source_id: BOOT4_MIGRATION
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: COMPATIBILITY_ASSESSMENT
+  legacy_review_status_v0_4: RISK_ASSESSMENT_REQUIRES_PROJECT_EVIDENCE
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: SEC7-TEST-011
+  title: Security Test Starter 與 Mock User 測試
+  category: TEST_SETUP_CHANGE
+  severity: HIGH
+  priority: P0
+  documented_change_or_risk: Boot 4 有技術專屬 Test Starter；測試 classpath 和 MockMvc wiring 必須核對，避免授權測試假性缺席。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - spring-security-test
+    - spring-boot-starter-security-test
+    - '@WithMockUser'
+    - MockMvc
+    must_resolve:
+    - test module
+    - auto configuration
+    - profiles
+    - method security setup
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - ALIGN_SECURITY_TEST_STARTER
+  - RESTORE_SECURITY_TEST_SETUP
+  verification:
+    required:
+    - security test discovery
+    - MockMvc 401/403/200
+    - auth mock isolation
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - BOOT4_MIGRATION
+  migration_evidence_v0_5:
+    classification: BREAKING_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: REQUIRES_CLAIM_LEVEL_SOURCE_REVIEW
+    evidence:
+      references:
+      - source_id: BOOT4_MIGRATION
+        section: REVIEW_REQUIRED
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+  rule_type: BREAKING_CHANGE
+  actionable: false
+- id: SEC7-AUTHZSRV-012
+  title: OAuth2 Authorization Server 與 Token 格式
+  category: AUTHORIZATION_SERVER_RISK
+  severity: HIGH
+  priority: P1
+  documented_change_or_risk: Security 7 的 Authorization Server 預設使用 Jackson 3；如果原系統有 JWT/consent/authorization
+    持久化需驗證跨版本讀寫。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires_feature_presence: true
+    component_versions: resolve exact effective versions and dependency graph
+    confidence_without_project_inspection: UNKNOWN
+  investigation:
+    detect_signals:
+    - spring-security-oauth2-authorization-server
+    - OAuth2AuthorizationService
+    - Redis/JDBC token serialization
+    must_resolve:
+    - registered client schema
+    - signing keys
+    - persistence serializer
+    - session/cookie
+    effective_configuration_policy: SOURCE_RUNTIME_FIRST; INSPECT_OVERRIDES; ONLY_IF_NO_EFFECTIVE_OVERRIDE_COMPARE_VERSION_DEFAULTS
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - existing refresh tokens, auth code flow, key rotation, token refresh
+    pass_criteria: EQUIVALENT_SOURCE_TARGET_BEHAVIOR_OR_EXPLICITLY_APPROVED_DEVIATION
+    actual_result: NOT_RUN
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_CONFIG_ABSENT_WITHOUT_PROOF
+  - AUTO_APPROVE_SECURITY_CHANGE
+  - CLAIM_PASS_FROM_BUILD_ONLY
+  sources:
+  - SEC7_MIGRATION
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: SEC7_MIGRATION
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: DOCUMENTATION_GROUNDED_PROJECT_VALIDATION_PENDING
+  rule_type: VALIDATION_ONLY
+  actionable: false
+evidence_policy: EVIDENCE-POLICY.md
