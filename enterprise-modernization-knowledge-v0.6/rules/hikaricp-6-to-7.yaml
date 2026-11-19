@@ -1,0 +1,435 @@
+schema_version: '0.5'
+knowledge_pack: spring-boot-3-to-4
+evidence_policy: EVIDENCE-POLICY.md
+scope: JDK resolved from migration config; exact effective component versions required
+rules:
+- id: HCP7-SCHEMA-001
+  title: 7.0.0 setSchema 已知回歸
+  category: VERSION_REGRESSION
+  severity: HIGH
+  priority: P1
+  documented_change_or_risk: 官方變更紀錄記載 7.0.1 修正 setSchema 回歸；只有目標實際解析為 7.0.0 且程式使用相關功能時命中。
+  sources:
+  - HIKARI_CHANGES
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    exact_component_scope: only HikariCP 7.0.0; fixed in 7.0.1
+    requires_feature_presence: true
+  investigation:
+    detect_signals:
+    - HikariDataSource
+    - setSchema(
+    - connectionInitSql
+    must_resolve:
+    - actual dependency tree / BOM / explicit overrides
+    - source runtime effective config
+    - relevant source behavior contract
+    effective_configuration_policy: OBSERVE_SOURCE_FIRST; VERSION_DEFAULTS_ONLY_WITH_CONFIRMED_OVERRIDE_ABSENCE
+    unknown_policy: REVIEW_REQUIRED
+  verification:
+    required:
+    - TARGET_HIKARI_VERSION_7_0_0
+    - SCHEMA_SET_GET_RESTORE
+    actual_result: NOT_RUN
+    pass_criteria: EQUIVALENT_OR_APPROVED_DEVIATION
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_VERSION_UPGRADE_MEANS_BREAKING_CHANGE
+  - CLAIM_PASS_WITHOUT_RUNTIME_EVIDENCE
+  migration_evidence_v0_5:
+    classification: REGRESSION
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: OFFICIAL_CHANGELOG_CONFIRMED
+    evidence:
+      references:
+      - source_id: HIKARI_CHANGES
+        section: Changes in 7.0.1 — fix regression with setSchema behavior
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+      exact_affected_target: 7.0.0
+    remediation_policy:
+      mode: AVOID_KNOWN_DEFECT_VERSION_OR_REVIEW_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: REGRESSION
+  actionable: false
+- id: HCP7-CONFIG-002
+  title: 有效連線池參數比較
+  category: INTEGRATION_VERIFICATION
+  severity: MEDIUM
+  priority: P1
+  documented_change_or_risk: 尚無證據支持 6→7 普遍更動 connectionTimeout/idleTimeout/maxLifetime 的必要性。
+  sources:
+  - HIKARI_CHANGES
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    exact_component_scope: 6.x -> 7.x
+    requires_feature_presence: true
+  investigation:
+    detect_signals:
+    - spring.datasource.hikari.*
+    - HikariConfig
+    must_resolve:
+    - actual dependency tree / BOM / explicit overrides
+    - source runtime effective config
+    - relevant source behavior contract
+    effective_configuration_policy: OBSERVE_SOURCE_FIRST; VERSION_DEFAULTS_ONLY_WITH_CONFIRMED_OVERRIDE_ABSENCE
+    unknown_policy: REVIEW_REQUIRED
+  verification:
+    required:
+    - EFFECTIVE_POOL_SETTINGS
+    actual_result: NOT_RUN
+    pass_criteria: EQUIVALENT_OR_APPROVED_DEVIATION
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_VERSION_UPGRADE_MEANS_BREAKING_CHANGE
+  - CLAIM_PASS_WITHOUT_RUNTIME_EVIDENCE
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: HIKARI_CHANGES
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: HCP7-STARTUP-003
+  title: 啟動與連線故障恢復
+  category: INTEGRATION_VERIFICATION
+  severity: MEDIUM
+  priority: P1
+  documented_change_or_risk: 有針對 pool filling interruption 的修正，但不能直接推論一般專案必改設定。
+  sources:
+  - HIKARI_CHANGES
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    exact_component_scope: 6.x -> 7.x
+    requires_feature_presence: true
+  investigation:
+    detect_signals:
+    - initializationFailTimeout
+    - HikariDataSource
+    must_resolve:
+    - actual dependency tree / BOM / explicit overrides
+    - source runtime effective config
+    - relevant source behavior contract
+    effective_configuration_policy: OBSERVE_SOURCE_FIRST; VERSION_DEFAULTS_ONLY_WITH_CONFIRMED_OVERRIDE_ABSENCE
+    unknown_policy: REVIEW_REQUIRED
+  verification:
+    required:
+    - STARTUP_WITH_DATABASE_UNAVAILABLE
+    - RECONNECT
+    actual_result: NOT_RUN
+    pass_criteria: EQUIVALENT_OR_APPROVED_DEVIATION
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_VERSION_UPGRADE_MEANS_BREAKING_CHANGE
+  - CLAIM_PASS_WITHOUT_RUNTIME_EVIDENCE
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: HIKARI_CHANGES
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: HCP7-TXN-004
+  title: Schema / Autocommit / Isolation
+  category: INTEGRATION_VERIFICATION
+  severity: MEDIUM
+  priority: P1
+  documented_change_or_risk: 除已知 7.0.0 setSchema 缺陷外，其餘設定保留行為驗證。
+  sources:
+  - HIKARI_CHANGES
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    exact_component_scope: 6.x -> 7.x
+    requires_feature_presence: true
+  investigation:
+    detect_signals:
+    - connectionInitSql
+    - setAutoCommit
+    - setTransactionIsolation
+    must_resolve:
+    - actual dependency tree / BOM / explicit overrides
+    - source runtime effective config
+    - relevant source behavior contract
+    effective_configuration_policy: OBSERVE_SOURCE_FIRST; VERSION_DEFAULTS_ONLY_WITH_CONFIRMED_OVERRIDE_ABSENCE
+    unknown_policy: REVIEW_REQUIRED
+  verification:
+    required:
+    - TX_COMMIT_ROLLBACK
+    - CONNECTION_STATE_RESET
+    actual_result: NOT_RUN
+    pass_criteria: EQUIVALENT_OR_APPROVED_DEVIATION
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_VERSION_UPGRADE_MEANS_BREAKING_CHANGE
+  - CLAIM_PASS_WITHOUT_RUNTIME_EVIDENCE
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: HIKARI_CHANGES
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: HCP7-METRICS-005
+  title: Metrics / JMX / Leak Detection
+  category: INTEGRATION_VERIFICATION
+  severity: MEDIUM
+  priority: P1
+  documented_change_or_risk: 7.0.0 修復特定 metrics reflection；無普遍必改設定依據。
+  sources:
+  - HIKARI_CHANGES
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    exact_component_scope: 6.x -> 7.x
+    requires_feature_presence: true
+  investigation:
+    detect_signals:
+    - metricRegistry
+    - leakDetectionThreshold
+    - registerMbeans
+    must_resolve:
+    - actual dependency tree / BOM / explicit overrides
+    - source runtime effective config
+    - relevant source behavior contract
+    effective_configuration_policy: OBSERVE_SOURCE_FIRST; VERSION_DEFAULTS_ONLY_WITH_CONFIRMED_OVERRIDE_ABSENCE
+    unknown_policy: REVIEW_REQUIRED
+  verification:
+    required:
+    - METRICS_REGISTRATION
+    - JMX_STARTUP
+    actual_result: NOT_RUN
+    pass_criteria: EQUIVALENT_OR_APPROVED_DEVIATION
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_VERSION_UPGRADE_MEANS_BREAKING_CHANGE
+  - CLAIM_PASS_WITHOUT_RUNTIME_EVIDENCE
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: HIKARI_CHANGES
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: HCP7-LOAD-006
+  title: Pool 耗盡與排隊行為
+  category: INTEGRATION_VERIFICATION
+  severity: MEDIUM
+  priority: P1
+  documented_change_or_risk: 負載與延遲對照是性能驗證，非官方確認的 Breaking Change。
+  sources:
+  - HIKARI_CHANGES
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    exact_component_scope: 6.x -> 7.x
+    requires_feature_presence: true
+  investigation:
+    detect_signals:
+    - maximumPoolSize
+    - minimumIdle
+    must_resolve:
+    - actual dependency tree / BOM / explicit overrides
+    - source runtime effective config
+    - relevant source behavior contract
+    effective_configuration_policy: OBSERVE_SOURCE_FIRST; VERSION_DEFAULTS_ONLY_WITH_CONFIRMED_OVERRIDE_ABSENCE
+    unknown_policy: REVIEW_REQUIRED
+  verification:
+    required:
+    - POOL_EXHAUSTION
+    - WAIT_TIMEOUT
+    - RECOVERY
+    actual_result: NOT_RUN
+    pass_criteria: EQUIVALENT_OR_APPROVED_DEVIATION
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_VERSION_UPGRADE_MEANS_BREAKING_CHANGE
+  - CLAIM_PASS_WITHOUT_RUNTIME_EVIDENCE
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: HIKARI_CHANGES
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  actionable: false

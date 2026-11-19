@@ -1,3 +1,5 @@
+> **v0.5 policy notice:** 歷史描述僅作背景參考；規則分類、是否可以修正與 Java 版本政策，請以 `EVIDENCE-POLICY.md`、`catalog.json`、`rules/*.yaml` 為準。不可依舊版 `evidence_class` 判定可自動修復。
+
 # Enterprise Modernization｜架構中立需求規格 v0.1
 
 > 狀態：需求初稿（待確認／待實驗驗證）；日期：2026-11-13  

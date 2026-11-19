@@ -1,3 +1,5 @@
+> **v0.5 policy notice:** 歷史描述僅作背景參考；規則分類、是否可以修正與 Java 版本政策，請以 `EVIDENCE-POLICY.md`、`catalog.json`、`rules/*.yaml` 為準。不可依舊版 `evidence_class` 判定可自動修復。
+
 # Enterprise Modernization Requirements v0.3 補充條款
 
 > 這是 v0.1/v0.2 的增補，不替代原始內容；持續架構中立。

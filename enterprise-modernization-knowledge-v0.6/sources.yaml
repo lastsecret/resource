@@ -1,5 +1,5 @@
-schema_version: '0.3'
-checked_on: '2026-11-13'
+schema_version: '0.6'
+checked_on: '2026-11-19'
 sources:
 - id: BOOT4_MIGRATION
   title: Spring Boot 4.0 Migration Guide
@@ -89,3 +89,47 @@ sources:
   title: Spring Cloud compatibility matrix
   url: https://spring.io/projects/spring-cloud/
   kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: HIKARI_CHANGES
+  title: HikariCP upstream CHANGES
+  url: https://github.com/brettwooldridge/HikariCP/blob/dev/CHANGES
+  kind: OFFICIAL_PROJECT_CHANGELOG
+- id: HIKARI_ISSUE_2344
+  title: HikariCP v7 breaking changes discussion
+  url: https://github.com/brettwooldridge/HikariCP/issues/2344
+  kind: UPSTREAM_MAINTAINER_DISCUSSION
+- id: ORACLE_JDBC_DOWNLOADS
+  title: Oracle JDBC and UCP Downloads
+  url: https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html
+  kind: OFFICIAL_VENDOR_DOCUMENTATION
+- id: ORACLE_JDBC_BOM
+  title: Oracle JDBC BOM 23.9 artifact metadata
+  url: https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc-bom/23.9.0.25.07
+  kind: PUBLISHED_ARTIFACT_METADATA
+- id: REWRITE_MAVEN_UPGRADE
+  title: OpenRewrite Upgrade Maven dependency version
+  url: https://docs.openrewrite.org/recipes/maven/upgradedependencyversion
+  kind: OFFICIAL_RECIPE_DOCUMENTATION
+- id: REWRITE_DEP_UPGRADE
+  title: OpenRewrite Upgrade Gradle or Maven dependency versions
+  url: https://docs.openrewrite.org/recipes/java/dependencies/upgradedependencyversion
+  kind: OFFICIAL_RECIPE_DOCUMENTATION
+- id: REWRITE_BOOT4
+  title: OpenRewrite Spring Boot 4.0 Upgrade
+  url: https://docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition/
+  kind: OFFICIAL_RECIPE_DOCUMENTATION
+- id: JACKSON3_NULL_FEATURE
+  title: 'Jackson 3.0 DeserializationFeature: FAIL_ON_NULL_FOR_PRIMITIVES'
+  url: https://github.com/FasterXML/jackson-databind/blob/3.x/src/main/java/tools/jackson/databind/DeserializationFeature.java
+  kind: OFFICIAL_UPSTREAM_SOURCE
+- id: JACKSON3_MAPPER_FEATURE
+  title: 'Jackson 3.0 MapperFeature: SORT_PROPERTIES_ALPHABETICALLY'
+  url: https://github.com/FasterXML/jackson-databind/blob/3.x/src/main/java/tools/jackson/databind/MapperFeature.java
+  kind: OFFICIAL_UPSTREAM_SOURCE
+- id: JACKSON3_MAPPER_BUILDER
+  title: 'Jackson 3 MapperBuilder: configureForJackson2 and mapper feature configuration'
+  url: https://github.com/FasterXML/jackson-databind/blob/3.x/src/main/java/tools/jackson/databind/cfg/MapperBuilder.java
+  kind: OFFICIAL_UPSTREAM_SOURCE
+- id: BOOT4_JSON_REFERENCE
+  title: Spring Boot 4.0 JSON reference and auto-configuration
+  url: https://docs.spring.io/spring-boot/4.0/reference/features/json.html
+  kind: OFFICIAL_UPSTREAM_SOURCE

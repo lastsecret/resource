@@ -1,0 +1,581 @@
+schema_version: '0.5'
+knowledge_pack: spring-boot-3-to-4
+evidence_policy: EVIDENCE-POLICY.md
+scope: JDK resolved from migration config; exact effective component versions required
+rules:
+- id: OJDBC239-ARTIFACT-001
+  title: Artifact / JDK / Driver 版本
+  category: INTEGRATION_VERIFICATION
+  severity: MEDIUM
+  priority: P1
+  documented_change_or_risk: Oracle JDBC Artifact 與 JDK 的相容性需依官方 BOM / Driver 文件檢查。
+  sources:
+  - ORACLE_JDBC_DOWNLOADS
+  - ORACLE_JDBC_BOM
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    exact_component_scope: 23.7.x -> 23.9.x
+    requires_feature_presence: true
+  investigation:
+    detect_signals:
+    - ojdbc11|ojdbc17
+    must_resolve:
+    - actual dependency tree / BOM / explicit overrides
+    - source runtime effective config
+    - relevant source behavior contract
+    effective_configuration_policy: OBSERVE_SOURCE_FIRST; VERSION_DEFAULTS_ONLY_WITH_CONFIRMED_OVERRIDE_ABSENCE
+    unknown_policy: REVIEW_REQUIRED
+  verification:
+    required:
+    - JDBC_VERSION
+    actual_result: NOT_RUN
+    pass_criteria: EQUIVALENT_OR_APPROVED_DEVIATION
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_VERSION_UPGRADE_MEANS_BREAKING_CHANGE
+  - CLAIM_PASS_WITHOUT_RUNTIME_EVIDENCE
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: ORACLE_JDBC_DOWNLOADS
+        section: REVIEW_REQUIRED
+      - source_id: ORACLE_JDBC_BOM
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: OJDBC239-DB-002
+  title: DB Server 與 Driver 矩陣
+  category: INTEGRATION_VERIFICATION
+  severity: MEDIUM
+  priority: P1
+  documented_change_or_risk: 確認資料庫實際版本；不可將 DB RU 與 JDBC Driver RU 混為一談。
+  sources:
+  - ORACLE_JDBC_DOWNLOADS
+  - ORACLE_JDBC_BOM
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    exact_component_scope: 23.7.x -> 23.9.x
+    requires_feature_presence: true
+  investigation:
+    detect_signals:
+    - jdbc:oracle:thin
+    must_resolve:
+    - actual dependency tree / BOM / explicit overrides
+    - source runtime effective config
+    - relevant source behavior contract
+    effective_configuration_policy: OBSERVE_SOURCE_FIRST; VERSION_DEFAULTS_ONLY_WITH_CONFIRMED_OVERRIDE_ABSENCE
+    unknown_policy: REVIEW_REQUIRED
+  verification:
+    required:
+    - DB_SERVER_COMPATIBILITY
+    actual_result: NOT_RUN
+    pass_criteria: EQUIVALENT_OR_APPROVED_DEVIATION
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_VERSION_UPGRADE_MEANS_BREAKING_CHANGE
+  - CLAIM_PASS_WITHOUT_RUNTIME_EVIDENCE
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: ORACLE_JDBC_DOWNLOADS
+        section: REVIEW_REQUIRED
+      - source_id: ORACLE_JDBC_BOM
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: OJDBC239-DATETIME-003
+  title: DATE / TIMESTAMP / 時區
+  category: INTEGRATION_VERIFICATION
+  severity: MEDIUM
+  priority: P1
+  documented_change_or_risk: 未確認驅動 23.7→23.9 普遍改變 DATE/TIMESTAMP Mapping；必須測來源與目標。
+  sources:
+  - ORACLE_JDBC_DOWNLOADS
+  - ORACLE_JDBC_BOM
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    exact_component_scope: 23.7.x -> 23.9.x
+    requires_feature_presence: true
+  investigation:
+    detect_signals:
+    - java.time|java.sql.Timestamp
+    must_resolve:
+    - actual dependency tree / BOM / explicit overrides
+    - source runtime effective config
+    - relevant source behavior contract
+    effective_configuration_policy: OBSERVE_SOURCE_FIRST; VERSION_DEFAULTS_ONLY_WITH_CONFIRMED_OVERRIDE_ABSENCE
+    unknown_policy: REVIEW_REQUIRED
+  verification:
+    required:
+    - ORACLE_DATE_TIMESTAMP_TZ
+    actual_result: NOT_RUN
+    pass_criteria: EQUIVALENT_OR_APPROVED_DEVIATION
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_VERSION_UPGRADE_MEANS_BREAKING_CHANGE
+  - CLAIM_PASS_WITHOUT_RUNTIME_EVIDENCE
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: ORACLE_JDBC_DOWNLOADS
+        section: REVIEW_REQUIRED
+      - source_id: ORACLE_JDBC_BOM
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: OJDBC239-GETOBJECT-004
+  title: getObject / getDate / getTimestamp
+  category: INTEGRATION_VERIFICATION
+  severity: MEDIUM
+  priority: P1
+  documented_change_or_risk: 先辨別 JDBC 原始型別與 Hibernate 映射責任，不能混為一談。
+  sources:
+  - ORACLE_JDBC_DOWNLOADS
+  - ORACLE_JDBC_BOM
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    exact_component_scope: 23.7.x -> 23.9.x
+    requires_feature_presence: true
+  investigation:
+    detect_signals:
+    - getObject|getTimestamp|getDate
+    must_resolve:
+    - actual dependency tree / BOM / explicit overrides
+    - source runtime effective config
+    - relevant source behavior contract
+    effective_configuration_policy: OBSERVE_SOURCE_FIRST; VERSION_DEFAULTS_ONLY_WITH_CONFIRMED_OVERRIDE_ABSENCE
+    unknown_policy: REVIEW_REQUIRED
+  verification:
+    required:
+    - JDBC_SCALAR_CLASS
+    actual_result: NOT_RUN
+    pass_criteria: EQUIVALENT_OR_APPROVED_DEVIATION
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_VERSION_UPGRADE_MEANS_BREAKING_CHANGE
+  - CLAIM_PASS_WITHOUT_RUNTIME_EVIDENCE
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: ORACLE_JDBC_DOWNLOADS
+        section: REVIEW_REQUIRED
+      - source_id: ORACLE_JDBC_BOM
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: OJDBC239-NULL-005
+  title: NULL / NUMBER / LOB
+  category: INTEGRATION_VERIFICATION
+  severity: MEDIUM
+  priority: P1
+  documented_change_or_risk: 未確認通用 Breaking Change；保留實際資料型別、精度及 Null 驗證。
+  sources:
+  - ORACLE_JDBC_DOWNLOADS
+  - ORACLE_JDBC_BOM
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    exact_component_scope: 23.7.x -> 23.9.x
+    requires_feature_presence: true
+  investigation:
+    detect_signals:
+    - setNull|getBigDecimal|getClob
+    must_resolve:
+    - actual dependency tree / BOM / explicit overrides
+    - source runtime effective config
+    - relevant source behavior contract
+    effective_configuration_policy: OBSERVE_SOURCE_FIRST; VERSION_DEFAULTS_ONLY_WITH_CONFIRMED_OVERRIDE_ABSENCE
+    unknown_policy: REVIEW_REQUIRED
+  verification:
+    required:
+    - NULL_NUMBER_LOB
+    actual_result: NOT_RUN
+    pass_criteria: EQUIVALENT_OR_APPROVED_DEVIATION
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_VERSION_UPGRADE_MEANS_BREAKING_CHANGE
+  - CLAIM_PASS_WITHOUT_RUNTIME_EVIDENCE
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: ORACLE_JDBC_DOWNLOADS
+        section: REVIEW_REQUIRED
+      - source_id: ORACLE_JDBC_BOM
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: OJDBC239-BATCH-006
+  title: PreparedStatement / Batch / Fetch
+  category: INTEGRATION_VERIFICATION
+  severity: MEDIUM
+  priority: P1
+  documented_change_or_risk: 未確認通用 Breaking Change；測試業務使用的 Batch 與 Fetch 行為。
+  sources:
+  - ORACLE_JDBC_DOWNLOADS
+  - ORACLE_JDBC_BOM
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    exact_component_scope: 23.7.x -> 23.9.x
+    requires_feature_presence: true
+  investigation:
+    detect_signals:
+    - addBatch|setFetchSize
+    must_resolve:
+    - actual dependency tree / BOM / explicit overrides
+    - source runtime effective config
+    - relevant source behavior contract
+    effective_configuration_policy: OBSERVE_SOURCE_FIRST; VERSION_DEFAULTS_ONLY_WITH_CONFIRMED_OVERRIDE_ABSENCE
+    unknown_policy: REVIEW_REQUIRED
+  verification:
+    required:
+    - BATCH_FETCH
+    actual_result: NOT_RUN
+    pass_criteria: EQUIVALENT_OR_APPROVED_DEVIATION
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_VERSION_UPGRADE_MEANS_BREAKING_CHANGE
+  - CLAIM_PASS_WITHOUT_RUNTIME_EVIDENCE
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: ORACLE_JDBC_DOWNLOADS
+        section: REVIEW_REQUIRED
+      - source_id: ORACLE_JDBC_BOM
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: OJDBC239-RAC-007
+  title: RAC / Network / Wallet / Failover
+  category: INTEGRATION_VERIFICATION
+  severity: MEDIUM
+  priority: P1
+  documented_change_or_risk: 只在使用 RAC/TLS/Wallet/Failover 的專案執行對應驗證。
+  sources:
+  - ORACLE_JDBC_DOWNLOADS
+  - ORACLE_JDBC_BOM
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    exact_component_scope: 23.7.x -> 23.9.x
+    requires_feature_presence: true
+  investigation:
+    detect_signals:
+    - oracle.net|wallet|ucp
+    must_resolve:
+    - actual dependency tree / BOM / explicit overrides
+    - source runtime effective config
+    - relevant source behavior contract
+    effective_configuration_policy: OBSERVE_SOURCE_FIRST; VERSION_DEFAULTS_ONLY_WITH_CONFIRMED_OVERRIDE_ABSENCE
+    unknown_policy: REVIEW_REQUIRED
+  verification:
+    required:
+    - CONNECTIVITY_FAILOVER
+    actual_result: NOT_RUN
+    pass_criteria: EQUIVALENT_OR_APPROVED_DEVIATION
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_VERSION_UPGRADE_MEANS_BREAKING_CHANGE
+  - CLAIM_PASS_WITHOUT_RUNTIME_EVIDENCE
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: ORACLE_JDBC_DOWNLOADS
+        section: REVIEW_REQUIRED
+      - source_id: ORACLE_JDBC_BOM
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: OJDBC239-COMPANION-008
+  title: Oracle 相關套件一致性
+  category: INTEGRATION_VERIFICATION
+  severity: MEDIUM
+  priority: P1
+  documented_change_or_risk: 若有 companion modules 或版本覆寫需檢查，不能要求所有專案加入 BOM。
+  sources:
+  - ORACLE_JDBC_DOWNLOADS
+  - ORACLE_JDBC_BOM
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    exact_component_scope: 23.7.x -> 23.9.x
+    requires_feature_presence: true
+  investigation:
+    detect_signals:
+    - oraclepki|osdt_core|ojdbc-bom
+    must_resolve:
+    - actual dependency tree / BOM / explicit overrides
+    - source runtime effective config
+    - relevant source behavior contract
+    effective_configuration_policy: OBSERVE_SOURCE_FIRST; VERSION_DEFAULTS_ONLY_WITH_CONFIRMED_OVERRIDE_ABSENCE
+    unknown_policy: REVIEW_REQUIRED
+  verification:
+    required:
+    - COMPANION_BOM
+    actual_result: NOT_RUN
+    pass_criteria: EQUIVALENT_OR_APPROVED_DEVIATION
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_VERSION_UPGRADE_MEANS_BREAKING_CHANGE
+  - CLAIM_PASS_WITHOUT_RUNTIME_EVIDENCE
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual source
+    target_version_scope: resolve actual target
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: ORACLE_JDBC_DOWNLOADS
+        section: REVIEW_REQUIRED
+      - source_id: ORACLE_JDBC_BOM
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  actionable: false

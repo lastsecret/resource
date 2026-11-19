@@ -1,4 +1,4 @@
-schema_version: '0.4'
+schema_version: '0.6'
 status: SPECIFICATION_ONLY_NOT_EXECUTED
 cases:
 - id: T-UTW-01
@@ -7,144 +7,216 @@ cases:
   expected_assessment_or_observation: PREFLIGHT BLOCK for Boot 4 until supported server selected
   gate_policy: BLOCK_IF_NO_SUPPORTED_SERVER
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-UTW-02
   rule_ref: WEB-UNDERTOW-002
   given: Undertow worker=16, Tomcat max threads=16
   expected_assessment_or_observation: must NOT automatically declare equivalent throughput; compare same-load measurements
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-UTW-03
   rule_ref: WEB-UNDERTOW-003
   given: encoded slash and oversized headers + reverse proxy
   expected_assessment_or_observation: compare 3.5 and 4.0 normalized response/status/security outcome
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-UTW-04
   rule_ref: WEB-UNDERTOW-004
   given: many slow synchronous HTTP requests and health probe concurrently
   expected_assessment_or_observation: health response and load resource metrics; no ungrounded PASS
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-HIB-01
   rule_ref: HIB7-NATIVE-DATETIME-001
   given: Oracle nativeQuery scalar temporal + no result mapping + java.sql.Date cast
   expected_assessment_or_observation: compare actual result runtime classes and exceptions
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-HIB-02
   rule_ref: HIB7-NATIVE-DATETIME-001
   given: JPQL @Query mapped Entity LocalDate with no nativeQuery
   expected_assessment_or_observation: do not assert native temporal default rule applies
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-HIB-03
   rule_ref: HIB7-ORACLE-DATE-002
   given: Oracle DATE contains 2026-01-01 23:59:59, Java LocalDate
   expected_assessment_or_observation: verify source+target Oracle JDBC actual read and truncated time semantics
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-HIB-04
   rule_ref: HIB7-ORACLE-DATE-002
   given: H2 MODE=Oracle instead of Oracle DB
   expected_assessment_or_observation: cannot count as real Oracle JDBC / database proof
   gate_policy: REVIEW_REQUIRED
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-HIB-05
   rule_ref: HIB7-CASCADE-MAPSID-003
   given: '@MapsId child transient, cascade absent'
   expected_assessment_or_observation: measure exact inserts and failure / correct FK
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-HIB-06
   rule_ref: HIB7-DETACHED-004
   given: entity detached, refresh after closed persistence context
   expected_assessment_or_observation: compare exception behavior before/after
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-HIB-07
   rule_ref: HIB7-RAW-HQL-005
   given: createQuery("from X, Y") without result type
   expected_assessment_or_observation: confirm error and explicit query repair result shape
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-HIB-08
   rule_ref: HIB7-IMMUTABLE-006
   given: '@Immutable bulk update and no explicit property'
   expected_assessment_or_observation: detect changed default and do not silently add allow
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-HIB-09
   rule_ref: HIB7-STATELESS-007
   given: StatelessSession + batch_size + L2 enabled
   expected_assessment_or_observation: validate batch SQL counts and cache consistency
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-HIB-10
   rule_ref: HIB7-ORACLE-DDL-009
   given: Oracle float/double with DDL auto update
   expected_assessment_or_observation: produce DDL diff, require explicit approval before DB schema change
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-HIB-11
   rule_ref: HIB7-ARRAY-010
   given: MariaDB basic array with existing VARBINARY rows
   expected_assessment_or_observation: old-row read and new-row write checked; no implicit schema migration
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SB4-01
   rule_ref: SB4-MODULAR-001
   given: Flyway library alone without Boot 4 Flyway starter
   expected_assessment_or_observation: identify missing auto config; recommend appropriate module
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SB4-02
   rule_ref: SB4-PACKAGE-002
   given: old Boot AutoConfiguration Jackson import
   expected_assessment_or_observation: point to verified target symbol and compilation evidence
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SB4-03
   rule_ref: SB4-TEST-003
   given: direct spring-security-test, no starter-security-test
   expected_assessment_or_observation: evaluate missing boot test support and actual security tests
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SB4-04
   rule_ref: SB4-PROPERTIES-004
   given: legacy property only present in unavailable external config
   expected_assessment_or_observation: UNKNOWN not ABSENT and no assumed default
   gate_policy: REVIEW_REQUIRED
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SB4-05
   rule_ref: SB4-JACKSON-MODULE-005
   given: custom classpath module before/after
   expected_assessment_or_observation: measure effective registered modules; not global unconditional disabling
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SB4-06
   rule_ref: SB4-HTTP-CONVERTER-007
   given: custom HttpMessageConverter Bean
   expected_assessment_or_observation: client vs server contract verifies behavior
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SB4-07
   rule_ref: SB4-ACTUATOR-009
   given: actuator in secured k8s deployment
   expected_assessment_or_observation: verify no unexpected health exposure or probe failure
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SB4-08
   rule_ref: SB4-SECURITY-011
   given: custom session Jackson 2 serialization
   expected_assessment_or_observation: old session/token decode and new session handling tested
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SB4-09
   rule_ref: SB4-TOMCAT-WAR-014
   given: WAR to external Tomcat 11
   expected_assessment_or_observation: runtime starter packaging and deployment result tested
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-MYB4-STARTER-001
   rule_ref: MYB4-STARTER-001
   given: Source Spring Boot 3.5.x project with feature signal org.mybatis.spring.boot:mybatis-spring-boot-starter;
@@ -153,6 +225,9 @@ cases:
     execute: dependency convergence; context startup; mapper select; compare target; never auto-apply patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-MYB4-MAPPER-002
   rule_ref: MYB4-MAPPER-002
   given: Source Spring Boot 3.5.x project with feature signal @MapperScan; target Boot 4.0.x
@@ -161,6 +236,9 @@ cases:
     patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-MYB4-HANDLER-003
   rule_ref: MYB4-HANDLER-003
   given: Source Spring Boot 3.5.x project with feature signal TypeHandler; target Boot 4.0.x
@@ -169,6 +247,9 @@ cases:
     patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-MYB4-CONFIG-004
   rule_ref: MYB4-CONFIG-004
   given: Source Spring Boot 3.5.x project with feature signal mybatis.configuration.*; target Boot 4.0.x
@@ -177,6 +258,9 @@ cases:
     auto-apply patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-MYB4-MULTIDS-005
   rule_ref: MYB4-MULTIDS-005
   given: Source Spring Boot 3.5.x project with feature signal SqlSessionFactoryBean; target Boot 4.0.x
@@ -185,6 +269,9 @@ cases:
     patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-MYB4-BATCH-006
   rule_ref: MYB4-BATCH-006
   given: Source Spring Boot 3.5.x project with feature signal ExecutorType.BATCH; target Boot 4.0.x
@@ -193,6 +280,9 @@ cases:
     auto-apply patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-MYB4-SQL-007
   rule_ref: MYB4-SQL-007
   given: Source Spring Boot 3.5.x project with feature signal <if>; target Boot 4.0.x
@@ -201,6 +291,9 @@ cases:
     patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-MYB4-RESULT-008
   rule_ref: MYB4-RESULT-008
   given: Source Spring Boot 3.5.x project with feature signal resultMap; target Boot 4.0.x
@@ -209,6 +302,9 @@ cases:
     auto-apply patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-MYB4-PLUS-009
   rule_ref: MYB4-PLUS-009
   given: Source Spring Boot 3.5.x project with feature signal com.baomidou:mybatis-plus*; target Boot 4.0.x
@@ -217,6 +313,9 @@ cases:
     patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SEC7-DSL-001
   rule_ref: SEC7-DSL-001
   given: Source Spring Boot 3.5.x project with feature signal HttpSecurity .and(); target Boot 4.0.x
@@ -224,6 +323,9 @@ cases:
     execute: compile; authorization matrix; filter order; compare target; never auto-apply patch'
   gate_policy: BLOCK_ON_SECURITY_POLICY_CHANGE_WITHOUT_APPROVAL
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SEC7-ACCESS-002
   rule_ref: SEC7-ACCESS-002
   given: Source Spring Boot 3.5.x project with feature signal AccessDecisionManager; target Boot 4.0.x
@@ -231,6 +333,9 @@ cases:
     execute: compile; same allow/deny matrix; denial response; compare target; never auto-apply patch'
   gate_policy: BLOCK_ON_SECURITY_POLICY_CHANGE_WITHOUT_APPROVAL
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SEC7-MATCHER-003
   rule_ref: SEC7-MATCHER-003
   given: Source Spring Boot 3.5.x project with feature signal requestMatchers; target Boot 4.0.x
@@ -238,6 +343,9 @@ cases:
     execute: anonymous,user,admin matrix; encoded path; dispatcher behavior; compare target; never auto-apply patch'
   gate_policy: BLOCK_ON_SECURITY_POLICY_CHANGE_WITHOUT_APPROVAL
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SEC7-METHOD-004
   rule_ref: SEC7-METHOD-004
   given: Source Spring Boot 3.5.x project with feature signal @PreAuthorize(#id); target Boot 4.0.x
@@ -246,6 +354,9 @@ cases:
     patch'
   gate_policy: BLOCK_ON_SECURITY_POLICY_CHANGE_WITHOUT_APPROVAL
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SEC7-JACKSON-005
   rule_ref: SEC7-JACKSON-005
   given: Source Spring Boot 3.5.x project with feature signal SecurityJackson2Modules; target Boot 4.0.x
@@ -254,6 +365,9 @@ cases:
     auto-apply patch'
   gate_policy: BLOCK_ON_SECURITY_POLICY_CHANGE_WITHOUT_APPROVAL
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SEC7-JWT-006
   rule_ref: SEC7-JWT-006
   given: Source Spring Boot 3.5.x project with feature signal NimbusJwtDecoder; target Boot 4.0.x
@@ -262,6 +376,9 @@ cases:
     patch'
   gate_policy: BLOCK_ON_SECURITY_POLICY_CHANGE_WITHOUT_APPROVAL
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SEC7-JWK-007
   rule_ref: SEC7-JWK-007
   given: Source Spring Boot 3.5.x project with feature signal NimbusJwtDecoder.withIssuerLocation; target Boot 4.0.x
@@ -269,6 +386,9 @@ cases:
     execute: JWK slow, timeout, outage; downstream thread and health impact; compare target; never auto-apply patch'
   gate_policy: BLOCK_ON_SECURITY_POLICY_CHANGE_WITHOUT_APPROVAL
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SEC7-OPAQUE-008
   rule_ref: SEC7-OPAQUE-008
   given: Source Spring Boot 3.5.x project with feature signal introspectionClientCredentials; target Boot 4.0.x
@@ -277,6 +397,9 @@ cases:
     patch'
   gate_policy: BLOCK_ON_SECURITY_POLICY_CHANGE_WITHOUT_APPROVAL
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SEC7-CONTEXT-009
   rule_ref: SEC7-CONTEXT-009
   given: Source Spring Boot 3.5.x project with feature signal OncePerRequestFilter; target Boot 4.0.x
@@ -284,6 +407,9 @@ cases:
     execute: same session subsequent request; logout; concurrent requests; compare target; never auto-apply patch'
   gate_policy: BLOCK_ON_SECURITY_POLICY_CHANGE_WITHOUT_APPROVAL
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SEC7-CSRF-010
   rule_ref: SEC7-CSRF-010
   given: Source Spring Boot 3.5.x project with feature signal csrf; target Boot 4.0.x
@@ -292,6 +418,9 @@ cases:
     patch'
   gate_policy: BLOCK_ON_SECURITY_POLICY_CHANGE_WITHOUT_APPROVAL
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SEC7-TEST-011
   rule_ref: SEC7-TEST-011
   given: Source Spring Boot 3.5.x project with feature signal spring-security-test; target Boot 4.0.x
@@ -300,6 +429,9 @@ cases:
     patch'
   gate_policy: BLOCK_ON_SECURITY_POLICY_CHANGE_WITHOUT_APPROVAL
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SEC7-AUTHZSRV-012
   rule_ref: SEC7-AUTHZSRV-012
   given: Source Spring Boot 3.5.x project with feature signal spring-security-oauth2-authorization-server; target
@@ -309,6 +441,9 @@ cases:
     patch'
   gate_policy: BLOCK_ON_SECURITY_POLICY_CHANGE_WITHOUT_APPROVAL
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-ECO4-SPRINGDOC-001
   rule_ref: ECO4-SPRINGDOC-001
   given: Source Spring Boot 3.5.x project with feature signal org.springdoc:springdoc-openapi*; target Boot 4.0.x
@@ -316,6 +451,9 @@ cases:
     execute: GET /v3/api-docs; Swagger UI; schema diff; error on startup; compare target; never auto-apply patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-ECO4-SPRINGDOC-002
   rule_ref: ECO4-SPRINGDOC-002
   given: Source Spring Boot 3.5.x project with feature signal OpenApiCustomizer; target Boot 4.0.x
@@ -324,6 +462,9 @@ cases:
     patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-ECO4-CLOUD-003
   rule_ref: ECO4-CLOUD-003
   given: Source Spring Boot 3.5.x project with feature signal org.springframework.cloud:spring-cloud-dependencies;
@@ -333,6 +474,9 @@ cases:
     patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-ECO4-CLOUD-004
   rule_ref: ECO4-CLOUD-004
   given: Source Spring Boot 3.5.x project with feature signal @FeignClient; target Boot 4.0.x
@@ -340,6 +484,9 @@ cases:
     execute: upstream timeout; retry count; X-Trace-Id; unavailable config; compare target; never auto-apply patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-ECO4-BATCH-005
   rule_ref: ECO4-BATCH-005
   given: Source Spring Boot 3.5.x project with feature signal spring-boot-starter-batch; target Boot 4.0.x
@@ -348,6 +495,9 @@ cases:
     patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-ECO4-BATCH-006
   rule_ref: ECO4-BATCH-006
   given: Source Spring Boot 3.5.x project with feature signal ItemReader; target Boot 4.0.x
@@ -355,6 +505,9 @@ cases:
     execute: restart from mid-chunk, retries, skip, exactly-once effect; compare target; never auto-apply patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-ECO4-REDIS-007
   rule_ref: ECO4-REDIS-007
   given: Source Spring Boot 3.5.x project with feature signal spring-session-data-redis; target Boot 4.0.x
@@ -362,6 +515,9 @@ cases:
     execute: read pre-upgrade session; TTL; logout; login; replica failover; compare target; never auto-apply patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-ECO4-REDIS-008
   rule_ref: ECO4-REDIS-008
   given: Source Spring Boot 3.5.x project with feature signal RedisTemplate; target Boot 4.0.x
@@ -370,6 +526,9 @@ cases:
     patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-ECO4-GRAPHQL-009
   rule_ref: ECO4-GRAPHQL-009
   given: Source Spring Boot 3.5.x project with feature signal schema.graphqls; target Boot 4.0.x
@@ -377,6 +536,9 @@ cases:
     execute: TW01->TW; invalid enum; null; lists; GraphQL errors; compare target; never auto-apply patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-ECO4-VALIDATION-010
   rule_ref: ECO4-VALIDATION-010
   given: Source Spring Boot 3.5.x project with feature signal spring-boot-starter-validation; target Boot 4.0.x
@@ -385,6 +547,9 @@ cases:
     patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-ECO4-OBSERV-011
   rule_ref: ECO4-OBSERV-011
   given: Source Spring Boot 3.5.x project with feature signal micrometer-tracing; target Boot 4.0.x
@@ -392,6 +557,9 @@ cases:
     execute: inbound/outbound header trace; log correlation across threads; compare target; never auto-apply patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-ECO4-TEST-012
   rule_ref: ECO4-TEST-012
   given: Source Spring Boot 3.5.x project with feature signal @SpringBootTest; target Boot 4.0.x
@@ -400,24 +568,36 @@ cases:
     patch'
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-MYB-NEG-NO-MYBATIS
   rule_ref: MYB4-STARTER-001
   given: Project has no MyBatis or MyBatis-Plus artifact and no mapper usage
   expected_assessment_or_observation: Rule is NOT_APPLICABLE; no dependency addition
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BREAKING_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-MYB-OVERRIDE-CONFIG
   rule_ref: MYB4-CONFIG-004
   given: Project config-location + custom ConfigurationCustomizer overrides framework property
   expected_assessment_or_observation: Use effective runtime value and flag uncertainty; never blindly write mybatis.configuration.*
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SEC-DENY
   rule_ref: SEC7-MATCHER-003
   given: Anonymous access to /admin denied in source but allowed in candidate target
   expected_assessment_or_observation: Fail quality gate even when compilation and tests otherwise pass
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SEC-JWK-TIMEOUT
   rule_ref: SEC7-JWK-007
   given: Source had default 500ms JWK fetch; target has 30s default with same outage
@@ -425,6 +605,9 @@ cases:
     owner review
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-BATCH-METADATA
   rule_ref: ECO4-BATCH-005
   given: Source job uses JDBC job metadata and restarts after crash
@@ -432,24 +615,36 @@ cases:
     approval fails
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SPRINGDOC-SCHEMA
   rule_ref: ECO4-SPRINGDOC-002
   given: Swagger UI loads but JSON schema loses enum response value
   expected_assessment_or_observation: Fail contract gate even if UI loads
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-UNKNOWN-EXTERNAL-CONFIG
   rule_ref: SEC7-CSRF-010
   given: Prod security config is in inaccessible Config Server
   expected_assessment_or_observation: UNKNOWN is not default, NOT_RUN is not PASS
   gate_policy: REVIEW_REQUIRED
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-SRC-EXPLICIT-SETTING
   rule_ref: MYB4-RESULT-008
   given: Source map-underscore-to-camel-case=false explicitly; new default differs in hypothetical environment
   expected_assessment_or_observation: Preserve effective false and measure, never blindly enable camel case
   gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
   actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-JAVA-01
   rule_ref: RUNTIME-JAVA-PARAMETERIZED
   given: Java 17 source, target mode preserve, Boot 4.0.x
@@ -457,6 +652,9 @@ cases:
     behavior
   gate_policy: CHECK_TARGET_JDK_AND_VERIFY_RUNTIME
   actual_result: NOT_RUN
+  rule_type: POLICY_GATE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-JAVA-02
   rule_ref: RUNTIME-JAVA-PARAMETERIZED
   given: Java 21 source, target mode preserve, Boot 4.0.x
@@ -464,18 +662,27 @@ cases:
     and approved
   gate_policy: CHECK_TARGET_JDK_AND_VERIFY_RUNTIME
   actual_result: NOT_RUN
+  rule_type: POLICY_GATE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-JAVA-03
   rule_ref: RUNTIME-JAVA-PARAMETERIZED
   given: Java 11 source, preserve Java 11, target Boot 4.0.x
   expected_assessment_or_observation: BLOCK because target Spring Boot minimum Java 17
   gate_policy: BLOCK_IF_BELOW_MINIMUM
   actual_result: NOT_RUN
+  rule_type: POLICY_GATE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-JAVA-04
   rule_ref: RUNTIME-JAVA-PARAMETERIZED
   given: Java 17 source, explicit target Java 21, no user approval
   expected_assessment_or_observation: BLOCK_AND_REVIEW; never auto-raise JDK
   gate_policy: BLOCK_UNAPPROVED_CHANGE
   actual_result: NOT_RUN
+  rule_type: POLICY_GATE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-JAVA-05
   rule_ref: RUNTIME-JAVA-PARAMETERIZED
   given: Java 17 source, explicit target Java 21, approved
@@ -483,27 +690,347 @@ cases:
     and behavior tests
   gate_policy: REQUIRE_RUNTIME_EVIDENCE
   actual_result: NOT_RUN
+  rule_type: POLICY_GATE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-JAVA-06
   rule_ref: RUNTIME-JAVA-PARAMETERIZED
   given: Tool JDK 21, target/runtime Java 17, compiler release 17
   expected_assessment_or_observation: Do not confuse tool JDK with product JDK; require actual Java 17 run
   gate_policy: SEPARATE_TOOL_AND_RUNTIME
   actual_result: NOT_RUN
+  rule_type: POLICY_GATE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-JAVA-07
   rule_ref: RUNTIME-JAVA-PARAMETERIZED
   given: Target Java 17 but bytecode major 65 or CI runtime 21
   expected_assessment_or_observation: BLOCK until target release and actual runtime are aligned
   gate_policy: BLOCK_BYTECODE_OR_RUNTIME_MISMATCH
   actual_result: NOT_RUN
+  rule_type: POLICY_GATE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-JAVA-08
   rule_ref: RUNTIME-JAVA-PARAMETERIZED
   given: Unknown exact dependency line or missing private library bytecode requirements
   expected_assessment_or_observation: REVIEW_REQUIRED; do not claim dependency compatibility from partial matrix
   gate_policy: REVIEW_IF_UNKNOWN
   actual_result: NOT_RUN
+  rule_type: POLICY_GATE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
 - id: T-JAVA-09
   rule_ref: RUNTIME-JAVA-PARAMETERIZED
   given: Unapproved OpenRewrite recipe alters java.version, gradle toolchain or Docker image
   expected_assessment_or_observation: BLOCK_AND_REVIEW; record attempted change and ask for approval
   gate_policy: BLOCK_UNAPPROVED_CHANGE
   actual_result: NOT_RUN
+  rule_type: POLICY_GATE
+  automatic_patch_expected: false
+  evidence_required: EXACT_VERSION_AND_PROJECT_APPLICABILITY
+- id: T-DBPOOL-01
+  rule_ref: HCP7-SCHEMA-001
+  rule_type: REGRESSION
+  given: 7.0.0 setSchema 已知回歸 in a project using the matching component and exact resolved versions
+  expected_assessment_or_observation: 'Known 7.0.0 regression: flag and avoid affected version; never patch blindly'
+  gate_policy: REVIEW_IF_MATCHED
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-DBPOOL-02
+  rule_ref: HCP7-CONFIG-002
+  rule_type: VALIDATION_ONLY
+  given: 有效連線池參數比較 in a project using the matching component and exact resolved versions
+  expected_assessment_or_observation: Verify only; no automatic source or configuration changes
+  gate_policy: VERIFICATION_ONLY
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-DBPOOL-03
+  rule_ref: HCP7-STARTUP-003
+  rule_type: VALIDATION_ONLY
+  given: 啟動與連線故障恢復 in a project using the matching component and exact resolved versions
+  expected_assessment_or_observation: Verify only; no automatic source or configuration changes
+  gate_policy: VERIFICATION_ONLY
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-DBPOOL-04
+  rule_ref: HCP7-TXN-004
+  rule_type: VALIDATION_ONLY
+  given: Schema / Autocommit / Isolation in a project using the matching component and exact resolved versions
+  expected_assessment_or_observation: Verify only; no automatic source or configuration changes
+  gate_policy: VERIFICATION_ONLY
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-DBPOOL-05
+  rule_ref: HCP7-METRICS-005
+  rule_type: VALIDATION_ONLY
+  given: Metrics / JMX / Leak Detection in a project using the matching component and exact resolved versions
+  expected_assessment_or_observation: Verify only; no automatic source or configuration changes
+  gate_policy: VERIFICATION_ONLY
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-DBPOOL-06
+  rule_ref: HCP7-LOAD-006
+  rule_type: VALIDATION_ONLY
+  given: Pool 耗盡與排隊行為 in a project using the matching component and exact resolved versions
+  expected_assessment_or_observation: Verify only; no automatic source or configuration changes
+  gate_policy: VERIFICATION_ONLY
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-DBPOOL-07
+  rule_ref: OJDBC239-ARTIFACT-001
+  rule_type: VALIDATION_ONLY
+  given: Artifact / JDK / Driver 版本 in a project using the matching component and exact resolved versions
+  expected_assessment_or_observation: Verify only; no automatic source or configuration changes
+  gate_policy: VERIFICATION_ONLY
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-DBPOOL-08
+  rule_ref: OJDBC239-DB-002
+  rule_type: VALIDATION_ONLY
+  given: DB Server 與 Driver 矩陣 in a project using the matching component and exact resolved versions
+  expected_assessment_or_observation: Verify only; no automatic source or configuration changes
+  gate_policy: VERIFICATION_ONLY
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-DBPOOL-09
+  rule_ref: OJDBC239-DATETIME-003
+  rule_type: VALIDATION_ONLY
+  given: DATE / TIMESTAMP / 時區 in a project using the matching component and exact resolved versions
+  expected_assessment_or_observation: Verify only; no automatic source or configuration changes
+  gate_policy: VERIFICATION_ONLY
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-DBPOOL-10
+  rule_ref: OJDBC239-GETOBJECT-004
+  rule_type: VALIDATION_ONLY
+  given: getObject / getDate / getTimestamp in a project using the matching component and exact resolved versions
+  expected_assessment_or_observation: Verify only; no automatic source or configuration changes
+  gate_policy: VERIFICATION_ONLY
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-DBPOOL-11
+  rule_ref: OJDBC239-NULL-005
+  rule_type: VALIDATION_ONLY
+  given: NULL / NUMBER / LOB in a project using the matching component and exact resolved versions
+  expected_assessment_or_observation: Verify only; no automatic source or configuration changes
+  gate_policy: VERIFICATION_ONLY
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-DBPOOL-12
+  rule_ref: OJDBC239-BATCH-006
+  rule_type: VALIDATION_ONLY
+  given: PreparedStatement / Batch / Fetch in a project using the matching component and exact resolved versions
+  expected_assessment_or_observation: Verify only; no automatic source or configuration changes
+  gate_policy: VERIFICATION_ONLY
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-DBPOOL-13
+  rule_ref: OJDBC239-RAC-007
+  rule_type: VALIDATION_ONLY
+  given: RAC / Network / Wallet / Failover in a project using the matching component and exact resolved versions
+  expected_assessment_or_observation: Verify only; no automatic source or configuration changes
+  gate_policy: VERIFICATION_ONLY
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-DBPOOL-14
+  rule_ref: OJDBC239-COMPANION-008
+  rule_type: VALIDATION_ONLY
+  given: Oracle 相關套件一致性 in a project using the matching component and exact resolved versions
+  expected_assessment_or_observation: Verify only; no automatic source or configuration changes
+  gate_policy: VERIFICATION_ONLY
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-POLICY-01
+  rule_ref: null
+  rule_type: POLICY_GATE
+  given: validation-only item detected
+  expected_assessment_or_observation: must not propose or run code/configuration patch
+  gate_policy: MUST_NOT_AUTO_PATCH
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-POLICY-02
+  rule_ref: null
+  rule_type: POLICY_GATE
+  given: migration delta has no exact source-version match
+  expected_assessment_or_observation: must not propose patch
+  gate_policy: MUST_NOT_AUTO_PATCH
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-POLICY-03
+  rule_ref: null
+  rule_type: POLICY_GATE
+  given: effective source configuration unresolved
+  expected_assessment_or_observation: must block auto remediation and request baseline evidence
+  gate_policy: MUST_NOT_AUTO_PATCH
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-POLICY-04
+  rule_ref: null
+  rule_type: POLICY_GATE
+  given: official document link exists but particular claim not reviewed
+  expected_assessment_or_observation: must not treat as verified breaking change
+  gate_policy: MUST_NOT_AUTO_PATCH
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-POLICY-05
+  rule_ref: null
+  rule_type: POLICY_GATE
+  given: dependency managed by BOM and no override
+  expected_assessment_or_observation: must not pin dependency version without approval
+  gate_policy: MUST_NOT_AUTO_PATCH
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-POLICY-06
+  rule_ref: null
+  rule_type: POLICY_GATE
+  given: target HikariCP 7.0.2 and use setSchema
+  expected_assessment_or_observation: 7.0.0-only regression must not trigger
+  gate_policy: MUST_NOT_AUTO_PATCH
+  automatic_patch_expected: false
+  actual_result: NOT_RUN
+- id: T-JCK3-01
+  rule_ref: JCK3-NULL-PRIMITIVES-001
+  given: Jackson 2 default false; Spring-managed Mapper; input {"count":null}; Jackson 3 default true
+  expected_assessment_or_observation: identify old count=0, new exception; propose scoped change ONLY after effective
+    mapper + baseline proof
+  gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
+  actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+- id: T-JCK3-02
+  rule_ref: JCK3-NULL-PRIMITIVES-001
+  given: Jackson 2 explicit FAIL_ON_NULL_FOR_PRIMITIVES=true, Jackson 3 default true
+  expected_assessment_or_observation: no new patch; source and target exception match
+  gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
+  actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+- id: T-JCK3-03
+  rule_ref: JCK3-NULL-PRIMITIVES-001
+  given: Jackson 2 default false; Jackson 3 self-constructed JsonMapper.builder().build(); spring.jackson.* set
+    for MVC
+  expected_assessment_or_observation: do not claim Boot property changes manual mapper; detect manual instance and
+    its null handling
+  gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
+  actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+- id: T-JCK3-04
+  rule_ref: JCK3-NULL-PRIMITIVES-001
+  given: Jackson 3 Spring-managed mapper is customized false via code despite library default true
+  expected_assessment_or_observation: resolve effective mapper false, do not add redundant property or overwrite
+    customizer
+  gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
+  actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+- id: T-JCK3-05
+  rule_ref: JCK3-NULL-PRIMITIVES-001
+  given: Spring profile production overrides false but local dev profile does not
+  expected_assessment_or_observation: compare effective feature separately per runtime profile; no global patch
+  gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
+  actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+- id: T-JCK3-06
+  rule_ref: JCK3-NULL-PRIMITIVES-001
+  given: source external configuration missing/unavailable and feature unknown
+  expected_assessment_or_observation: REVIEW_REQUIRED; never assume Jackson 2 default
+  gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
+  actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+- id: T-JCK3-07
+  rule_ref: JCK3-NULL-PRIMITIVES-001
+  given: deserialize {"count":null} to primitive int vs boxed Integer vs omitted count
+  expected_assessment_or_observation: distinguish explicit JSON null, missing properties, and boxed target types
+  gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
+  actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+- id: T-JCK3-08
+  rule_ref: JCK3-POJO-ORDER-002
+  given: POJO without order annotation; source raw byte snapshot order z,a; target JSON sorted a,z
+  expected_assessment_or_observation: if downstream byte-level contract verified, report difference and propose
+    minimum scoped remedy
+  gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
+  actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+- id: T-JCK3-09
+  rule_ref: JCK3-POJO-ORDER-002
+  given: POJO has explicit @JsonPropertyOrder("z","a")
+  expected_assessment_or_observation: preserve explicit order and do not unconditionally change global mapper sorting
+  gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
+  actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+- id: T-JCK3-10
+  rule_ref: JCK3-POJO-ORDER-002
+  given: Map<String,Object> entries ordered differently; POJO alphabetic feature
+  expected_assessment_or_observation: do NOT attribute Map key order to SORT_PROPERTIES_ALPHABETICALLY; verify ORDER_MAP_ENTRIES_BY_KEYS
+    separately
+  gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
+  actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+- id: T-JCK3-11
+  rule_ref: JCK3-POJO-ORDER-002
+  given: JSON consumer compares parsed object ignoring property order
+  expected_assessment_or_observation: no fix required solely for text ordering unless proven external contract
+  gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
+  actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+- id: T-JCK3-12
+  rule_ref: JCK3-MAPPER-TOPOLOGY-003
+  given: one @Bean JsonMapper + multiple new ObjectMapper() and JsonMapper.builder().build() callsites
+  expected_assessment_or_observation: inventory each mapper origin and downstream consumer; none implicitly inherits
+    spring.jackson.*
+  gate_policy: REVIEW_REQUIRED_WHEN_EFFECTIVE_MAPPER_UNKNOWN
+  actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+- id: T-JCK3-13
+  rule_ref: JCK3-MAPPER-TOPOLOGY-003
+  given: Spring Boot 4 classpath has both Jackson 2 ObjectMapper and Jackson 3 JsonMapper
+  expected_assessment_or_observation: record package and effective resolved version per instance; do not infer type
+    from simple class name
+  gate_policy: REVIEW_REQUIRED_WHEN_EFFECTIVE_MAPPER_UNKNOWN
+  actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+- id: T-JCK3-14
+  rule_ref: JCK3-MAPPER-TOPOLOGY-003
+  given: custom @Bean ObjectMapper declared in Boot 4 alongside auto-configured JsonMapper
+  expected_assessment_or_observation: verify which bean MVC actually uses; do not assume old ObjectMapper replaces
+    JSON mapper
+  gate_policy: REVIEW_REQUIRED_WHEN_EFFECTIVE_MAPPER_UNKNOWN
+  actual_result: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+- id: T-JCK3-15
+  rule_ref: JCK3-POJO-ORDER-002
+  given: Jackson 2 property sort explicitly true and Jackson 3 default true; same snapshots
+  expected_assessment_or_observation: no unnecessary sorting fix
+  gate_policy: FAIL_ON_UNEXPLAINED_DIFFERENCE
+  actual_result: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  automatic_patch_expected: false
+  evidence_required: EFFECTIVE_MAPPER_PROVENANCE_AND_SOURCE_BEHAVIOR
+evidence_policy: EVIDENCE-POLICY.md

@@ -1,3 +1,5 @@
+> **v0.5 policy notice:** 歷史描述僅作背景參考；規則分類、是否可以修正與 Java 版本政策，請以 `EVIDENCE-POLICY.md`、`catalog.json`、`rules/*.yaml` 為準。不可依舊版 `evidence_class` 判定可自動修復。
+
 # 架構中立需求增補 v0.2
 
 此文件延續 `reference-v0.1/REQUIREMENTS.md`，不修改既有 ID，新增：

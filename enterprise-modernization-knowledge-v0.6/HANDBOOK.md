@@ -1,3 +1,5 @@
+> **v0.5 policy notice:** 歷史描述僅作背景參考；規則分類、是否可以修正與 Java 版本政策，請以 `EVIDENCE-POLICY.md`、`catalog.json`、`rules/*.yaml` 為準。不可依舊版 `evidence_class` 判定可自動修復。
+
 # Spring Boot 3 → 4：相容性 Knowledge Pack v0.2
 
 > 2026-11-13。**架構中立的規格與待驗證候選規則，不是自動修改 Recipe 或已完成的測試結果。**

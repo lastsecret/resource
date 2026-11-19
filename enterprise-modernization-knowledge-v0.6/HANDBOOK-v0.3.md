@@ -1,3 +1,5 @@
+> **v0.5 policy notice:** 歷史描述僅作背景參考；規則分類、是否可以修正與 Java 版本政策，請以 `EVIDENCE-POLICY.md`、`catalog.json`、`rules/*.yaml` 為準。不可依舊版 `evidence_class` 判定可自動修復。
+
 # Spring Boot 3 → 4 Knowledge Pack v0.3 新增說明
 
 > 對應 Spring Boot 3.5.x → 4.0.x；Java 目標由每次 Migration Config 決定。既有 v0.2 文件原樣保留；本文件為新增規則索引與解讀重點。**規則文件不是已通過測試的遷移 Recipe。**
