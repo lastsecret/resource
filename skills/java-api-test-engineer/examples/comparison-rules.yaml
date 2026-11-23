@@ -1,0 +1,17 @@
+comparison:
+  mode: custom
+  headers_include: [content-type]
+  string_case_sensitive: true
+  array_order: preserve
+  strict_numeric_type: true
+  numeric_tolerance: 0
+  trim_string: false
+  unicode_normalization: none
+  null_missing_equal: false
+  null_empty_array_equal: false
+  ignore_paths: []
+  path_rules:
+    - path: $.message
+      string_case_sensitive: false
+    - path: $.data.items
+      array_order: ignore
