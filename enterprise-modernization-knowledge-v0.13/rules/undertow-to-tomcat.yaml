@@ -1,0 +1,484 @@
+schema_version: '0.5'
+knowledge_pack: spring-boot-3-to-4
+generated_on: '2026-11-13'
+scope: 3.5.x -> 4.0.x; resolve exact Hibernate / Boot dependencies
+rules:
+- id: WEB-UNDERTOW-001
+  title: Spring Boot 4 移除 Embedded Undertow
+  category: REMOVED_PLATFORM_SUPPORT
+  severity: HIGH
+  documented_change: Spring Boot 4 Servlet baseline 6.1；內嵌 Undertow Starter / 自動配置支援已移除。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - resolved runtime uses spring-boot-starter-undertow or io.undertow artifacts
+    - application is Servlet MVC or Servlet-based server
+  investigation:
+    must_resolve:
+    - actual embedded/external server
+    - POM exclusions and transitive server artifacts
+    - Undertow-only Java customizers / Handler / ServletExtension / XNIO
+    - deployment mode JAR or WAR
+    - Servlet 6.1 readiness
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - REPLACE_EMBEDDED_SERVER_WITH_TOMCAT_11
+  - EVALUATE_JETTY_12_1
+  - MANUAL_ARCHITECTURE_REVIEW
+  verification:
+    required:
+    - BOOT_STARTUP
+    - SERVLET_REGISTRATION
+    - HTTP_CONTRACT_DIFF
+    - SMOKE_TEST
+    - SECURITY_FILTER_CHAIN
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - BOOT4_MIGRATION
+  - BOOT4_REQUIREMENTS
+  - SPRING7_RELEASE
+  workflow_phase: PREFLIGHT
+  caveat: 選擇 Tomcat 是本專案建議路線，不是 Hibernate 或 Spring Boot 無條件要求；外部容器另行檢查。
+  migration_evidence_v0_5:
+    classification: BREAKING_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: BOOT4_MIGRATION
+        section: Features Removed from This Release / Undertow
+      - source_id: BOOT4_REQUIREMENTS
+        section: REVIEW_REQUIRED
+      - source_id: SPRING7_RELEASE
+        section: REVIEW_REQUIRED
+      note: 官方文件可作為遷移差異來源；仍須以實際有效設定／專案使用證據確認是否命中
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: DOCUMENTED_CHANGE
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: BREAKING_CHANGE
+  actionable: false
+- id: WEB-UNDERTOW-002
+  title: Undertow Worker / IO 設定不能直接換算成 Tomcat 執行緒
+  category: SERVER_CONCURRENCY_SEMANTICS
+  severity: HIGH
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - server.undertow.threads.worker or server.undertow.threads.io
+    - custom XNIO worker or UndertowBuilderCustomizer
+    - existing throughput/SLA requirement
+  investigation:
+    must_resolve:
+    - effective Undertow worker/io counts and blocking handlers
+    - sync HTTP wait, synchronized lock and @Transactional boundaries
+    - Tomcat threads.max/min-spare, max-connections, accept-count and executor
+    - CPU/quota/container memory
+    - virtual threads enabled or not
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - BASELINE_LOAD_PROFILE
+    - LOAD_SAME_TRAFFIC_MIX
+    - ACTIVE_THREADS_AND_QUEUE
+    - P95_P99
+    - REJECTION_RATE
+    - HEALTH_UNDER_OVERLOAD
+    - MEMORY_HEADROOM
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - BOOT35_PROPERTIES
+  - BOOT4_PROPERTIES
+  workflow_phase: PLAN
+  caveat: 不以 thread 數相等推定吞吐、記憶體或健康狀態相等。
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: BOOT35_PROPERTIES
+        section: REVIEW_REQUIRED
+      - source_id: BOOT4_PROPERTIES
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: ENGINEERING_RISK_TO_VALIDATE
+  legacy_unverified_claim_v0_4: Undertow 的 IO/Worker 模型與 Tomcat Connector / Executor
+    模型不同；設定鍵與資源行為不具一對一語意。
+  verification_rationale: NO_EXACT_VERSION_DELTA_ESTABLISHED
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: WEB-UNDERTOW-003
+  title: HTTP 請求解析與限制在換容器後需逐項檢查
+  category: HTTP_BEHAVIOR_RISK
+  severity: HIGH
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - Undertow request handling properties or custom handlers
+    - Servlet REST API endpoints
+  investigation:
+    must_resolve:
+    - effective proxy/ingress normalization
+    - server.max-http-request-header-size actual semantics
+    - URL encoded slash and semicolon handling
+    - max parameters/cookies/headers/form body
+    - forwarded headers and authentication filters
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - HTTP_BOUNDARY_GOLDENS
+    - ENCODED_PATH_QUERY
+    - OVERSIZED_HEADER
+    - OVERSIZED_BODY
+    - FORWARDED_HEADERS
+    - ERROR_STATUS_MAPPING
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - BOOT35_PROPERTIES
+  - BOOT4_PROPERTIES
+  workflow_phase: ASSESS
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: BOOT35_PROPERTIES
+        section: REVIEW_REQUIRED
+      - source_id: BOOT4_PROPERTIES
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: ENGINEERING_RISK_TO_VALIDATE
+  legacy_unverified_claim_v0_4: 兩種 Servlet 容器在 URI 編碼、encoded slash、Headers、Cookie、multipart、timeouts
+    等邊界行為可能不同。
+  verification_rationale: NO_EXACT_VERSION_DELTA_ESTABLISHED
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: WEB-UNDERTOW-004
+  title: Tomcat 11 Connector / graceful shutdown / health 壓測基準
+  category: OPERATIONAL_BEHAVIOR_RISK
+  severity: HIGH
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    source_component_version: resolve actual dependency
+    target_component_version: resolve actual dependency
+    requires:
+    - embedded Undertow replaced by Tomcat
+    - application uses health checks or ingress readiness
+  investigation:
+    must_resolve:
+    - actual liveness/readiness URLs and management port
+    - graceful shutdown / terminationGracePeriod
+    - keep-alive and connection-timeout
+    - worker saturation and actuator isolation
+    - GC and heap pressure
+    effective_configuration_policy: OBSERVE_EFFECTIVE_SOURCE_AND_TARGET; USE_VERSION_DEFAULTS_ONLY_WHEN_OVERRIDE_ABSENCE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - NO_CHANGE_WITHOUT_CONFIRMED_DELTA
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  verification:
+    required:
+    - HEALTH_REACHABLE_UNDER_LOAD
+    - GRACEFUL_SHUTDOWN_IN_FLIGHT
+    - KEEPALIVE_CONTRACT
+    - RESOURCE_BUDGET
+    pass_criteria: TARGET_MATCHES_MEASURED_SOURCE_CONTRACT_OR_APPROVED_DEVIATION
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - ASSUME_UNSEEN_CONFIG_IS_ABSENT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - BOOT4_MIGRATION
+  - BOOT4_PROPERTIES
+  workflow_phase: ASSESS
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: resolve actual dependency
+    target_version_scope: resolve actual dependency
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: BOOT4_MIGRATION
+        section: REVIEW_REQUIRED
+      - source_id: BOOT4_PROPERTIES
+        section: REVIEW_REQUIRED
+      note: 沒有已確認且精確對應本版本區間的通用 Breaking Change；保留受影響功能的回歸測試，不產生自動修正
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: false
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNCONFIRMED_BREAKING_CHANGE
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  legacy_evidence_class_v0_4: ENGINEERING_RISK_TO_VALIDATE
+  legacy_unverified_claim_v0_4: 更換容器後，健康檢查、連線重用、關閉時排空與過載行為須以同條件重測。
+  verification_rationale: NO_EXACT_VERSION_DELTA_ESTABLISHED
+  legacy_review_status_v0_4: OFFICIAL_RULE_WITH_PROJECT_SPECIFIC_VALIDATION_PENDING
+  rule_type: VALIDATION_ONLY
+  actionable: false
+- id: WEB-UNDERTOW-005
+  title: Undertow 專用設定轉移至 Tomcat 需要逐項核對語意
+  category: SERVER_CONFIGURATION_MIGRATION
+  severity: HIGH
+  documented_change: Spring Boot 4 不支援 embedded Undertow，server.undertow.* 不會設定新的
+    Tomcat 容器；部分名稱相似但語意不等價。
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires:
+    - actual embedded Undertow usage
+    - explicit server.undertow.* or Undertow customizations
+  investigation:
+    must_resolve:
+    - active Spring profile and effective Undertow configuration
+    - env/command line/Config Server overrides
+    - actual Tomcat target settings and potential conflicts
+    - Tomcat-specific Java customizers
+    - runtime source vs target HTTP behavior
+    effective_configuration_policy: STATIC_CANDIDATES_NOT_PROOF
+    unknown_policy: REVIEW_REQUIRED
+  candidate_decisions:
+  - SAME_PURPOSE_CANDIDATE_REVIEW
+  - MANUAL_REVIEW
+  - NO_CHANGE
+  verification:
+    required:
+    - APPROVED_CONVERSION_MAP
+    - TARGET_SERVER_START
+    - HTTP_CONTRACT_DIFF
+    - ACCESSLOG_DIFF
+    - CONFIG_EFFECTIVE_RUNTIME
+    pass_criteria: ACTUAL_SOURCE_TARGET_BEHAVIOR_MATCHES_OR_DEVIATION_APPROVED
+  prohibited:
+  - AUTO_COPY_SERVER_UNDERTOW_TO_TOMCAT
+  - ASSUME_MISSING_KEY_IS_DEFAULT
+  - AUTO_PATCH_WITHOUT_APPROVAL
+  sources:
+  - BOOT35_PROPERTIES
+  - BOOT4_PROPERTIES
+  - BOOT4_MIGRATION
+  workflow_phase: ASSESS
+  rule_type: BEHAVIOR_CHANGE
+  actionable: false
+  migration_evidence_v0_5:
+    classification: BEHAVIOR_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: 3.5.x embedded Undertow
+    target_version_scope: 4.0.x embedded Tomcat
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: BOOT35_PROPERTIES
+        section: server.undertow.*
+      - source_id: BOOT4_PROPERTIES
+        section: server.tomcat.*
+      - source_id: BOOT4_MIGRATION
+        section: Undertow removal
+      note: Only apply after embedded Undertow and effective per-source setting are
+        established
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+- id: WEB-UNDERTOW-006
+  title: Undertow 預設值和 Tomcat 預設值僅能做行為差異評估
+  category: SERVER_DEFAULT_COMPARISON
+  severity: MEDIUM
+  applicability:
+    source_spring_boot: 3.5.x
+    target_spring_boot: 4.0.x
+    requires:
+    - actual embedded Undertow usage
+  investigation:
+    must_resolve:
+    - documented default differs from effective runtime default
+    - server.max-http-request-header-size policy
+    - thread/connections/queue settings
+    - HTTP POST vs form post semantics
+    - access log filename defaults and log rotation
+  candidate_decisions:
+  - RUN_TARGETED_REGRESSION_CHECK
+  - REVIEW_IF_ACTUAL_BEHAVIOR_DIFFERS
+  - NO_CHANGE
+  verification:
+    required:
+    - EFFECTIVE_RUNTIME_CONFIG
+    - HTTP_LOAD_AND_SIZE_BOUNDARIES
+    - ACCESSLOG_FILENAME_DIFF
+    pass_criteria: ACTUAL_SOURCE_TARGET_BEHAVIOR_MATCHES_OR_DEVIATION_APPROVED
+  prohibited:
+  - AUTO_COPY_DEFAULTS
+  - INFER_DEFAULT_FROM_ABSENT_STATIC_PROPERTY
+  sources:
+  - BOOT35_PROPERTIES
+  - BOOT4_PROPERTIES
+  workflow_phase: VERIFY
+  rule_type: VALIDATION_ONLY
+  actionable: false
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VERIFICATION_CASE
+    source_version_scope: Spring Boot 3.5 embedded Undertow
+    target_version_scope: Spring Boot 4.0 embedded Tomcat
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: BOOT35_PROPERTIES
+        section: server.undertow.* defaults
+      - source_id: BOOT4_PROPERTIES
+        section: server.tomcat.* defaults
+      note: Default comparison is not proof of a regression; do not patch solely based
+        on the table.
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - FEATURE_PRESENT
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+evidence_policy: EVIDENCE-POLICY.md

@@ -1,0 +1,52 @@
+schema_version: '0.5'
+checked_on: '2026-11-25'
+rules:
+- component: HikariCP
+  source: 6.x
+  target: 7.x
+  dedicated_recipe:
+    status: NOT_FOUND_IN_REVIEWED_PUBLIC_CATALOG
+    recipe_id: null
+  generic_recipe: org.openrewrite.maven.UpgradeDependencyVersion
+  runtime_effect: DECLARATION_ONLY
+  usage: ONLY_IF_DIRECT_PIN_OR_APPROVED_OVERRIDE; PREFER_BOOT_BOM
+  can_auto_apply: false
+  sources:
+  - REWRITE_MAVEN_UPGRADE
+  - HIKARI_CHANGES
+- component: Oracle JDBC
+  source: 23.7.x
+  target: 23.9.x
+  dedicated_recipe:
+    status: NOT_FOUND_IN_REVIEWED_PUBLIC_CATALOG
+    recipe_id: null
+  generic_recipe: org.openrewrite.maven.UpgradeDependencyVersion
+  runtime_effect: DECLARATION_ONLY
+  usage: ONLY_IF_DIRECT_PIN_OR_APPROVED_OVERRIDE; PREFER_BOOT_OR_VENDOR_BOM
+  can_auto_apply: false
+  sources:
+  - REWRITE_MAVEN_UPGRADE
+  - ORACLE_JDBC_BOM
+- component: Spring Boot
+  source: 3.5.x
+  target: 4.0.x
+  dedicated_recipe:
+    status: DOCUMENTED
+    recipe_id: org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_0
+  usage: FIRST_VERIFY_INSTALLED_RECIPE_ARTIFACT_AND_NEXUS_ACCESS; INSPECT_RECIPE_CONTENT; DRY_RUN
+  can_auto_apply: false
+  sources:
+  - REWRITE_BOOT4
+- component: Spring Boot
+  source: 4.0.x
+  target: 4.1.x
+  dedicated_recipe:
+    status: VERIFY_INSTALLED_ARTIFACT_BEFORE_USE
+    recipe_id: org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_1
+    note: Documentation/catalog entries vary and may be edition-specific; inspect rewrite-spring local version and
+      `mvn rewrite:discover`, no assumed availability.
+  usage: NEVER ASSUME RECIPE IS COMPLETE OR THAT IT TARGETS EXACT 4.1.3
+  can_auto_apply: false
+  sources:
+  - https://docs.openrewrite.org/recipes/java/spring/boot4/
+  - https://github.com/openrewrite/rewrite-spring/issues

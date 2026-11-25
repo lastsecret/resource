@@ -1,0 +1,135 @@
+{
+  "version": "0.13",
+  "scanner_tests_passed": 193,
+  "summary_tests_passed": 7,
+  "total_tests_passed": 200,
+  "oracle_cases": 54,
+  "knowledge_rules": 100,
+  "migration_cases_not_run": 135,
+  "replays": [
+    {
+      "profile": "default",
+      "v012_actual": {
+        "coverage": {
+          "DETECTED": 51,
+          "NOT_DETECTED": 48,
+          "UNKNOWN": 0,
+          "NOT_EVALUATED": 0,
+          "NOT_APPLICABLE": 1
+        },
+        "oracle": {
+          "MET": 46,
+          "NOT_RUN_PROFILE": 2
+        }
+      },
+      "v013_partial_import_replay": {
+        "coverage": {
+          "DETECTED": 48,
+          "NOT_DETECTED": 48,
+          "UNKNOWN": 2,
+          "NOT_EVALUATED": 2,
+          "NOT_APPLICABLE": 0
+        },
+        "oracle": {
+          "MET": 47,
+          "NOT_RUN_PROFILE": 3,
+          "NOT_RUN_NO_CAPTURE_ATTESTATION": 4
+        },
+        "routes": {
+          "AGENT": 26,
+          "RUNTIME": 28,
+          "EVIDENCE": 55
+        },
+        "scope_attested": false,
+        "unchanged": true,
+        "canary_leak_files": []
+      }
+    },
+    {
+      "profile": "jooq-risk",
+      "v012_actual": {
+        "coverage": {
+          "DETECTED": 51,
+          "NOT_DETECTED": 48,
+          "UNKNOWN": 0,
+          "NOT_EVALUATED": 0,
+          "NOT_APPLICABLE": 1
+        },
+        "oracle": {
+          "MET": 46,
+          "NOT_RUN_PROFILE": 2
+        }
+      },
+      "v013_partial_import_replay": {
+        "coverage": {
+          "DETECTED": 48,
+          "NOT_DETECTED": 48,
+          "UNKNOWN": 2,
+          "NOT_EVALUATED": 2,
+          "NOT_APPLICABLE": 0
+        },
+        "oracle": {
+          "MET": 47,
+          "NOT_RUN_PROFILE": 3,
+          "NOT_RUN_NO_CAPTURE_ATTESTATION": 4
+        },
+        "routes": {
+          "AGENT": 26,
+          "RUNTIME": 29,
+          "EVIDENCE": 55
+        },
+        "scope_attested": false,
+        "unchanged": true,
+        "canary_leak_files": []
+      }
+    },
+    {
+      "profile": "hikari-regression",
+      "v012_actual": {
+        "coverage": {
+          "DETECTED": 52,
+          "NOT_DETECTED": 48,
+          "UNKNOWN": 0,
+          "NOT_EVALUATED": 0,
+          "NOT_APPLICABLE": 0
+        },
+        "oracle": {
+          "MET": 45,
+          "NOT_RUN_PROFILE": 3
+        }
+      },
+      "v013_partial_import_replay": {
+        "coverage": {
+          "DETECTED": 49,
+          "NOT_DETECTED": 48,
+          "UNKNOWN": 1,
+          "NOT_EVALUATED": 2,
+          "NOT_APPLICABLE": 0
+        },
+        "oracle": {
+          "MET": 47,
+          "NOT_RUN_PROFILE": 5,
+          "NOT_RUN_NO_CAPTURE_ATTESTATION": 2
+        },
+        "routes": {
+          "AGENT": 27,
+          "RUNTIME": 28,
+          "EVIDENCE": 54
+        },
+        "scope_attested": false,
+        "unchanged": true,
+        "canary_leak_files": []
+      }
+    }
+  ],
+  "handoff": {
+    "status": "TEMPLATE_ONLY_NOT_AGENT",
+    "submitted_pending_review": 2,
+    "unanswered_tasks": 107,
+    "batches_disjoint": true
+  },
+  "actual_maven": "NOT_RUN",
+  "actual_agent": "NOT_RUN",
+  "runtime": "NOT_RUN",
+  "benchmark": "NOT_RUN"
+}

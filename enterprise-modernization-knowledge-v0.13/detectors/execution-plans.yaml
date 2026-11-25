@@ -1,0 +1,1622 @@
+schema_version: '0.10'
+semantics: OR of candidate anchors; no candidate proves applicability, impact or compatibility.
+  Exact type attribution separate.
+rules:
+  HIB7-NATIVE-DATETIME-001:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  HIB7-ORACLE-DATE-002:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  HIB7-CASCADE-MAPSID-003:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  HIB7-DETACHED-004:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  HIB7-RAW-HQL-005:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.call
+      pattern: createQuery
+    - type: java.call
+      pattern: createSelectionQuery
+    - type: java.annotation
+      pattern: Query
+    - type: java.annotation
+      pattern: NamedQuery
+  HIB7-IMMUTABLE-006:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.annotation
+      pattern: Immutable
+    - type: java.call
+      pattern: executeUpdate
+    - type: java.call
+      pattern: createMutationQuery
+  HIB7-STATELESS-007:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.symbol
+      pattern: StatelessSession
+    - type: java.call
+      pattern: openStatelessSession
+  HIB7-API-REMOVAL-008:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.call
+      pattern: save
+    - type: java.call
+      pattern: update
+    - type: java.call
+      pattern: saveOrUpdate
+    - type: java.call
+      pattern: delete
+    - type: java.call
+      pattern: replicate
+  HIB7-ORACLE-DDL-009:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: ojdbc*
+    - type: java.symbol
+      pattern: OracleDialect
+    - type: config.key
+      pattern: spring.jpa.hibernate.ddl-auto
+    - type: config.key
+      pattern: hibernate.hbm2ddl.auto
+  HIB7-ARRAY-010:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: mysql-connector-j
+    - type: dependency.artifact
+      pattern: mariadb-java-client
+    - type: java.symbol
+      pattern: SqlTypes
+    - type: java.annotation
+      pattern: JdbcTypeCode
+  HIB7-CRITERIA-011:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.symbol
+      pattern: CriteriaBuilder
+    - type: java.symbol
+      pattern: CriteriaQuery
+    - type: java.symbol
+      pattern: Root
+    - type: java.call
+      pattern: treat
+  HIB7-VALIDATION-012:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: config.key
+      pattern: jakarta.persistence.validation.mode
+    - type: config.key
+      pattern: spring.jpa.properties.jakarta.persistence.validation.mode
+    - type: dependency.artifact
+      pattern: hibernate-validator
+  MYB4-STARTER-001:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: mybatis-spring-boot-starter
+    - type: dependency.artifact
+      pattern: mybatis-spring
+    - type: dependency.artifact
+      pattern: mybatis
+  MYB4-MAPPER-002:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  MYB4-HANDLER-003:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  MYB4-CONFIG-004:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: config.key
+      pattern: mybatis.*
+    - type: java.symbol
+      pattern: ConfigurationCustomizer
+    - type: java.symbol
+      pattern: SqlSessionFactoryBean
+  MYB4-MULTIDS-005:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  MYB4-BATCH-006:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.symbol
+      pattern: ExecutorType.BATCH
+    - type: java.call
+      pattern: flushStatements
+    - type: config.key
+      pattern: mybatis.executor-type
+  MYB4-SQL-007:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: xml.mybatis.element
+      pattern: if
+    - type: xml.mybatis.element
+      pattern: where
+    - type: xml.mybatis.element
+      pattern: foreach
+    - type: xml.mybatis.element
+      pattern: choose
+    - type: java.annotation
+      pattern: SelectProvider
+    - type: java.annotation
+      pattern: UpdateProvider
+    - type: java.symbol
+      pattern: StatementHandler
+    - type: java.symbol
+      pattern: Interceptor
+  MYB4-RESULT-008:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: xml.mybatis.element
+      pattern: resultMap
+    - type: xml.mybatis.element
+      pattern: result
+    - type: config.key
+      pattern: mybatis.configuration.map-underscore-to-camel-case
+    - type: config.key
+      pattern: mybatis.configuration.auto-mapping-behavior
+    - type: java.annotation
+      pattern: Results
+  MYB4-PLUS-009:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: mybatis-plus*
+  SB4-MODULAR-001:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: spring-boot-starter*
+    - type: dependency.artifact
+      pattern: spring-boot-autoconfigure
+  SB4-PACKAGE-002:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SB4-TEST-003:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: spring-boot-starter-test
+    - type: java.annotation
+      pattern: WebMvcTest
+    - type: java.annotation
+      pattern: DataJpaTest
+    - type: java.annotation
+      pattern: JsonTest
+    - type: java.annotation
+      pattern: RestClientTest
+  SB4-PROPERTIES-004:
+    execution_strategy:
+    - VERSIONED_CONFIGURATION_METADATA_DIFF
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SB4-JACKSON-MODULE-005:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.symbol
+      pattern: SimpleModule
+    - type: java.call
+      pattern: registerModule
+    - type: java.call
+      pattern: findAndRegisterModules
+    - type: java.annotation
+      pattern: JsonComponent
+    - type: java.symbol
+      pattern: Jackson2ObjectMapperBuilderCustomizer
+  SB4-JACKSON-API-006:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.import
+      pattern: com.fasterxml.jackson.databind.*
+    - type: java.import
+      pattern: org.springframework.boot.jackson.*
+    - type: java.import
+      pattern: org.springframework.boot.autoconfigure.jackson.*
+    - type: java.symbol
+      pattern: Jackson2ObjectMapperBuilderCustomizer
+  SB4-HTTP-CONVERTER-007:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.symbol
+      pattern: HttpMessageConverter
+    - type: java.symbol
+      pattern: MappingJackson2HttpMessageConverter
+    - type: java.call
+      pattern: configureMessageConverters
+    - type: java.call
+      pattern: extendMessageConverters
+  SB4-RESTCLIENT-008:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.symbol
+      pattern: RestTemplate
+    - type: java.symbol
+      pattern: RestClient
+    - type: java.symbol
+      pattern: RestTemplateBuilder
+    - type: java.symbol
+      pattern: RestClientBuilder
+  SB4-ACTUATOR-009:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: spring-boot-starter-actuator
+    - type: config.key
+      pattern: management.endpoint.health.*
+    - type: config.key
+      pattern: management.endpoints.*
+  SB4-ENTITYSCAN-010:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.import
+      pattern: org.springframework.boot.autoconfigure.domain.EntityScan
+    - type: java.annotation
+      pattern: EntityScan
+    - type: config.key
+      pattern: spring.dao.exceptiontranslation.enabled
+  SB4-SECURITY-011:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: spring-boot-starter-security
+    - type: java.symbol
+      pattern: SecurityJackson2Modules
+    - type: java.symbol
+      pattern: SecurityFilterChain
+  SB4-SESSION-012:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: spring-session-data-redis
+    - type: config.key
+      pattern: spring.session.redis.*
+  SB4-SERVLET-013:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: jakarta.servlet-api
+    - type: dependency.artifact
+      pattern: javax.servlet-api
+    - type: java.import
+      pattern: jakarta.servlet.*
+    - type: java.import
+      pattern: javax.servlet.*
+  SB4-TOMCAT-WAR-014:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: spring-boot-starter-tomcat
+    - type: dependency.artifact
+      pattern: spring-boot-starter-tomcat-runtime
+    - type: java.symbol
+      pattern: SpringBootServletInitializer
+    - type: file.name
+      pattern: web.xml
+  ECO4-SPRINGDOC-001:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: springdoc-openapi*
+  ECO4-SPRINGDOC-002:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.symbol
+      pattern: OpenApiCustomizer
+    - type: java.symbol
+      pattern: GroupedOpenApi
+    - type: java.annotation
+      pattern: SecurityScheme
+    - type: java.symbol
+      pattern: HttpMessageConverter
+  ECO4-CLOUD-003:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: spring-cloud-*
+  ECO4-CLOUD-004:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.annotation
+      pattern: FeignClient
+    - type: java.symbol
+      pattern: DiscoveryClient
+    - type: config.key
+      pattern: spring.cloud.*
+    - type: config.key
+      pattern: spring.config.import
+  ECO4-BATCH-005:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: spring-boot-starter-batch
+    - type: java.symbol
+      pattern: JdbcJobRepository
+    - type: java.symbol
+      pattern: JobExplorer
+  ECO4-BATCH-006:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.symbol
+      pattern: ItemReader
+    - type: java.symbol
+      pattern: ItemWriter
+    - type: java.symbol
+      pattern: StepBuilder
+    - type: java.symbol
+      pattern: ExecutionContext
+    - type: java.symbol
+      pattern: JobRepository
+  ECO4-REDIS-007:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: spring-session-data-redis
+    - type: java.symbol
+      pattern: RedisIndexedSessionRepository
+    - type: java.symbol
+      pattern: RedisSerializer
+  ECO4-REDIS-008:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.symbol
+      pattern: RedisTemplate
+    - type: java.symbol
+      pattern: StringRedisTemplate
+    - type: java.symbol
+      pattern: RedisCacheManager
+    - type: java.symbol
+      pattern: RedisLockRegistry
+    - type: java.symbol
+      pattern: Redisson
+  ECO4-GRAPHQL-009:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: file.name
+      pattern: '*.graphqls'
+    - type: file.name
+      pattern: '*.gqls'
+    - type: java.annotation
+      pattern: Argument
+    - type: java.symbol
+      pattern: RuntimeWiringConfigurer
+  ECO4-VALIDATION-010:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: spring-boot-starter-validation
+    - type: java.annotation
+      pattern: Valid
+    - type: java.annotation
+      pattern: Validated
+    - type: java.symbol
+      pattern: ConstraintValidator
+  ECO4-OBSERV-011:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: micrometer-tracing*
+    - type: java.symbol
+      pattern: ObservationRegistry
+    - type: java.symbol
+      pattern: Tracer
+    - type: java.symbol
+      pattern: MDC
+  ECO4-TEST-012:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.annotation
+      pattern: SpringBootTest
+    - type: java.annotation
+      pattern: AutoConfigureMockMvc
+    - type: java.symbol
+      pattern: MockMvc
+  SEC7-DSL-001:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SEC7-ACCESS-002:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SEC7-MATCHER-003:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.call
+      pattern: requestMatchers
+    - type: java.call
+      pattern: securityMatcher
+    - type: java.call
+      pattern: shouldFilterAllDispatcherTypes
+    - type: java.call
+      pattern: dispatcherTypeMatchers
+  SEC7-METHOD-004:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.annotation
+      pattern: PreAuthorize
+    - type: java.annotation
+      pattern: PostAuthorize
+    - type: java.symbol
+      pattern: AuthorizationAdvisorProxyFactory
+  SEC7-JACKSON-005:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.symbol
+      pattern: SecurityJackson2Modules
+    - type: java.symbol
+      pattern: SecurityJacksonModules
+    - type: java.symbol
+      pattern: SecurityJackson2Module
+  SEC7-JWT-006:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.symbol
+      pattern: NimbusJwtDecoder
+    - type: java.symbol
+      pattern: JwtValidators
+    - type: java.symbol
+      pattern: JwtTypeValidator
+    - type: java.call
+      pattern: validateTypes
+    - type: java.call
+      pattern: jwtProcessorCustomizer
+  SEC7-JWK-007:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.symbol
+      pattern: NimbusJwtDecoder
+    - type: java.call
+      pattern: withIssuerLocation
+    - type: java.call
+      pattern: withJwkSetUri
+    - type: config.key
+      pattern: spring.security.oauth2.resourceserver.jwt.*
+  SEC7-OPAQUE-008:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.call
+      pattern: introspectionClientCredentials
+    - type: java.symbol
+      pattern: OpaqueTokenIntrospector
+    - type: java.symbol
+      pattern: SpringOpaqueTokenIntrospector
+    - type: config.key
+      pattern: spring.security.oauth2.resourceserver.opaquetoken.*
+  SEC7-CONTEXT-009:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.symbol
+      pattern: OncePerRequestFilter
+    - type: java.symbol
+      pattern: SecurityContextHolder
+    - type: java.symbol
+      pattern: SecurityContextRepository
+    - type: java.call
+      pattern: saveContext
+  SEC7-CSRF-010:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.call
+      pattern: csrf
+    - type: java.call
+      pattern: cors
+    - type: java.call
+      pattern: sessionManagement
+    - type: java.symbol
+      pattern: CookieCsrfTokenRepository
+    - type: config.key
+      pattern: server.servlet.session.cookie.*
+  SEC7-TEST-011:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: spring-security-test
+    - type: dependency.artifact
+      pattern: spring-boot-starter-security-test
+    - type: java.annotation
+      pattern: WithMockUser
+    - type: java.symbol
+      pattern: MockMvc
+  SEC7-AUTHZSRV-012:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: spring-security-oauth2-authorization-server
+    - type: java.symbol
+      pattern: OAuth2AuthorizationService
+    - type: java.symbol
+      pattern: JdbcOAuth2AuthorizationService
+  WEB-UNDERTOW-001:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  WEB-UNDERTOW-002:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  WEB-UNDERTOW-003:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: config.key
+      pattern: server.undertow.*
+    - type: config.key
+      pattern: server.max-http-request-header-size
+    - type: config.key
+      pattern: server.forward-headers-strategy
+    - type: java.symbol
+      pattern: UndertowBuilderCustomizer
+  WEB-UNDERTOW-004:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: spring-boot-starter-undertow
+    - type: config.key
+      pattern: server.shutdown
+    - type: config.key
+      pattern: spring.lifecycle.timeout-per-shutdown-phase
+    - type: config.key
+      pattern: server.undertow.threads.*
+  HCP7-SCHEMA-001:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  HCP7-CONFIG-002:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: config.key
+      pattern: spring.datasource.hikari.*
+    - type: java.symbol
+      pattern: HikariConfig
+    - type: java.symbol
+      pattern: HikariDataSource
+  HCP7-STARTUP-003:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: config.key
+      pattern: spring.datasource.hikari.initialization-fail-timeout
+    - type: java.symbol
+      pattern: HikariDataSource
+    - type: java.call
+      pattern: setInitializationFailTimeout
+  HCP7-TXN-004:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: config.key
+      pattern: spring.datasource.hikari.connection-init-sql
+    - type: config.key
+      pattern: spring.datasource.hikari.auto-commit
+    - type: config.key
+      pattern: spring.datasource.hikari.transaction-isolation
+    - type: java.call
+      pattern: setAutoCommit
+    - type: java.call
+      pattern: setTransactionIsolation
+    - type: java.call
+      pattern: setConnectionInitSql
+  HCP7-METRICS-005:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: config.key
+      pattern: spring.datasource.hikari.leak-detection-threshold
+    - type: config.key
+      pattern: spring.datasource.hikari.register-mbeans
+    - type: java.call
+      pattern: setMetricRegistry
+    - type: java.call
+      pattern: setLeakDetectionThreshold
+    - type: java.call
+      pattern: setRegisterMbeans
+  HCP7-LOAD-006:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: config.key
+      pattern: spring.datasource.hikari.maximum-pool-size
+    - type: config.key
+      pattern: spring.datasource.hikari.minimum-idle
+    - type: java.call
+      pattern: setMaximumPoolSize
+    - type: java.call
+      pattern: setMinimumIdle
+  OJDBC239-ARTIFACT-001:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: ojdbc*
+    - type: java.import
+      pattern: oracle.jdbc.*
+  OJDBC239-DB-002:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: ojdbc*
+    - type: java.symbol
+      pattern: OracleDataSource
+  OJDBC239-DATETIME-003:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  OJDBC239-GETOBJECT-004:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.call
+      pattern: getObject
+    - type: java.call
+      pattern: getDate
+    - type: java.call
+      pattern: getTimestamp
+  OJDBC239-NULL-005:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.call
+      pattern: setNull
+    - type: java.call
+      pattern: getBigDecimal
+    - type: java.call
+      pattern: getClob
+    - type: java.call
+      pattern: getBlob
+  OJDBC239-BATCH-006:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: java.call
+      pattern: addBatch
+    - type: java.call
+      pattern: executeBatch
+    - type: java.call
+      pattern: setFetchSize
+  OJDBC239-RAC-007:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: ucp*
+    - type: dependency.artifact
+      pattern: oraclepki
+    - type: java.symbol
+      pattern: PoolDataSource
+    - type: java.symbol
+      pattern: OracleDataSource
+    - type: config.key
+      pattern: oracle.net.*
+  OJDBC239-COMPANION-008:
+    execution_strategy:
+    - DECLARATIVE_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+    match_any:
+    - type: dependency.artifact
+      pattern: oraclepki
+    - type: dependency.artifact
+      pattern: osdt_core
+    - type: dependency.artifact
+      pattern: osdt_cert
+    - type: dependency.artifact
+      pattern: ojdbc-bom
+    - type: dependency.artifact
+      pattern: ucp*
+  JCK3-NULL-PRIMITIVES-001:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  JCK3-POJO-ORDER-002:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  JCK3-MAPPER-TOPOLOGY-003:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  WEB-UNDERTOW-005:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  WEB-UNDERTOW-006:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SB41-DEPRECATED-001:
+    execution_strategy:
+    - JAR_API_DIFF_AND_REFERENCE_SEARCH
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SB41-LAYERTOOLS-002:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SB41-TESTAOT-003:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SB41-JPA-DEFERRED-004:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SB41-JPA-LAZY-005:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SB41-TOMCAT-TMP-006:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SB41-REACTOR-PROXY-007:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SB41-JOOQ-JDK-008:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SB41-JACKSON-HANDLER-009:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SB41-GRADLE-BUILDINFO-010:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  SB41-DEPENDENCY-BOM-011:
+    execution_strategy:
+    - VERIFIED_DEPENDENCY_GRAPH_DIFF
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  HIB71-LOCKOPTIONS-001:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  HIB72-REGISTRY-001:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  HIB73-COLUMNS-001:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - API_OR_BUILD_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  HIB73-SINGLE-RESULT-002:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  HIB73-SCHEMA-003:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  HIB74-ORACLE-DATE-001:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION
+  JCK31-NULLNODE-001:
+    execution_strategy:
+    - LEGACY_CANDIDATE_DETECTOR
+    - RUNTIME_OR_CONTRACT_VERIFICATION
+    candidate_only: true
+    decision: REVIEW_REQUIRED
+    fallback: AGENT_INVESTIGATION
+    required_evidence:
+    - RESOLVED_COMPONENT_PAIR
+    - PROJECT_FEATURE_AND_SCOPE
+    - RULE_SPECIFIC_VERIFICATION

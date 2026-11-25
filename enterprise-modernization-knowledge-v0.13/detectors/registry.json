@@ -1,0 +1,1178 @@
+{
+  "schema_version": "0.9",
+  "rules": {
+    "HIB7-NATIVE-DATETIME-001": {
+      "detector": "text",
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      },
+      "regex": "createNativeQuery\\s*\\(|nativeQuery\\s*=\\s*true",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "HIB7-ORACLE-DATE-002": {
+      "detector": "text",
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      },
+      "regex": "\\bLocalDate(?:Time)?\\b",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "HIB7-CASCADE-MAPSID-003": {
+      "detector": "text",
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      },
+      "regex": "@MapsId\\b",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "HIB7-DETACHED-004": {
+      "detector": "text",
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      },
+      "regex": "\\.(?:refresh|lock)\\s*\\(",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "HIB7-RAW-HQL-005": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HIB7-IMMUTABLE-006": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HIB7-STATELESS-007": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HIB7-API-REMOVAL-008": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HIB7-ORACLE-DDL-009": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HIB7-ARRAY-010": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HIB7-CRITERIA-011": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HIB7-VALIDATION-012": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "MYB4-STARTER-001": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "target_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "crosses": "4.0",
+        "source_min": "3.0",
+        "target_max_exclusive": "5.0"
+      }
+    },
+    "MYB4-MAPPER-002": {
+      "detector": "text",
+      "component": {
+        "source_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "target_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "crosses": "4.0",
+        "source_min": "3.0",
+        "target_max_exclusive": "5.0"
+      },
+      "regex": "@MapperScan\\b|<mapper\\b",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "MYB4-HANDLER-003": {
+      "detector": "text",
+      "component": {
+        "source_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "target_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "crosses": "4.0",
+        "source_min": "3.0",
+        "target_max_exclusive": "5.0"
+      },
+      "regex": "\\b(?:TypeHandler|BaseTypeHandler)\\b",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "MYB4-CONFIG-004": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "target_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "crosses": "4.0",
+        "source_min": "3.0",
+        "target_max_exclusive": "5.0"
+      }
+    },
+    "MYB4-MULTIDS-005": {
+      "detector": "text",
+      "component": {
+        "source_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "target_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "crosses": "4.0",
+        "source_min": "3.0",
+        "target_max_exclusive": "5.0"
+      },
+      "regex": "\\bSqlSessionFactory\\b",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "MYB4-BATCH-006": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "target_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "crosses": "4.0",
+        "source_min": "3.0",
+        "target_max_exclusive": "5.0"
+      }
+    },
+    "MYB4-SQL-007": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "target_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "crosses": "4.0",
+        "source_min": "3.0",
+        "target_max_exclusive": "5.0"
+      }
+    },
+    "MYB4-RESULT-008": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "target_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "crosses": "4.0",
+        "source_min": "3.0",
+        "target_max_exclusive": "5.0"
+      }
+    },
+    "MYB4-PLUS-009": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "target_ga": [
+          "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+        ],
+        "crosses": "4.0",
+        "source_min": "3.0",
+        "target_max_exclusive": "5.0"
+      }
+    },
+    "SB4-MODULAR-001": {
+      "detector": "none"
+    },
+    "SB4-PACKAGE-002": {
+      "detector": "text",
+      "regex": "\\bimport\\s+org\\.springframework\\.boot\\.autoconfigure\\.",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "SB4-TEST-003": {
+      "detector": "none"
+    },
+    "SB4-PROPERTIES-004": {
+      "detector": "none"
+    },
+    "SB4-JACKSON-MODULE-005": {
+      "detector": "none"
+    },
+    "SB4-JACKSON-API-006": {
+      "detector": "none"
+    },
+    "SB4-HTTP-CONVERTER-007": {
+      "detector": "none"
+    },
+    "SB4-RESTCLIENT-008": {
+      "detector": "none"
+    },
+    "SB4-ACTUATOR-009": {
+      "detector": "none"
+    },
+    "SB4-ENTITYSCAN-010": {
+      "detector": "none"
+    },
+    "SB4-SECURITY-011": {
+      "detector": "none"
+    },
+    "SB4-SESSION-012": {
+      "detector": "none"
+    },
+    "SB4-SERVLET-013": {
+      "detector": "none"
+    },
+    "SB4-TOMCAT-WAR-014": {
+      "detector": "none"
+    },
+    "ECO4-SPRINGDOC-001": {
+      "detector": "none"
+    },
+    "ECO4-SPRINGDOC-002": {
+      "detector": "none"
+    },
+    "ECO4-CLOUD-003": {
+      "detector": "none"
+    },
+    "ECO4-CLOUD-004": {
+      "detector": "none"
+    },
+    "ECO4-BATCH-005": {
+      "detector": "none"
+    },
+    "ECO4-BATCH-006": {
+      "detector": "none"
+    },
+    "ECO4-REDIS-007": {
+      "detector": "none"
+    },
+    "ECO4-REDIS-008": {
+      "detector": "none"
+    },
+    "ECO4-GRAPHQL-009": {
+      "detector": "none"
+    },
+    "ECO4-VALIDATION-010": {
+      "detector": "none"
+    },
+    "ECO4-OBSERV-011": {
+      "detector": "none"
+    },
+    "ECO4-TEST-012": {
+      "detector": "none"
+    },
+    "SEC7-DSL-001": {
+      "detector": "text",
+      "component": {
+        "source_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "target_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      },
+      "regex": "\\.and\\s*\\(|\\.authorizeRequests\\s*\\(",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "SEC7-ACCESS-002": {
+      "detector": "text",
+      "component": {
+        "source_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "target_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      },
+      "regex": "\\bAccessDecision(?:Manager|Voter)\\b",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "SEC7-MATCHER-003": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "target_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "SEC7-METHOD-004": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "target_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "SEC7-JACKSON-005": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "target_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "SEC7-JWT-006": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "target_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "SEC7-JWK-007": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "target_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "SEC7-OPAQUE-008": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "target_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "SEC7-CONTEXT-009": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "target_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "SEC7-CSRF-010": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "target_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "SEC7-TEST-011": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "target_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "SEC7-AUTHZSRV-012": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "target_ga": [
+          "org.springframework.security:spring-security-core"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "WEB-UNDERTOW-001": {
+      "detector": "legacy"
+    },
+    "WEB-UNDERTOW-002": {
+      "detector": "text",
+      "regex": "server\\.undertow\\.|UndertowBuilderCustomizer",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "WEB-UNDERTOW-003": {
+      "detector": "none"
+    },
+    "WEB-UNDERTOW-004": {
+      "detector": "none"
+    },
+    "HCP7-SCHEMA-001": {
+      "detector": "text",
+      "component": {
+        "source_ga": [
+          "com.zaxxer:HikariCP"
+        ],
+        "target_ga": [
+          "com.zaxxer:HikariCP"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0",
+        "exact_target": "7.0.0"
+      },
+      "regex": "\\bsetSchema\\s*\\(|spring\\.datasource\\.hikari\\.schema",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "HCP7-CONFIG-002": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "com.zaxxer:HikariCP"
+        ],
+        "target_ga": [
+          "com.zaxxer:HikariCP"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HCP7-STARTUP-003": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "com.zaxxer:HikariCP"
+        ],
+        "target_ga": [
+          "com.zaxxer:HikariCP"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HCP7-TXN-004": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "com.zaxxer:HikariCP"
+        ],
+        "target_ga": [
+          "com.zaxxer:HikariCP"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HCP7-METRICS-005": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "com.zaxxer:HikariCP"
+        ],
+        "target_ga": [
+          "com.zaxxer:HikariCP"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HCP7-LOAD-006": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "com.zaxxer:HikariCP"
+        ],
+        "target_ga": [
+          "com.zaxxer:HikariCP"
+        ],
+        "crosses": "7.0",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "OJDBC239-ARTIFACT-001": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "target_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "crosses": "23.9",
+        "source_min": "23.7",
+        "target_max_exclusive": "23.10"
+      }
+    },
+    "OJDBC239-DB-002": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "target_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "crosses": "23.9",
+        "source_min": "23.7",
+        "target_max_exclusive": "23.10"
+      }
+    },
+    "OJDBC239-DATETIME-003": {
+      "detector": "text",
+      "component": {
+        "source_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "target_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "crosses": "23.9",
+        "source_min": "23.7",
+        "target_max_exclusive": "23.10"
+      },
+      "regex": "\\b(?:getDate|getTimestamp|LocalDateTime)\\b",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "OJDBC239-GETOBJECT-004": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "target_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "crosses": "23.9",
+        "source_min": "23.7",
+        "target_max_exclusive": "23.10"
+      }
+    },
+    "OJDBC239-NULL-005": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "target_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "crosses": "23.9",
+        "source_min": "23.7",
+        "target_max_exclusive": "23.10"
+      }
+    },
+    "OJDBC239-BATCH-006": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "target_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "crosses": "23.9",
+        "source_min": "23.7",
+        "target_max_exclusive": "23.10"
+      }
+    },
+    "OJDBC239-RAC-007": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "target_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "crosses": "23.9",
+        "source_min": "23.7",
+        "target_max_exclusive": "23.10"
+      }
+    },
+    "OJDBC239-COMPANION-008": {
+      "detector": "none",
+      "component": {
+        "source_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "target_ga": [
+          "com.oracle.database.jdbc:ojdbc11",
+          "com.oracle.database.jdbc:ojdbc17",
+          "com.oracle.database.jdbc:ojdbc8"
+        ],
+        "crosses": "23.9",
+        "source_min": "23.7",
+        "target_max_exclusive": "23.10"
+      }
+    },
+    "JCK3-NULL-PRIMITIVES-001": {
+      "detector": "text",
+      "component": {
+        "source_ga": [
+          "com.fasterxml.jackson.core:jackson-databind"
+        ],
+        "target_ga": [
+          "tools.jackson.core:jackson-databind"
+        ],
+        "crosses": "3.0",
+        "source_min": "2.0",
+        "target_max_exclusive": "4.0"
+      },
+      "regex": "FAIL_ON_NULL_FOR_PRIMITIVES|fail-on-null-for-primitives|\\breadValue\\s*\\(|\\breadTree\\s*\\(",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "JCK3-POJO-ORDER-002": {
+      "detector": "text",
+      "component": {
+        "source_ga": [
+          "com.fasterxml.jackson.core:jackson-databind"
+        ],
+        "target_ga": [
+          "tools.jackson.core:jackson-databind"
+        ],
+        "crosses": "3.0",
+        "source_min": "2.0",
+        "target_max_exclusive": "4.0"
+      },
+      "regex": "SORT_PROPERTIES_ALPHABETICALLY|sort-properties-alphabetically|JsonPropertyOrder|\\bwriteValueAsString\\s*\\(",
+      "suffixes": [
+        ".java",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml",
+        ".kt"
+      ]
+    },
+    "JCK3-MAPPER-TOPOLOGY-003": {
+      "detector": "legacy",
+      "component": {
+        "source_ga": [
+          "com.fasterxml.jackson.core:jackson-databind"
+        ],
+        "target_ga": [
+          "tools.jackson.core:jackson-databind"
+        ],
+        "crosses": "3.0",
+        "source_min": "2.0",
+        "target_max_exclusive": "4.0"
+      }
+    },
+    "WEB-UNDERTOW-005": {
+      "detector": "legacy"
+    },
+    "WEB-UNDERTOW-006": {
+      "detector": "legacy"
+    },
+    "SB41-DEPRECATED-001": {
+      "detector": "none"
+    },
+    "SB41-LAYERTOOLS-002": {
+      "detector": "boot41"
+    },
+    "SB41-TESTAOT-003": {
+      "detector": "boot41"
+    },
+    "SB41-JPA-DEFERRED-004": {
+      "detector": "boot41"
+    },
+    "SB41-JPA-LAZY-005": {
+      "detector": "boot41"
+    },
+    "SB41-TOMCAT-TMP-006": {
+      "detector": "boot41"
+    },
+    "SB41-REACTOR-PROXY-007": {
+      "detector": "boot41"
+    },
+    "SB41-JOOQ-JDK-008": {
+      "detector": "boot41"
+    },
+    "SB41-JACKSON-HANDLER-009": {
+      "detector": "boot41",
+      "component": {
+        "source_ga": [
+          "com.fasterxml.jackson.core:jackson-databind",
+          "tools.jackson.core:jackson-databind"
+        ],
+        "target_ga": [
+          "tools.jackson.core:jackson-databind"
+        ],
+        "crosses": "3.1",
+        "source_min": "2.0",
+        "target_max_exclusive": "4.0",
+        "target_presence_only": true,
+        "requires_boot_route": true
+      }
+    },
+    "SB41-GRADLE-BUILDINFO-010": {
+      "detector": "boot41"
+    },
+    "SB41-DEPENDENCY-BOM-011": {
+      "detector": "none"
+    },
+    "HIB71-LOCKOPTIONS-001": {
+      "detector": "text",
+      "regex": "LockOptions",
+      "suffixes": [
+        ".java",
+        ".kt",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml"
+      ],
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.1",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HIB72-REGISTRY-001": {
+      "detector": "text",
+      "regex": "TypeConfiguration|JavaTypeRegistry|BasicTypeRegistry",
+      "suffixes": [
+        ".java",
+        ".kt",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml"
+      ],
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.2",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HIB73-COLUMNS-001": {
+      "detector": "text",
+      "regex": "org\\.hibernate\\.annotations\\.Columns|@Columns\\b",
+      "suffixes": [
+        ".java",
+        ".kt",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml"
+      ],
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.3",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HIB73-SINGLE-RESULT-002": {
+      "detector": "text",
+      "regex": "getSingleResult(?:OrNull)?\\s*\\(",
+      "suffixes": [
+        ".java",
+        ".kt",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml"
+      ],
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.3",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HIB73-SCHEMA-003": {
+      "detector": "text",
+      "regex": "hbm2ddl|schema-generation|ddl-auto",
+      "suffixes": [
+        ".java",
+        ".kt",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml"
+      ],
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.3",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "HIB74-ORACLE-DATE-001": {
+      "detector": "text",
+      "regex": "(?:current|local)\\s+date",
+      "suffixes": [
+        ".java",
+        ".kt",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml"
+      ],
+      "component": {
+        "source_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "target_ga": [
+          "org.hibernate.orm:hibernate-core"
+        ],
+        "crosses": "7.4",
+        "source_min": "6.0",
+        "target_max_exclusive": "8.0"
+      }
+    },
+    "JCK31-NULLNODE-001": {
+      "detector": "text",
+      "regex": "\\.as(?:Int|Long|Double|Boolean|String)(?:Opt)?\\s*\\(",
+      "suffixes": [
+        ".java",
+        ".kt",
+        ".xml",
+        ".properties",
+        ".yaml",
+        ".yml"
+      ],
+      "component": {
+        "source_ga": [
+          "com.fasterxml.jackson.core:jackson-databind",
+          "tools.jackson.core:jackson-databind"
+        ],
+        "target_ga": [
+          "tools.jackson.core:jackson-databind"
+        ],
+        "crosses": "3.1",
+        "source_min": "2.0",
+        "target_max_exclusive": "4.0"
+      }
+    }
+  }
+}

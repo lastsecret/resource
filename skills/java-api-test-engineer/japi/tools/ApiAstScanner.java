@@ -65,65 +65,149 @@ public class ApiAstScanner {
     if(t.startsWith("Map<"))return "object";
     return "unknown";
   }
-  static class Scanner extends TreePathScanner<Void,Void>{
-    final CompilationUnitTree unit; final Path file; final String root;
-    final List<Object> endpoints;final Map<String,Object> classes;
-    String base=""; boolean controller=false;
-    Scanner(CompilationUnitTree unit,Path file,String root,List<Object> endpoints,Map<String,Object> classes) {
-      this.unit=unit;this.file=file;this.root=root;this.endpoints=endpoints;this.classes=classes;
+  static class TypeInfo {
+    final CompilationUnitTree unit; final ClassTree tree; final String name; final String source;
+    TypeInfo(CompilationUnitTree unit, ClassTree tree, String name, String source) {
+      this.unit=unit; this.tree=tree; this.name=name; this.source=source;
     }
-    @Override public Void visitClass(ClassTree cl,Void v){
-      String prior=base;boolean priorC=controller;
-      List<? extends AnnotationTree> annotations=cl.getModifiers().getAnnotations();
-      controller=annotations.stream().anyMatch(a->Set.of("RestController","Controller").contains(annName(a)));
-      base="";
-      for(AnnotationTree a:annotations) if(annName(a).equals("RequestMapping"))base=annotationValue(a);
-      String cls=cl.getSimpleName().toString();
-      Map<String,Object> fields=new LinkedHashMap<>();
-      for(Tree member:cl.getMembers())if(member instanceof VariableTree field){
-        if(field.getModifiers().getFlags().contains(javax.lang.model.element.Modifier.STATIC))continue;
-        if(field.getType()!=null)fields.put(field.getName().toString(),field.getType().toString());
-      }
-      if(!fields.isEmpty())classes.put(cls,fields);
-      super.visitClass(cl,v);
-      base=prior;controller=priorC;
+  }
+  static final Map<String,TypeInfo> types=new LinkedHashMap<>();
+  static final List<Object> hierarchyIssues=new ArrayList<>();
+  static TypeInfo resolve(String name, TypeInfo owner) {
+    if(name.contains("<")) {
+      hierarchyIssues.add("Generic controller hierarchy is not resolved: "+owner.name+" -> "+name);
       return null;
     }
-    @Override public Void visitMethod(MethodTree method,Void v){
-      String http=null,path="";
-      for(AnnotationTree a:method.getModifiers().getAnnotations()){
-        String n=annName(a);
-        if(n.endsWith("Mapping")&&n.length()>7){
-          http=n.substring(0,n.length()-7).toUpperCase(Locale.ROOT);path=annotationValue(a);break;
-        }
-        if(n.equals("RequestMapping")){
-          String m=annAttrs(a).getOrDefault("method","").toUpperCase(Locale.ROOT);
-          for(String k:List.of("GET","POST","PUT","PATCH","DELETE","HEAD","OPTIONS"))if(m.contains(k)){http=k;break;}
-          path=annotationValue(a);
-        }
+    if(types.containsKey(name)) return types.get(name);
+    String pkg=owner.unit.getPackageName()==null?"":owner.unit.getPackageName().toString();
+    for(ImportTree imp:owner.unit.getImports()) {
+      if(imp.isStatic())continue;
+      String imported=imp.getQualifiedIdentifier().toString();
+      if(imported.endsWith("."+name)&&types.containsKey(imported))return types.get(imported);
+    }
+    String local=pkg.isEmpty()?name:pkg+"."+name;
+    if(types.containsKey(local))return types.get(local);
+    List<TypeInfo> candidates=new ArrayList<>();
+    for(ImportTree imp:owner.unit.getImports()) {
+      String imported=imp.getQualifiedIdentifier().toString();
+      if(!imp.isStatic()&&imported.endsWith(".*")) {
+        TypeInfo t=types.get(imported.substring(0,imported.length()-1)+name);
+        if(t!=null)candidates.add(t);
       }
-      if(controller&&http!=null){
-        List<Object> params=new ArrayList<>();String bodyType=null;
-        for(VariableTree p:method.getParameters()){
-          String location=null,pname=p.getName().toString();
-          for(AnnotationTree a:p.getModifiers().getAnnotations()){
-            String n=annName(a);
-            if(n.equals("RequestBody"))bodyType=p.getType().toString();
-            if(n.equals("PathVariable"))location="path";
-            if(n.equals("RequestParam"))location="query";
-            if(n.equals("RequestHeader"))location="header";
-            if(location!=null&&!annotationValue(a).isBlank())pname=annotationValue(a);
+    }
+    if(candidates.size()==1)return candidates.get(0);
+    hierarchyIssues.add("Unresolved or ambiguous controller parent: "+owner.name+" -> "+name);
+    return null;
+  }
+  static List<TypeInfo> parents(TypeInfo t) {
+    List<Tree> refs=new ArrayList<>();
+    if(t.tree.getExtendsClause()!=null)refs.add(t.tree.getExtendsClause());
+    refs.addAll(t.tree.getImplementsClause());
+    List<TypeInfo> result=new ArrayList<>();
+    for(Tree ref:refs){TypeInfo p=resolve(ref.toString(),t);if(p!=null)result.add(p);}
+    return result;
+  }
+  static String signature(MethodTree m, TypeInfo owner) {
+    List<String> args=new ArrayList<>();
+    for(VariableTree p:m.getParameters()) {
+      String type=p.getType().toString().replace("java.lang.","");
+      // Canonicalize source types using imports/package, without compiling the project.
+      String pkg=owner.unit.getPackageName()==null?"":owner.unit.getPackageName().toString();
+      for(ImportTree imp:owner.unit.getImports()) {
+        String imported=imp.getQualifiedIdentifier().toString();
+        if(!imp.isStatic()&&imported.endsWith("."+type))type=imported;
+      }
+      if(types.containsKey(pkg+"."+type))type=pkg+"."+type;
+      args.add(type);
+    }
+    return m.getName()+"("+String.join(",",args)+")";
+  }
+  static class Declaration {
+    final MethodTree method; final TypeInfo owner;
+    Declaration(MethodTree method,TypeInfo owner){this.method=method;this.owner=owner;}
+  }
+  static Map<String,List<Declaration>> methods(TypeInfo t,Set<String> visiting) {
+    Map<String,List<Declaration>> result=new LinkedHashMap<>();
+    if(!visiting.add(t.name))return result;
+    for(Tree member:t.tree.getMembers())if(member instanceof MethodTree m && m.getReturnType()!=null
+        && !m.getModifiers().getFlags().contains(javax.lang.model.element.Modifier.STATIC)
+        && !m.getModifiers().getFlags().contains(javax.lang.model.element.Modifier.PRIVATE))
+      result.computeIfAbsent(signature(m,t),k->new ArrayList<>()).add(new Declaration(m,t));
+    for(TypeInfo parent:parents(t))for(var e:methods(parent,visiting).entrySet())
+      result.computeIfAbsent(e.getKey(),k->new ArrayList<>()).addAll(e.getValue());
+    visiting.remove(t.name);
+    return result;
+  }
+  static AnnotationTree mapping(List<? extends AnnotationTree> annotations) {
+    for(AnnotationTree a:annotations)if(Set.of("RequestMapping","GetMapping","PostMapping",
+        "PutMapping","PatchMapping","DeleteMapping","HeadMapping","OptionsMapping").contains(annName(a)))return a;
+    return null;
+  }
+  static AnnotationTree typeMapping(TypeInfo t,Set<String> visiting) {
+    if(!visiting.add(t.name))return null;
+    AnnotationTree a=mapping(t.tree.getModifiers().getAnnotations());
+    if(a!=null)return a;
+    for(TypeInfo parent:parents(t)){a=typeMapping(parent,visiting);if(a!=null)return a;}
+    return null;
+  }
+  static void scanType(TypeInfo t,List<Object> endpoints,Map<String,Object> classes) {
+    ClassTree cl=t.tree;
+    Map<String,Object> fields=new LinkedHashMap<>();
+    for(Tree member:cl.getMembers())if(member instanceof VariableTree field){
+      if(field.getModifiers().getFlags().contains(javax.lang.model.element.Modifier.STATIC))continue;
+      if(field.getType()!=null)fields.put(field.getName().toString(),field.getType().toString());
+    }
+    if(!fields.isEmpty())classes.put(cl.getSimpleName().toString(),fields);
+    boolean controller=cl.getModifiers().getAnnotations().stream()
+        .anyMatch(a->Set.of("RestController","Controller").contains(annName(a)));
+    if(!controller||cl.getKind()==Tree.Kind.INTERFACE
+        ||cl.getModifiers().getFlags().contains(javax.lang.model.element.Modifier.ABSTRACT))return;
+    AnnotationTree baseAnnotation=typeMapping(t,new HashSet<>());
+    String base=baseAnnotation==null?"":annotationValue(baseAnnotation);
+    for(List<Declaration> chain:methods(t,new HashSet<>()).values()) {
+      Declaration implementation=chain.get(0), mapped=null;
+      AnnotationTree route=null;
+      for(Declaration d:chain){route=mapping(d.method.getModifiers().getAnnotations());if(route!=null){mapped=d;break;}}
+      if(route==null)continue;
+      String http=null,n=annName(route);
+      if(!n.equals("RequestMapping"))http=n.substring(0,n.length()-7).toUpperCase(Locale.ROOT);
+      else {
+        String value=annAttrs(route).getOrDefault("method","").toUpperCase(Locale.ROOT);
+        for(String k:List.of("GET","POST","PUT","PATCH","DELETE","HEAD","OPTIONS"))if(value.contains(k)){http=k;break;}
+      }
+      if(http==null)continue;
+      MethodTree method=implementation.method;
+      List<Object> params=new ArrayList<>();String bodyType=null;
+      for(int i=0;i<method.getParameters().size();i++) {
+        VariableTree p=method.getParameters().get(i),metadata=p;
+        for(Declaration d:chain) {
+          VariableTree candidate=d.method.getParameters().get(i);
+          if(candidate.getModifiers().getAnnotations().stream().anyMatch(a->Set.of("RequestBody",
+              "PathVariable","RequestParam","RequestHeader").contains(annName(a)))){metadata=candidate;break;}
+        }
+        String location=null,pname=metadata.getName().toString();boolean required=false;
+        for(AnnotationTree a:metadata.getModifiers().getAnnotations()) {
+          String an=annName(a);
+          if(an.equals("RequestBody"))bodyType=p.getType().toString();
+          if(an.equals("PathVariable"))location="path";
+          if(an.equals("RequestParam"))location="query";
+          if(an.equals("RequestHeader"))location="header";
+          if(Set.of("PathVariable","RequestParam","RequestHeader").contains(an)) {
+            Map<String,String> attrs=annAttrs(a);
+            String explicit=unquote(attrs.getOrDefault("name",attrs.getOrDefault("value","")));
+            if(!explicit.isBlank())pname=explicit;
+            required=location.equals("path")||(!attrs.getOrDefault("required","true").equals("false")&&!attrs.containsKey("defaultValue"));
           }
-          if(location!=null)params.add(obj("name",pname,"in",location,"required",location.equals("path"),"java_type",p.getType().toString()));
         }
-        String returnType=method.getReturnType()==null?"void":method.getReturnType().toString();
-        if(returnType.startsWith("ResponseEntity<")&&returnType.endsWith(">"))returnType=returnType.substring(15,returnType.length()-1);
-        long pos=Trees.instance(JavacTaskHolder.task).getSourcePositions().getStartPosition(unit,method);
-        long line=unit.getLineMap().getLineNumber(pos);
-        endpoints.add(obj("method",http,"path",joinPath(base,path),"parameters",params,
-            "return_type",returnType,"body_type",bodyType,"source",root+":"+line,"operation_id",method.getName().toString()));
+        if(location!=null)params.add(obj("name",pname,"in",location,"required",required,"java_type",p.getType().toString()));
       }
-      return super.visitMethod(method,v);
+      String returnType=method.getReturnType().toString();
+      if(returnType.startsWith("ResponseEntity<")&&returnType.endsWith(">"))returnType=returnType.substring(15,returnType.length()-1);
+      long pos=Trees.instance(JavacTaskHolder.task).getSourcePositions().getStartPosition(mapped.owner.unit,mapped.method);
+      long line=mapped.owner.unit.getLineMap().getLineNumber(pos);
+      endpoints.add(obj("method",http,"path",joinPath(base,annotationValue(route)),"parameters",params,
+          "return_type",returnType,"body_type",bodyType,"source",mapped.owner.source+":"+line,
+          "operation_id",method.getName().toString()));
     }
   }
   static class JavacTaskHolder{static JavacTask task;}
@@ -146,10 +230,20 @@ public class ApiAstScanner {
       JavacTaskHolder.task=task;
       for(CompilationUnitTree unit:task.parse()){
         Path source=Path.of(unit.getSourceFile().toUri());
-        new Scanner(unit,source,root.relativize(source).toString(),endpoints,classes).scan(unit,null);
+        new TreePathScanner<Void,String>() {
+          @Override public Void visitClass(ClassTree cl,String parent) {
+            String pkg=unit.getPackageName()==null?"":unit.getPackageName().toString();
+            String prefix=parent==null?pkg:parent;
+            String name=(prefix.isEmpty()?"":prefix+".")+cl.getSimpleName();
+            types.put(name,new TypeInfo(unit,cl,name,root.relativize(source).toString()));
+            return super.visitClass(cl,name);
+          }
+        }.scan(unit,null);
       }
+      for(TypeInfo t:types.values())scanType(t,endpoints,classes);
     }
     List<Object>issues=new ArrayList<>();
+    issues.addAll(new LinkedHashSet<>(hierarchyIssues));
     for(Diagnostic<? extends JavaFileObject> d:diagnostic.getDiagnostics())
       if(d.getKind()==Diagnostic.Kind.ERROR)issues.add(d.getMessage(Locale.ROOT));
     System.out.println(json(obj("endpoints",endpoints,"classes",classes,"diagnostics",issues)));

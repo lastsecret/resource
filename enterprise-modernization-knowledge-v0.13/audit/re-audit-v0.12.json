@@ -1,0 +1,172 @@
+{
+  "method": "Partial focused dependency replay from prior sanitized v0.11 feedback; no Maven or original classpath; synthetic root version placeholder used only for import; no capture attestation.",
+  "scenarios": [
+    {
+      "profile": "default",
+      "v011_real_coverage": {
+        "DETECTED": 46,
+        "NOT_DETECTED": 11,
+        "UNKNOWN": 40,
+        "NOT_EVALUATED": 3
+      },
+      "v011_real_oracle": {
+        "MET": 32,
+        "GAP": 4,
+        "NOT_RUN_PROFILE": 2
+      },
+      "v012_partial_replay_coverage": {
+        "DETECTED": 48,
+        "NOT_DETECTED": 48,
+        "UNKNOWN": 2,
+        "NOT_EVALUATED": 2,
+        "NOT_APPLICABLE": 0
+      },
+      "v012_partial_replay_oracle": {
+        "MET": 45,
+        "NOT_RUN_PROFILE": 2,
+        "NOT_RUN_NO_CAPTURE_ATTESTATION": 1
+      },
+      "preflight": "REVIEW_REQUIRED",
+      "original_four": {
+        "G04": "MET",
+        "G06": "MET",
+        "G07": "MET",
+        "G09": "MET"
+      },
+      "coverage_consistent": true,
+      "fixture_unchanged": true,
+      "canary_leak_files": [],
+      "parser_warnings": [
+        {
+          "path": "gateway/src/main/resources/application.yml",
+          "module": "lab.modernization:gateway",
+          "family": "config",
+          "code": "PROFILE_DOCUMENTS",
+          "coverage_blocking": false
+        }
+      ],
+      "knowledge_coverage_gaps": [
+        {
+          "module": "lab.modernization:persistence",
+          "ga": "com.oracle.database.jdbc:ojdbc11",
+          "target_version": "23.26.4.0.0",
+          "known_rule_upper_exclusive": "23.10",
+          "code": "KNOWLEDGE_COVERAGE_GAP",
+          "decision": "REVIEW_REQUIRED"
+        }
+      ],
+      "runtime": "NOT_RUN"
+    },
+    {
+      "profile": "hikari-regression",
+      "v011_real_coverage": {
+        "DETECTED": 47,
+        "NOT_DETECTED": 11,
+        "UNKNOWN": 39,
+        "NOT_EVALUATED": 3
+      },
+      "v011_real_oracle": {
+        "MET": 32,
+        "GAP": 4,
+        "NOT_RUN_PROFILE": 2
+      },
+      "v012_partial_replay_coverage": {
+        "DETECTED": 49,
+        "NOT_DETECTED": 48,
+        "UNKNOWN": 1,
+        "NOT_EVALUATED": 2,
+        "NOT_APPLICABLE": 0
+      },
+      "v012_partial_replay_oracle": {
+        "MET": 45,
+        "NOT_RUN_PROFILE": 3
+      },
+      "preflight": "REVIEW_REQUIRED",
+      "original_four": {
+        "G04": "MET",
+        "G06": "MET",
+        "G07": "MET",
+        "G09": "MET"
+      },
+      "coverage_consistent": true,
+      "fixture_unchanged": true,
+      "canary_leak_files": [],
+      "parser_warnings": [
+        {
+          "path": "gateway/src/main/resources/application.yml",
+          "module": "lab.modernization:gateway",
+          "family": "config",
+          "code": "PROFILE_DOCUMENTS",
+          "coverage_blocking": false
+        }
+      ],
+      "knowledge_coverage_gaps": [
+        {
+          "module": "lab.modernization:persistence",
+          "ga": "com.oracle.database.jdbc:ojdbc11",
+          "target_version": "23.26.4.0.0",
+          "known_rule_upper_exclusive": "23.10",
+          "code": "KNOWLEDGE_COVERAGE_GAP",
+          "decision": "REVIEW_REQUIRED"
+        }
+      ],
+      "runtime": "NOT_RUN"
+    },
+    {
+      "profile": "jooq-risk",
+      "v011_real_coverage": {
+        "DETECTED": 46,
+        "NOT_DETECTED": 11,
+        "UNKNOWN": 40,
+        "NOT_EVALUATED": 3
+      },
+      "v011_real_oracle": {
+        "MET": 32,
+        "GAP": 4,
+        "NOT_RUN_PROFILE": 2
+      },
+      "v012_partial_replay_coverage": {
+        "DETECTED": 48,
+        "NOT_DETECTED": 48,
+        "UNKNOWN": 2,
+        "NOT_EVALUATED": 2,
+        "NOT_APPLICABLE": 0
+      },
+      "v012_partial_replay_oracle": {
+        "MET": 45,
+        "NOT_RUN_PROFILE": 2,
+        "NOT_RUN_NO_CAPTURE_ATTESTATION": 1
+      },
+      "preflight": "BLOCK",
+      "original_four": {
+        "G04": "MET",
+        "G06": "MET",
+        "G07": "MET",
+        "G09": "MET"
+      },
+      "coverage_consistent": true,
+      "fixture_unchanged": true,
+      "canary_leak_files": [],
+      "parser_warnings": [
+        {
+          "path": "gateway/src/main/resources/application.yml",
+          "module": "lab.modernization:gateway",
+          "family": "config",
+          "code": "PROFILE_DOCUMENTS",
+          "coverage_blocking": false
+        }
+      ],
+      "knowledge_coverage_gaps": [
+        {
+          "module": "lab.modernization:persistence",
+          "ga": "com.oracle.database.jdbc:ojdbc11",
+          "target_version": "23.26.4.0.0",
+          "known_rule_upper_exclusive": "23.10",
+          "code": "KNOWLEDGE_COVERAGE_GAP",
+          "decision": "REVIEW_REQUIRED"
+        }
+      ],
+      "runtime": "NOT_RUN"
+    }
+  ]
+}

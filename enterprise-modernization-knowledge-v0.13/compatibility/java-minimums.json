@@ -1,0 +1,84 @@
+{
+  "schema_version": "0.8",
+  "description": "Java minimums for the listed component release lines. Minimum alone does not prove runtime compatibility. Exact transitive dependencies must be inspected.",
+  "status": "DOCUMENTATION_GROUNDED_NO_RUNTIME_TEST",
+  "verified_on": "2026-11-25",
+  "components": [
+    {
+      "id": "spring-boot",
+      "version_series": "4.0",
+      "java_minimum": 17,
+      "source": "https://docs.spring.io/spring-boot/4.0/system-requirements.html"
+    },
+    {
+      "id": "spring-framework",
+      "version_series": "7.0",
+      "java_minimum": 17,
+      "source": "https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-7.0-Release-Notes"
+    },
+    {
+      "id": "spring-security",
+      "version_series": "7.0",
+      "java_minimum": 17,
+      "source": "https://docs.spring.io/spring-security/reference/7.0/prerequisites.html"
+    },
+    {
+      "id": "hibernate-orm",
+      "version_series": "7.0",
+      "java_minimum": 17,
+      "source": "https://docs.hibernate.org/orm/7.0/migration-guide/"
+    },
+    {
+      "id": "hibernate-orm",
+      "version_series": "7.1",
+      "java_minimum": 17,
+      "source": "https://hibernate.org/orm/releases/7.1/"
+    },
+    {
+      "id": "mybatis-spring-boot-starter",
+      "version_series": "4.0",
+      "java_minimum": 17,
+      "source": "https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/"
+    },
+    {
+      "id": "spring-boot",
+      "version_series": "4.1",
+      "java_minimum": 17,
+      "source": "https://docs.spring.io/spring-boot/4.1/system-requirements.html"
+    },
+    {
+      "id": "spring-security",
+      "version_series": "7.1",
+      "java_minimum": 17,
+      "source": "https://docs.spring.io/spring-security/reference/7.1/prerequisites.html"
+    },
+    {
+      "id": "hibernate-orm",
+      "version_series": "7.4",
+      "java_minimum": 17,
+      "source": "https://hibernate.org/orm/releases/7.4/"
+    },
+    {
+      "id": "mybatis-spring-boot-starter",
+      "version_series": "4.1",
+      "java_minimum": 17,
+      "source": "https://github.com/mybatis/spring-boot-starter/blob/master/README.md"
+    },
+    {
+      "id": "jooq-oss",
+      "version_series": "3.20",
+      "java_minimum": 21,
+      "source": "https://www.jooq.org/download/support-matrix-jdk"
+    },
+    {
+      "id": "jooq-oss",
+      "version_series": "3.21",
+      "java_minimum": 21,
+      "source": "https://www.jooq.org/download/support-matrix-jdk"
+    }
+  ],
+  "notes": [
+    "jOOQ OSS 3.20+ requires JDK21; commercial editions may have edition-specific Java17 artifacts: validate coordinates and license.",
+    "Minimum JVM requirements do not prove complete runtime compatibility."
+  ]
+}

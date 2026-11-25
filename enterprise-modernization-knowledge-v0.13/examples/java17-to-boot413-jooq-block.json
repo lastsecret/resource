@@ -1,0 +1,48 @@
+{
+  "schema_version": "0.4",
+  "migration_id": "demo-java17-boot413",
+  "source": {
+    "spring_boot_version": "3.5.7",
+    "java": {
+      "feature_version": 17,
+      "evidence": "project baseline: pom.xml + source runtime observation (example; not verified)"
+    }
+  },
+  "target": {
+    "spring_boot_version": "4.1.3",
+    "java": {
+      "mode": "preserve",
+      "feature_version": null,
+      "change_approved": false
+    }
+  },
+  "toolchain": {
+    "migration_tool_jdk": 21,
+    "compiler_release": 17,
+    "runtime_jdk": 17,
+    "ci_jdk": 17,
+    "docker_jdk": 17
+  },
+  "components": [
+    {
+      "id": "spring-boot",
+      "version": "4.1.3"
+    },
+    {
+      "id": "spring-security",
+      "version": "7.1.0"
+    },
+    {
+      "id": "hibernate-orm",
+      "version": "7.4.0.Final"
+    },
+    {
+      "id": "mybatis-spring-boot-starter",
+      "version": "4.1.0"
+    },
+    {
+      "id": "jooq-oss",
+      "version": "3.21.5"
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+schema_version: '0.8'
+checked_on: '2026-11-25'
+sources:
+- id: BOOT4_MIGRATION
+  title: Spring Boot 4.0 Migration Guide
+  url: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide
+  kind: OFFICIAL_DOCUMENTATION
+- id: BOOT4_PROPERTIES
+  title: Spring Boot 4.0 Common Application Properties
+  url: https://docs.spring.io/spring-boot/4.0/appendix/application-properties/
+  kind: OFFICIAL_DOCUMENTATION
+- id: BOOT35_PROPERTIES
+  title: Spring Boot 3.5 Common Application Properties
+  url: https://docs.spring.io/spring-boot/3.5/appendix/application-properties/
+  kind: OFFICIAL_DOCUMENTATION
+- id: BOOT4_REQUIREMENTS
+  title: Spring Boot 4 System Requirements
+  url: https://docs.spring.io/spring-boot/system-requirements.html
+  kind: OFFICIAL_DOCUMENTATION
+- id: BOOT4_MODULES
+  title: Modularizing Spring Boot
+  url: https://spring.io/blog/2025/10/28/modularizing-spring-boot/
+  kind: OFFICIAL_DOCUMENTATION
+- id: HIB7_MIGRATION
+  title: Hibernate ORM 7.0 Migration Guide
+  url: https://docs.hibernate.org/orm/7.0/migration-guide/
+  kind: OFFICIAL_DOCUMENTATION
+- id: HIB7_ORACLE
+  title: Hibernate ORM 7.1 Introduction - Date and time / Oracle DATE
+  url: https://docs.hibernate.org/orm/7.1/introduction/html_single/
+  kind: OFFICIAL_DOCUMENTATION
+- id: SPRING7_RELEASE
+  title: Spring Framework 7.0 Release Notes
+  url: https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-7.0-Release-Notes
+  kind: OFFICIAL_DOCUMENTATION
+- id: SEC7_MIGRATION
+  title: Spring Security 7.0 Migration Guide
+  url: https://docs.spring.io/spring-security/reference/migration/
+  kind: OFFICIAL_DOCUMENTATION
+- id: MYBATIS_STARTER_REQ
+  title: MyBatis Spring Boot Starter compatibility
+  url: https://github.com/mybatis/spring-boot-starter/blob/master/README.md
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: MYBATIS_SPRING_REQ
+  title: MyBatis-Spring compatibility
+  url: https://mybatis.org/spring/
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: MYBATIS_STARTER_DOC
+  title: MyBatis Spring Boot starter reference
+  url: https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: MYBATIS_PLUS_INSTALL
+  title: MyBatis-Plus Boot4 installation
+  url: https://baomidou.com/en/getting-started/install/
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: SEC7_CONFIG_PREP
+  title: Spring Security 6.5 preparing for 7 configuration
+  url: https://docs.spring.io/spring-security/reference/6.5/migration-7/configuration.html
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: SEC7_AUTH_MIGRATION
+  title: Spring Security 7 servlet authorization migration
+  url: https://docs.spring.io/spring-security/reference/migration/servlet/authorization.html
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: SEC7_AUTH_REQUEST
+  title: Spring Security 7 authorize requests
+  url: https://docs.spring.io/spring-security/reference/7.0/servlet/authorization/authorize-http-requests.html
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: SEC7_AUTH_PREP
+  title: Spring Security 6.5 preparing for authorization
+  url: https://docs.spring.io/spring-security/reference/6.5/migration-7/authorization.html
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: SEC7_OAUTH_PREP
+  title: Spring Security 6.5 preparing for OAuth2
+  url: https://docs.spring.io/spring-security/reference/6.5/migration-7/oauth2.html
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: SEC7_OAUTH_MIGRATION
+  title: Spring Security 7 servlet OAuth2 migration
+  url: https://docs.spring.io/spring-security/reference/migration/servlet/oauth2.html
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: SEC7_SESSION_REF
+  title: Spring Security session management
+  url: https://docs.spring.io/spring-security/reference/7.0/servlet/authentication/session-management.html
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: SPRINGDOC_FAQ
+  title: springdoc OpenAPI compatibility FAQ
+  url: https://springdoc.org/faq.html
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: SPRING_CLOUD_COMPAT
+  title: Spring Cloud compatibility matrix
+  url: https://spring.io/projects/spring-cloud/
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: HIKARI_CHANGES
+  title: HikariCP upstream CHANGES
+  url: https://github.com/brettwooldridge/HikariCP/blob/dev/CHANGES
+  kind: OFFICIAL_PROJECT_CHANGELOG
+- id: HIKARI_ISSUE_2344
+  title: HikariCP v7 breaking changes discussion
+  url: https://github.com/brettwooldridge/HikariCP/issues/2344
+  kind: UPSTREAM_MAINTAINER_DISCUSSION
+- id: ORACLE_JDBC_DOWNLOADS
+  title: Oracle JDBC and UCP Downloads
+  url: https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html
+  kind: OFFICIAL_VENDOR_DOCUMENTATION
+- id: ORACLE_JDBC_BOM
+  title: Oracle JDBC BOM 23.9 artifact metadata
+  url: https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc-bom/23.9.0.25.07
+  kind: PUBLISHED_ARTIFACT_METADATA
+- id: REWRITE_MAVEN_UPGRADE
+  title: OpenRewrite Upgrade Maven dependency version
+  url: https://docs.openrewrite.org/recipes/maven/upgradedependencyversion
+  kind: OFFICIAL_RECIPE_DOCUMENTATION
+- id: REWRITE_DEP_UPGRADE
+  title: OpenRewrite Upgrade Gradle or Maven dependency versions
+  url: https://docs.openrewrite.org/recipes/java/dependencies/upgradedependencyversion
+  kind: OFFICIAL_RECIPE_DOCUMENTATION
+- id: REWRITE_BOOT4
+  title: OpenRewrite Spring Boot 4.0 Upgrade
+  url: https://docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition/
+  kind: OFFICIAL_RECIPE_DOCUMENTATION
+- id: JACKSON3_NULL_FEATURE
+  title: 'Jackson 3.0 DeserializationFeature: FAIL_ON_NULL_FOR_PRIMITIVES'
+  url: https://github.com/FasterXML/jackson-databind/blob/3.x/src/main/java/tools/jackson/databind/DeserializationFeature.java
+  kind: OFFICIAL_UPSTREAM_SOURCE
+- id: JACKSON3_MAPPER_FEATURE
+  title: 'Jackson 3.0 MapperFeature: SORT_PROPERTIES_ALPHABETICALLY'
+  url: https://github.com/FasterXML/jackson-databind/blob/3.x/src/main/java/tools/jackson/databind/MapperFeature.java
+  kind: OFFICIAL_UPSTREAM_SOURCE
+- id: JACKSON3_MAPPER_BUILDER
+  title: 'Jackson 3 MapperBuilder: configureForJackson2 and mapper feature configuration'
+  url: https://github.com/FasterXML/jackson-databind/blob/3.x/src/main/java/tools/jackson/databind/cfg/MapperBuilder.java
+  kind: OFFICIAL_UPSTREAM_SOURCE
+- id: BOOT4_JSON_REFERENCE
+  title: Spring Boot 4.0 JSON reference and auto-configuration
+  url: https://docs.spring.io/spring-boot/4.0/reference/features/json.html
+  kind: OFFICIAL_UPSTREAM_SOURCE
+- id: SPRING_BOOT_41_NOTES
+  title: Spring Boot 4.1 Release Notes
+  url: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.1-Release-Notes
+  kind: OFFICIAL_DOCUMENTATION
+- id: SPRING_BOOT_413_REQ
+  title: Spring Boot 4.1.3 requirements
+  url: https://docs.spring.io/spring-boot/4.1/system-requirements.html
+  kind: OFFICIAL_DOCUMENTATION
+- id: JOOQ_JDK_MATRIX
+  title: jOOQ JDK support matrix
+  url: https://www.jooq.org/download/support-matrix-jdk
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: V09_HIB71_LOCKOPTIONS_001
+  title: LockOptions
+  url: https://docs.hibernate.org/orm/7.1/migration-guide/
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: V09_HIB72_REGISTRY_001
+  title: Registry Generic Signatures
+  url: https://docs.hibernate.org/orm/7.2/migration-guide/
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: V09_HIB73_COLUMNS_001
+  title: Removed @Columns
+  url: https://docs.hibernate.org/orm/7.3/migration-guide/
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: V09_HIB73_SINGLE_RESULT_002
+  title: Result deduplication
+  url: https://docs.hibernate.org/orm/7.3/migration-guide/
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: V09_HIB73_SCHEMA_003
+  title: Schema actions now executed even without mapped entities
+  url: https://docs.hibernate.org/orm/7.3/migration-guide/
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: V09_HIB74_ORACLE_DATE_001
+  title: HQL current date and local date on Oracle
+  url: https://docs.hibernate.org/orm/7.4/migration-guide/
+  kind: OFFICIAL_PROJECT_DOCUMENTATION
+- id: V09_JCK31_NULLNODE_001
+  title: NullNode coercion / 3.1
+  url: https://github.com/FasterXML/jackson-databind/issues/5558
+  kind: OFFICIAL_PROJECT_DOCUMENTATION

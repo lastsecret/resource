@@ -1,0 +1,391 @@
+schema_version: '0.5'
+knowledge_pack: enterprise-modernization
+generated_on: '2026-11-19'
+scope: Jackson 2.x→3.x, Spring Boot 3.x→4.x where applicable; Java major version parameterized
+evidence_policy: EVIDENCE-POLICY.md
+rules:
+- id: JCK3-NULL-PRIMITIVES-001
+  title: Jackson 2→3：JSON null 反序列化到 Java primitive 的有效行為差異
+  category: DEFAULT_BEHAVIOR_CHANGE
+  severity: HIGH
+  documented_change: Jackson 2 FAIL_ON_NULL_FOR_PRIMITIVES 預設 false；Jackson 3 預設 true。null→primitive (int/boolean
+    等) 在未覆蓋預設下由型別預設值變為錯誤；是否需修改須依原專案每一實際 mapper 的有效值決定。
+  applicability:
+    source_spring_boot: 3.x (detect actual library)
+    target_spring_boot: 4.x (detect actual library)
+    source_component_version: jackson-databind 2.x resolved effective version
+    target_component_version: jackson-databind 3.x resolved effective version
+    requires:
+    - JSON null is deserialized into a Java primitive via a mapper that actually migrated Jackson 2 to 3
+  investigation:
+    must_resolve:
+    - exact Jackson 2/3 dependency and classpath coexistence
+    - all effective mapper construction pathways and usage callsites
+    - active profile/external property sources and precedence
+    - Spring Bean customizers and custom mapper overrides
+    - runtime effective feature per mapper instance
+    - original behavior baseline on the actual calling mapper
+    mapper_discovery: &id001
+      scan_source_code_and_configuration:
+      - new ObjectMapper(...) — resolve com.fasterxml vs tools.jackson; include factory methods and static fields
+      - new JsonMapper(...) if present; JsonMapper.builder().build(); Jackson2 ObjectMapper via builder/factory
+      - ObjectMapper.copy(), JsonMapper.rebuild()/copy equivalents, wrapper factories, helpers and shared libraries
+      - '@Bean ObjectMapper, @Bean JsonMapper, JsonMapper.Builder, Jackson2ObjectMapperBuilderCustomizer, JsonMapperBuilderCustomizer'
+      - Spring-managed HTTP message converters, custom WebMvcConfigurer, RestTemplate, MVC, GraphQL, Redis serializers
+      - application.properties, application.yml/yaml and profile-specific variants
+      - spring.config.import, configtree, external environment variables, command-line, Spring Cloud Config, profiles
+        and overrides
+      - mapper.configure/enable/disable/feature builders and @JsonPropertyOrder
+      - ObjectReader, ObjectWriter, message converters and wrapper methods; map callsites to actual mapper instances
+      mapper_origin_categories:
+      - SPRING_BOOT_AUTOCONFIGURED_JSONMAPPER
+      - SPRING_CUSTOM_JSONMAPPER_BEAN
+      - SPRING_CUSTOM_OBJECTMAPPER_BEAN
+      - MANUAL_NEW_OBJECTMAPPER
+      - MANUAL_NEW_JSONMAPPER
+      - MANUAL_BUILDER_CREATED_MAPPER
+      - THIRD_PARTY_OR_SHARED_LIBRARY
+      - UNKNOWN_OR_MIXED
+      mapper_provenance_fields:
+      - module
+      - source_file_line
+      - mapper_type_and_package
+      - resolved_jackson_major
+      - construction_site
+      - spring_bean_name_or_none
+      - active_profile_and_environment
+      - effective_feature_values_with_origin
+      - downstream_callsites
+      - version_and_module_set
+      - confidence
+      - evidence
+      do_not_assume:
+      - spring.jackson.* applies to new or builder-created mappers
+      - a newly created mapper is the same as MVC HTTP mapper
+      - all ObjectMapper symbols refer to Jackson 3
+      - only one mapper is used across application
+      - external configuration is absent if it is not in git
+    effective_configuration_policy: RESOLVE_PER_MAPPER_INSTANCE_FIRST; THEN SOURCE_AND_TARGET_EFFECTIVE_FEATURE;
+      USE_LIBRARY_DEFAULT_ONLY_IF_NO_OVERRIDE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED; NEVER_ASSUME_ABSENT_OVERRIDES
+  behavior:
+    feature: DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES
+    library_default_when_no_override:
+      jackson_2: false
+      jackson_3: true
+    scope: Deserialization; Java primitives only (not java.lang.Integer, not JSON serialization)
+    baseline: MEASURE_OR_REVIEW_EFFECTIVE_SOURCE_MAPPER
+  candidate_decisions:
+  - NO_CHANGE_IF_SOURCE_AND_TARGET_ALREADY_MATCH
+  - PROPOSE_BOOT_JACKSON_PROPERTY_CHANGE_FOR_AUTOCONFIGURED_MAPPER_ONLY_IF_PROVEN_NEEDED
+  - PROPOSE_SCOPED_MAPPER_BUILDER_CHANGE_FOR_MANUAL_MAPPER_ONLY_IF_PROVEN_NEEDED
+  - MANUAL_REVIEW_WHEN_MAPPER_PROVENANCE_OR_EFFECTIVE_VALUE_IS_UNKNOWN
+  verification:
+    required:
+    - JSON_EXPLICIT_NULL_TO_INT_EXPECTED_0_OR_ERROR
+    - JSON_EXPLICIT_NULL_TO_BOOLEAN_EXPECTED_FALSE_OR_ERROR
+    - JSON_OMITTED_FIELD_VS_EXPLICIT_NULL_SEPARATE
+    - JSON_WRAPPER_INTEGER_VS_PRIMITIVE_SEPARATE
+    - PER_MAPPER_AND_PER_PROFILE_BASELINE
+    - SPRING_MAPPER_VS_MANUAL_MAPPER_INTEGRATION
+    pass_criteria: TARGET_MATCHES_EFFECTIVE_SOURCE_BEHAVIOR_OR_HUMAN_APPROVED_CHANGE; NO_GLOBAL_PATCH_WITHOUT_PROVEN_SCOPE
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - APPLICATION_PROPERTIES_ONLY_ASSESSMENT
+  - ASSUME_MANUAL_NEW_INHERITS_SPRING_PROPERTIES
+  - ASSUME_MAPPER_ONLY_USED_IN_MVC
+  - ASSUME_UNKNOWN_MEANS_DEFAULT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - JACKSON3_NULL_FEATURE
+  - JACKSON3_MAPPER_BUILDER
+  - BOOT4_MIGRATION
+  - BOOT4_PROPERTIES
+  workflow_phase: ASSESS
+  migration_evidence_v0_5:
+    classification: BEHAVIOR_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: jackson-databind 2.x resolved effective version
+    target_version_scope: jackson-databind 3.x resolved effective version
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: JACKSON3_NULL_FEATURE
+        section: FAIL_ON_NULL_FOR_PRIMITIVES
+      - source_id: JACKSON3_MAPPER_BUILDER
+        section: configureForJackson2
+      - source_id: BOOT4_MIGRATION
+        section: Upgrading Jackson / Jackson 2 Compatibility
+      - source_id: BOOT4_PROPERTIES
+        section: Jackson Properties
+      note: Upstream verifies feature defaults; no individual project is claimed affected until effective configuration
+        and baseline are proven
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - MAPPER_ORIGIN_RESOLVED
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - UNCONFIRMED_BREAKING_CHANGE
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  actionable: false
+  effective_config_resolution:
+    source_priority: RUNTIME_EFFECTIVE_CONFIG; code-level mapper settings/custom deserializers override library
+      defaults; application property relevant ONLY to mapper connected to Spring auto-configuration
+    decision_examples:
+    - source_effective: false
+      target_effective: true
+      conclusion: CHANGE_NEEDED_IF_BEHAVIOR_MUST_BE_PRESERVED
+    - source_effective: true
+      target_effective: true
+      conclusion: NO_CHANGE
+    - source_effective: false
+      target_effective: false
+      conclusion: NO_CHANGE
+    - source_effective: UNKNOWN
+      target_effective: true
+      conclusion: REVIEW_REQUIRED
+    config_keys_to_inspect:
+    - spring.jackson.deserialization.fail-on-null-for-primitives
+    - spring.jackson.use-jackson2-defaults
+    - spring.jackson2.deserialization.fail-on-null-for-primitives
+    caveats:
+    - Spring Boot 4 properties do not automatically configure manually created mapper instances
+    - Jackson 2 can coexist in Spring Boot 4; resolve real mapper library version
+    - When source uses a custom deserializer, do not infer behavior from feature flag alone
+- id: JCK3-POJO-ORDER-002
+  title: Jackson 2→3：POJO JSON 屬性字母排序預設差異
+  category: DEFAULT_BEHAVIOR_CHANGE
+  severity: HIGH
+  documented_change: Jackson 2 SORT_PROPERTIES_ALPHABETICALLY 預設 false；Jackson 3 預設 true。影響未被 class-specific order
+    覆蓋的 POJO 序列化順序，但不是 Map entries 排序；是否需改取決於每個實際 mapper 的有效設定與外部 byte-level 合約。
+  applicability:
+    source_spring_boot: 3.x (detect actual library)
+    target_spring_boot: 4.x (detect actual library)
+    source_component_version: jackson-databind 2.x resolved effective version
+    target_component_version: jackson-databind 3.x resolved effective version
+    requires:
+    - POJO serialization uses Jackson 2→3 and property sequence matters to a verified contract, snapshot, signature,
+      or downstream consumer
+  investigation:
+    must_resolve:
+    - exact Jackson 2/3 dependency and classpath coexistence
+    - all effective mapper construction pathways and usage callsites
+    - active profile/external property sources and precedence
+    - Spring Bean customizers and custom mapper overrides
+    - runtime effective feature per mapper instance
+    - original behavior baseline on the actual calling mapper
+    mapper_discovery: *id001
+    effective_configuration_policy: RESOLVE_PER_MAPPER_INSTANCE_FIRST; THEN SOURCE_AND_TARGET_EFFECTIVE_FEATURE;
+      USE_LIBRARY_DEFAULT_ONLY_IF_NO_OVERRIDE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED; NEVER_ASSUME_ABSENT_OVERRIDES
+  behavior:
+    feature: MapperFeature.SORT_PROPERTIES_ALPHABETICALLY
+    library_default_when_no_override:
+      jackson_2: false
+      jackson_3: true
+    scope: Serialization of POJO properties; not Map entry ordering; explicit @JsonPropertyOrder can override
+    baseline: MEASURE_OR_REVIEW_EFFECTIVE_SOURCE_MAPPER
+  candidate_decisions:
+  - NO_CHANGE_IF_ORDER_UNIMPORTANT_TO_CONTRACT
+  - NO_CHANGE_IF_SOURCE_AND_TARGET_EFFECTIVE_ORDER_MATCH
+  - PROPOSE_BOOT_JACKSON_PROPERTY_CHANGE_FOR_AUTOCONFIGURED_MAPPER_ONLY_IF_ORDER_PROVEN_REQUIRED
+  - PROPOSE_SCOPED_MAPPER_BUILDER_CHANGE_FOR_MANUAL_MAPPER_ONLY_IF_ORDER_PROVEN_REQUIRED
+  - MANUAL_REVIEW_WHEN_ORDER_IN_SOURCE_IS_UNSPECIFIED
+  verification:
+    required:
+    - POJO_WITH_NONALPHABETIC_PROPERTY_DECLARATIONS
+    - JSON_PROPERTY_ORDER_ANNOTATION_OVERRIDES
+    - MAP_ENTRIES_NOT_CONFLATED_WITH_POJO_PROPERTIES
+    - JSON_BYTES_SNAPSHOT_IF_CONTRACT_REQUIRES
+    - JSON_SEMANTIC_EQUIVALENCE_IF_ORDER_UNIMPORTANT
+    - SCOPED_MAPPER_VARIANTS
+    pass_criteria: TARGET_MATCHES_EFFECTIVE_SOURCE_BEHAVIOR_OR_HUMAN_APPROVED_CHANGE; NO_GLOBAL_PATCH_WITHOUT_PROVEN_SCOPE
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - APPLICATION_PROPERTIES_ONLY_ASSESSMENT
+  - ASSUME_MANUAL_NEW_INHERITS_SPRING_PROPERTIES
+  - ASSUME_MAPPER_ONLY_USED_IN_MVC
+  - ASSUME_UNKNOWN_MEANS_DEFAULT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - JACKSON3_MAPPER_FEATURE
+  - JACKSON3_MAPPER_BUILDER
+  - BOOT4_MIGRATION
+  - BOOT4_PROPERTIES
+  workflow_phase: ASSESS
+  migration_evidence_v0_5:
+    classification: BEHAVIOR_CHANGE
+    rule_kind: MIGRATION_DELTA
+    source_version_scope: jackson-databind 2.x resolved effective version
+    target_version_scope: jackson-databind 3.x resolved effective version
+    evidence_status: OFFICIAL_DOC_SECTION_CHECKED
+    evidence:
+      references:
+      - source_id: JACKSON3_MAPPER_FEATURE
+        section: SORT_PROPERTIES_ALPHABETICALLY
+      - source_id: JACKSON3_MAPPER_BUILDER
+        section: configureForJackson2
+      - source_id: BOOT4_MIGRATION
+        section: Upgrading Jackson / Jackson 2 Compatibility
+      - source_id: BOOT4_PROPERTIES
+        section: Jackson Properties
+      note: Upstream verifies feature defaults; no individual project is claimed affected until effective configuration
+        and baseline are proven
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: CONDITIONAL_RECOMMENDATION_ONLY
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - MAPPER_ORIGIN_RESOLVED
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - UNCONFIRMED_BREAKING_CHANGE
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: BEHAVIOR_CHANGE
+  actionable: false
+  effective_config_resolution:
+    config_keys_to_inspect:
+    - spring.jackson.mapper.sort-properties-alphabetically
+    - spring.jackson.use-jackson2-defaults
+    - spring.jackson.serialization.order-map-entries-by-keys
+    annotation_overrides:
+    - '@JsonPropertyOrder(value={...})'
+    - '@JsonPropertyOrder(alphabetic=true)'
+    not_the_same_feature: SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS controls Map keys, separate verification
+      only; do not treat as 2→3 default change without upstream evidence
+    contract_types:
+    - SEMANTIC_JSON_OBJECT_EQUALITY
+    - ORDER_SENSITIVE_BYTES
+    - SNAPSHOT
+    - SIGNATURE
+    - PARTNER_TEXT_CONTRACT
+    source_default_false_does_not_guarantee_declaration_order: true
+    decision_requirements:
+    - compare exact source output bytes if output ordering is contract-relevant
+    - do not recommend changing ordering for purely semantic JSON equality
+    - for manually constructed mappers change builder locally if proven necessary
+    - if source explicit annotation applies, preserve annotation and check output before proposing mapper-level
+      override
+- id: JCK3-MAPPER-TOPOLOGY-003
+  title: Jackson Mapper 建立來源與呼叫鏈覆蓋率盤點
+  category: MAPPER_PROVENANCE_VERIFICATION
+  severity: MEDIUM
+  documented_change: Mapper 建立方式盤點是遷移風險驗證前置條件，本身不是已確認的 Jackson 2→3 Breaking Change。必須檢查手動 new、builder、factory、copy、@Bean、HTTP
+    converters 與第三方 serializer。
+  applicability:
+    source_spring_boot: 3.x (detect actual library)
+    target_spring_boot: 4.x (detect actual library)
+    source_component_version: jackson-databind 2.x resolved effective version
+    target_component_version: jackson-databind 3.x resolved effective version
+    requires:
+    - project uses JSON serialization/deserialization or Jackson in either version
+  investigation:
+    must_resolve:
+    - exact Jackson 2/3 dependency and classpath coexistence
+    - all effective mapper construction pathways and usage callsites
+    - active profile/external property sources and precedence
+    - Spring Bean customizers and custom mapper overrides
+    - runtime effective feature per mapper instance
+    - original behavior baseline on the actual calling mapper
+    mapper_discovery: *id001
+    effective_configuration_policy: RESOLVE_PER_MAPPER_INSTANCE_FIRST; THEN SOURCE_AND_TARGET_EFFECTIVE_FEATURE;
+      USE_LIBRARY_DEFAULT_ONLY_IF_NO_OVERRIDE_IS_CONFIRMED
+    unknown_policy: REVIEW_REQUIRED; NEVER_ASSUME_ABSENT_OVERRIDES
+  behavior:
+    feature: EFFECTIVE_MAPPER_INSTANCE_PROVENANCE
+    library_default_when_no_override:
+      jackson_2: null
+      jackson_3: null
+    scope: Cross-cutting verification; no version-specific default claim
+    baseline: MEASURE_OR_REVIEW_EFFECTIVE_SOURCE_MAPPER
+  candidate_decisions:
+  - REPORT_ALL_MAPPER_INSTANCES_WITH_USAGE_PATHS
+  - MARK_UNKNOWN_OWNERSHIP_AS_REVIEW_REQUIRED
+  - DO_NOT_PATCH
+  verification:
+    required:
+    - MAPPER_INSTANCE_INVENTORY
+    - PROVENANCE_TO_CALLSITE_MAPPING
+    - ACTIVE_PROFILE_PROPERTY_EFFECTIVENESS
+    - MIXED_JACKSON_2_AND_3_MAPPER_DETECTION
+    pass_criteria: TARGET_MATCHES_EFFECTIVE_SOURCE_BEHAVIOR_OR_HUMAN_APPROVED_CHANGE; NO_GLOBAL_PATCH_WITHOUT_PROVEN_SCOPE
+  prohibited:
+  - UNCONDITIONAL_PATCH
+  - APPLICATION_PROPERTIES_ONLY_ASSESSMENT
+  - ASSUME_MANUAL_NEW_INHERITS_SPRING_PROPERTIES
+  - ASSUME_MAPPER_ONLY_USED_IN_MVC
+  - ASSUME_UNKNOWN_MEANS_DEFAULT
+  - CLAIM_PASS_WITHOUT_RUNTIME_OR_TEST_EVIDENCE
+  sources:
+  - BOOT4_MIGRATION
+  - BOOT4_JSON_REFERENCE
+  - BOOT4_PROPERTIES
+  workflow_phase: ASSESS
+  migration_evidence_v0_5:
+    classification: VALIDATION_ONLY
+    rule_kind: VALIDATION_ONLY
+    source_version_scope: jackson-databind 2.x resolved effective version
+    target_version_scope: jackson-databind 3.x resolved effective version
+    evidence_status: NO_EXACT_VERSION_DELTA_ESTABLISHED
+    evidence:
+      references:
+      - source_id: BOOT4_MIGRATION
+        section: Upgrading Jackson / Jackson 2 Compatibility
+      - source_id: BOOT4_JSON_REFERENCE
+        section: Custom JsonMapper and Builder
+      - source_id: BOOT4_PROPERTIES
+        section: Jackson Properties
+      note: Upstream verifies feature defaults; no individual project is claimed affected until effective configuration
+        and baseline are proven
+    trigger:
+      requires_project_feature_detection: true
+      requires_exact_resolved_versions: true
+      requires_effective_source_configuration: true
+      requires_target_behavior_or_runtime_evidence: true
+    remediation_policy:
+      mode: VERIFY_ONLY_NO_PATCH
+      automatic_patch: false
+      requires_human_approval: true
+      prerequisites:
+      - EXACT_VERSION_COMPATIBILITY
+      - MAPPER_ORIGIN_RESOLVED
+      - SOURCE_EFFECTIVE_CONFIG_RESOLVED
+      - SOURCE_BEHAVIOR_CAPTURED_OR_ACCEPTED_SPEC
+      - TARGET_BEHAVIOR_VERIFIED
+      blocked_if:
+      - UNKNOWN_EFFECTIVE_CONFIGURATION
+      - UNCONFIRMED_BREAKING_CHANGE
+      - NO_BASELINE_EVIDENCE
+      - UNAPPROVED_BEHAVIOR_CHANGE
+    runtime_validation: NOT_RUN
+  rule_type: VALIDATION_ONLY
+  actionable: false
+  effective_config_resolution:
+    do_not_infer_feature_values_from_static_match_alone: true
+    report_mapping: constructor -> configuration methods -> consumer -> test evidence

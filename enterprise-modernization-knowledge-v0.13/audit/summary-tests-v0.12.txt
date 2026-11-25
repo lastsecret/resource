@@ -1,0 +1,11 @@
+test_generic_without_oracle (test_summary_report.SummaryTests.test_generic_without_oracle) ... ok
+test_graph_required (test_summary_report.SummaryTests.test_graph_required) ... ok
+test_line_exact (test_summary_report.SummaryTests.test_line_exact) ... ok
+test_paths (test_summary_report.SummaryTests.test_paths) ... ok
+test_safe_feedback (test_summary_report.SummaryTests.test_safe_feedback) ... ok
+test_unknown_not_gap (test_summary_report.SummaryTests.test_unknown_not_gap) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.003s
+
+OK

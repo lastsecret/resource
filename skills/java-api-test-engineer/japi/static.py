@@ -59,6 +59,6 @@ def discover_static(project, java_executable='java'):
             'tags':[],'parameters':params,'request_body':body,
             'responses':{'200':{'content':{'application/json':{'schema':schema}}}} if schema else {},
             'source':raw_ep['source'],'confidence':'inferred'})
-    warnings.append('JDK AST scanner does not resolve inherited/controller-interface mappings, Lombok, constants, record components, Jackson customizations, or multi-path mappings, mixed HTTP method mappings, or runtime route conditions; review inferred DTO schemas.')
+    warnings.append('JDK AST scanner resolves source-local non-generic controller/interface hierarchies; it does not resolve generic/external parent types, Lombok, constants, record components, Jackson customizations, or multi-path mappings, mixed HTTP method mappings, or runtime route conditions; review inferred DTO schemas.')
     return {'format_version':1,'source':f'static-jdk:{Path(project).resolve()}',
         'endpoints':endpoints,'components':{'schemas':schemas},'warnings':warnings}

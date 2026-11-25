@@ -44,7 +44,7 @@ japi discover --mode springdoc-runtime --docs-url http://127.0.0.1:8080/v3/api-d
 
 產物：`endpoints.json`（method/path/parameters/request/response schemas）、`discovery-decision.json`。OpenAPI 輸入支援 v3.0/v3.1 JSON、YAML（需 PyYAML）；會保留 `$ref`。Springdoc Runtime 不需要被測程式碼，但需已啟動的應用。
 
-**靜態分析限制：** JDK AST 能解析原始碼中的標準 Spring MVC Controller 與簡單 DTO，但沒有執行 Spring Bean 或完成 classpath symbol resolution。介面繼承映射、record、Lombok、Jackson 客製轉換、複數路由、SpEL、WebFlux functional endpoints 可能有遺漏，系統會產生警示，不保證與實際 Runtime Schema 完全相同。
+**靜態分析限制：** JDK AST 能解析原始碼中的標準 Spring MVC Controller 與簡單 DTO，但沒有執行 Spring Bean 或完成 classpath symbol resolution。同一掃描範圍內的非泛型介面／父類別路由繼承已支援（包含方法與參數註解，Controller 自身註解優先）。泛型或外部依賴的父型別、record、Lombok、Jackson 客製轉換、複數路由、SpEL、WebFlux functional endpoints 可能有遺漏，系統會產生警示，不保證與實際 Runtime Schema 完全相同。
 
 ## 3. 固定 Request Case
 

@@ -1,0 +1,259 @@
+{
+  "schema_version": "0.8",
+  "delta_id": "spring-boot-4.0-to-4.1",
+  "rules": [
+    {
+      "id": "SB41-DEPRECATED-001",
+      "title": "Spring Boot 4.0 已 deprecated 的 API 在 4.1 移除",
+      "classification": "BREAKING_CHANGE",
+      "source_version_scope": "4.0.x",
+      "target_version_scope": "4.1.x",
+      "source": {
+        "url": "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.1-Release-Notes",
+        "section": "Upgrading from Spring Boot 4.0",
+        "reviewed_on": "2026-11-25",
+        "status": "OFFICIAL_RELEASE_NOTES_CHECKED"
+      },
+      "trigger": {
+        "necessary_condition": "使用 4.0 deprecated Spring Boot API；需型別分析與編譯結果確認",
+        "detection": "COMPILE_REQUIRED",
+        "static_regex": null
+      },
+      "verification": "Compile target 4.1; scan deprecation usage; migrate only exact affected symbols",
+      "effective_config_required": false,
+      "automatic_patch": false,
+      "decision_on_candidate": "REVIEW_REQUIRED",
+      "runtime_validation": "NOT_RUN"
+    },
+    {
+      "id": "SB41-LAYERTOOLS-002",
+      "title": "移除 layertools jar mode",
+      "classification": "BREAKING_CHANGE",
+      "source_version_scope": "4.0.x",
+      "target_version_scope": "4.1.x",
+      "source": {
+        "url": "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.1-Release-Notes",
+        "section": "Upgrading from Spring Boot 4.0",
+        "reviewed_on": "2026-11-25",
+        "status": "OFFICIAL_RELEASE_NOTES_CHECKED"
+      },
+      "trigger": {
+        "necessary_condition": "啟動或 CI/Docker 腳本使用 jarmode=layertools",
+        "detection": "TEXT_CANDIDATE",
+        "static_regex": "jarmode[= :\"\\']+layertools|layertools"
+      },
+      "verification": "替換為 tools jar mode 並驗證容器分層與啟動腳本",
+      "effective_config_required": false,
+      "automatic_patch": false,
+      "decision_on_candidate": "REVIEW_REQUIRED",
+      "runtime_validation": "NOT_RUN"
+    },
+    {
+      "id": "SB41-TESTAOT-003",
+      "title": "-DskipTests 不再讓 Spring Boot Maven test AOT 跳過",
+      "classification": "BEHAVIOR_CHANGE",
+      "source_version_scope": "4.0.x",
+      "target_version_scope": "4.1.x",
+      "source": {
+        "url": "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.1-Release-Notes",
+        "section": "Upgrading from Spring Boot 4.0",
+        "reviewed_on": "2026-11-25",
+        "status": "OFFICIAL_RELEASE_NOTES_CHECKED"
+      },
+      "trigger": {
+        "necessary_condition": "CI Maven 有 -DskipTests 且使用 AOT test 目標",
+        "detection": "TEXT_CANDIDATE",
+        "static_regex": "-DskipTests|<skipTests>|maven\\.test\\.skip"
+      },
+      "verification": "核對 CI pipeline 目標；必要時審查 maven.test.skip 選項及其副作用",
+      "effective_config_required": false,
+      "automatic_patch": false,
+      "decision_on_candidate": "REVIEW_REQUIRED",
+      "runtime_validation": "NOT_RUN"
+    },
+    {
+      "id": "SB41-JPA-DEFERRED-004",
+      "title": "JPA deferred bootstrap 需要合適 AsyncTaskExecutor",
+      "classification": "BEHAVIOR_CHANGE",
+      "source_version_scope": "4.0.x",
+      "target_version_scope": "4.1.x",
+      "source": {
+        "url": "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.1-Release-Notes",
+        "section": "Upgrading from Spring Boot 4.0",
+        "reviewed_on": "2026-11-25",
+        "status": "OFFICIAL_RELEASE_NOTES_CHECKED"
+      },
+      "trigger": {
+        "necessary_condition": "spring.data.jpa.repositories.bootstrap-mode=deferred 且找不到可用 AsyncTaskExecutor",
+        "detection": "STATIC_CONFIG_CANDIDATE",
+        "static_regex": "bootstrap-mode\\s*[:=]\\s*[\"\\']?deferred"
+      },
+      "verification": "檢查有效 Profile 與 Bean；Context startup test",
+      "effective_config_required": true,
+      "automatic_patch": false,
+      "decision_on_candidate": "REVIEW_REQUIRED",
+      "runtime_validation": "NOT_RUN"
+    },
+    {
+      "id": "SB41-JPA-LAZY-005",
+      "title": "JPA lazy bootstrap executor auto-config 行為調整",
+      "classification": "BEHAVIOR_CHANGE",
+      "source_version_scope": "4.0.x",
+      "target_version_scope": "4.1.x",
+      "source": {
+        "url": "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.1-Release-Notes",
+        "section": "Upgrading from Spring Boot 4.0",
+        "reviewed_on": "2026-11-25",
+        "status": "OFFICIAL_RELEASE_NOTES_CHECKED"
+      },
+      "trigger": {
+        "necessary_condition": "spring.data.jpa.repositories.bootstrap-mode=lazy",
+        "detection": "STATIC_CONFIG_CANDIDATE",
+        "static_regex": "bootstrap-mode\\s*[:=]\\s*[\"\\']?lazy"
+      },
+      "verification": "比較 EntityManagerFactory bootstrap 行為，非必然需改設定",
+      "effective_config_required": true,
+      "automatic_patch": false,
+      "decision_on_candidate": "REVIEW_REQUIRED",
+      "runtime_validation": "NOT_RUN"
+    },
+    {
+      "id": "SB41-TOMCAT-TMP-006",
+      "title": "Tomcat 臨時 base dir 在 Context 關閉時清理",
+      "classification": "BEHAVIOR_CHANGE",
+      "source_version_scope": "4.0.x",
+      "target_version_scope": "4.1.x",
+      "source": {
+        "url": "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.1-Release-Notes",
+        "section": "Upgrading from Spring Boot 4.0",
+        "reviewed_on": "2026-11-25",
+        "status": "OFFICIAL_RELEASE_NOTES_CHECKED"
+      },
+      "trigger": {
+        "necessary_condition": "專案將資料持久化於 Tomcat 暫存 base directory",
+        "detection": "USAGE_REVIEW",
+        "static_regex": "server\\.tomcat\\.basedir|catalina\\.base|java\\.io\\.tmpdir"
+      },
+      "verification": "檢查自訂 basedir 與外部流程；需要保留時評估顯式 basedir",
+      "effective_config_required": true,
+      "automatic_patch": false,
+      "decision_on_candidate": "REVIEW_REQUIRED",
+      "runtime_validation": "NOT_RUN"
+    },
+    {
+      "id": "SB41-REACTOR-PROXY-007",
+      "title": "Reactor client builder 預設啟用 proxyWithSystemProperties",
+      "classification": "BEHAVIOR_CHANGE",
+      "source_version_scope": "4.0.x",
+      "target_version_scope": "4.1.x",
+      "source": {
+        "url": "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.1-Release-Notes",
+        "section": "Upgrading from Spring Boot 4.0",
+        "reviewed_on": "2026-11-25",
+        "status": "OFFICIAL_RELEASE_NOTES_CHECKED"
+      },
+      "trigger": {
+        "necessary_condition": "使用 Reactor client builder 且環境有系統 Proxy 屬性",
+        "detection": "TEXT_CANDIDATE",
+        "static_regex": "ReactorClientHttpRequestFactoryBuilder|ReactorClientHttpConnectorBuilder|proxyWithSystemProperties|https?\\.proxyHost"
+      },
+      "verification": "比較實際 HTTP Route，必要時 with/withoutHttpClientDefaults",
+      "effective_config_required": true,
+      "automatic_patch": false,
+      "decision_on_candidate": "REVIEW_REQUIRED",
+      "runtime_validation": "NOT_RUN"
+    },
+    {
+      "id": "SB41-JOOQ-JDK-008",
+      "title": "Spring Boot 4.1 的 jOOQ OSS 3.20+ 需要 Java 21",
+      "classification": "BREAKING_CHANGE",
+      "source_version_scope": "4.0.x",
+      "target_version_scope": "4.1.x",
+      "source": {
+        "url": "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.1-Release-Notes",
+        "section": "Upgrading from Spring Boot 4.0",
+        "reviewed_on": "2026-11-25",
+        "status": "OFFICIAL_RELEASE_NOTES_CHECKED"
+      },
+      "trigger": {
+        "necessary_condition": "專案實際解析 OSS org.jooq:jooq 3.20+ 且應用目標 Java 17",
+        "detection": "DEP_GRAPH_REQUIRED",
+        "static_regex": "<artifactId>jooq</artifactId>|org\\.jooq:jooq|spring-boot-starter-jooq"
+      },
+      "verification": "BLOCK；核實 edition/coordinates/overrides；不得擅自升 Java",
+      "effective_config_required": false,
+      "automatic_patch": false,
+      "decision_on_candidate": "REVIEW_REQUIRED",
+      "runtime_validation": "NOT_RUN"
+    },
+    {
+      "id": "SB41-JACKSON-HANDLER-009",
+      "title": "自動配置的 Jackson Mapper 現可透過 Spring Bean HandlerInstantiator 建立 Handler",
+      "classification": "VALIDATION_ONLY",
+      "source_version_scope": "4.0.x",
+      "target_version_scope": "4.1.x",
+      "source": {
+        "url": "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.1-Release-Notes",
+        "section": "New and Noteworthy / Dependency Upgrades",
+        "reviewed_on": "2026-11-25",
+        "status": "OFFICIAL_RELEASE_NOTES_CHECKED"
+      },
+      "trigger": {
+        "necessary_condition": "自訂 Serializer/Deserializer 或多組手動建立 Mapper",
+        "detection": "TEXT_CANDIDATE",
+        "static_regex": "JsonMapper\\.builder|new\\s+JsonMapper\\s*\\(|new\\s+ObjectMapper\\s*\\(|JsonDeserialize\\("
+      },
+      "verification": "解析 Mapper origin & handler 從 Bean 建立的行為，不推定所有 Mapper 受影響",
+      "effective_config_required": true,
+      "automatic_patch": false,
+      "decision_on_candidate": "REVIEW_REQUIRED",
+      "runtime_validation": "NOT_RUN"
+    },
+    {
+      "id": "SB41-GRADLE-BUILDINFO-010",
+      "title": "Gradle bootBuildInfo 預設輸出位置/檔名調整",
+      "classification": "BEHAVIOR_CHANGE",
+      "source_version_scope": "4.0.x",
+      "target_version_scope": "4.1.x",
+      "source": {
+        "url": "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.1-Release-Notes",
+        "section": "Upgrading from Spring Boot 4.0",
+        "reviewed_on": "2026-11-25",
+        "status": "OFFICIAL_RELEASE_NOTES_CHECKED"
+      },
+      "trigger": {
+        "necessary_condition": "Gradle 專案依賴舊 build-info.properties 路徑",
+        "detection": "TEXT_CANDIDATE",
+        "static_regex": "bootBuildInfo|build-info\\.properties"
+      },
+      "verification": "檢查消費端，必要時顯式 filename 並驗證產物",
+      "effective_config_required": false,
+      "automatic_patch": false,
+      "decision_on_candidate": "REVIEW_REQUIRED",
+      "runtime_validation": "NOT_RUN"
+    },
+    {
+      "id": "SB41-DEPENDENCY-BOM-011",
+      "title": "4.1.3 BOM 第三方版本與 4.0 不同",
+      "classification": "VALIDATION_ONLY",
+      "source_version_scope": "4.0.x",
+      "target_version_scope": "4.1.x",
+      "source": {
+        "url": "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.1-Release-Notes",
+        "section": "New and Noteworthy / Dependency Upgrades",
+        "reviewed_on": "2026-11-25",
+        "status": "OFFICIAL_RELEASE_NOTES_CHECKED"
+      },
+      "trigger": {
+        "necessary_condition": "專案依賴 Hibernate/Security/jOOQ/MyBatis 等或有版本覆寫",
+        "detection": "DEP_GRAPH_REQUIRED",
+        "static_regex": null
+      },
+      "verification": "對照最終依賴樹與 JDK；不能假設 4.1.0 發布時的依賴等於 4.1.3",
+      "effective_config_required": false,
+      "automatic_patch": false,
+      "decision_on_candidate": "REVIEW_REQUIRED",
+      "runtime_validation": "NOT_RUN"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+[
+  {
+    "id": "A01-patch-downgrade",
+    "observed": "CANDIDATES_SELECTED",
+    "expected": "BLOCK or explicit patch-policy review",
+    "defect_reproduced": true
+  },
+  {
+    "id": "A02-prerelease",
+    "observed": "CANDIDATES_SELECTED",
+    "expected": "REVIEW unless explicitly permitted",
+    "defect_reproduced": true
+  },
+  {
+    "id": "A03-route-filter",
+    "observed": [
+      "JCK3-MAPPER-TOPOLOGY-003",
+      "WEB-UNDERTOW-001",
+      "WEB-UNDERTOW-005",
+      "WEB-UNDERTOW-006"
+    ],
+    "expected": "No out-of-route rule findings (or separate out-of-scope diagnostic)",
+    "defect_reproduced": true
+  },
+  {
+    "id": "A04-builder-pattern",
+    "observed": [
+      "JSONMAPPER_BUILDER",
+      "OBJECTMAPPER_BUILDER"
+    ],
+    "expected": "One JsonMapper builder match; ObjectMapper pattern must differ",
+    "defect_reproduced": true
+  },
+  {
+    "id": "A05-secret-disclosure",
+    "observed": true,
+    "expected": "Sensitive values redacted",
+    "defect_reproduced": true
+  },
+  {
+    "id": "A06-cross-profile-conflict",
+    "observed": [],
+    "expected": "Record existing target in another profile as possible conflict",
+    "defect_reproduced": true
+  },
+  {
+    "id": "A07-unbound-evidence",
+    "observed": {
+      "preflight": "PRECHECK_PASS",
+      "jooq_candidate": true
+    },
+    "expected": "Require resolved graph evidence or REVIEW on contradiction",
+    "defect_reproduced": true
+  },
+  {
+    "id": "A08-dockerfile-variant",
+    "observed": false,
+    "expected": "Flag layertools in Dockerfile.dev",
+    "defect_reproduced": true
+  },
+  {
+    "id": "A09-unimplemented-legacy-detectors",
+    "observed": false,
+    "expected": "Report rule NOT_EVALUATED if unsupported; do not imply coverage",
+    "defect_reproduced": true
+  },
+  {
+    "id": "A10-symlink-scope",
+    "observed": true,
+    "expected": "Do not follow out-of-root links",
+    "defect_reproduced": true
+  }
+]

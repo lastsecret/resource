@@ -1,0 +1,1821 @@
+{
+  "schema_version": "0.9",
+  "route": {
+    "status": "CANDIDATES_SELECTED",
+    "stages": [
+      "spring-boot-3.5-to-4.0",
+      "spring-boot-4.0-to-4.1"
+    ],
+    "rule_ids": [
+      "HIB7-NATIVE-DATETIME-001",
+      "HIB7-ORACLE-DATE-002",
+      "HIB7-CASCADE-MAPSID-003",
+      "HIB7-DETACHED-004",
+      "HIB7-RAW-HQL-005",
+      "HIB7-IMMUTABLE-006",
+      "HIB7-STATELESS-007",
+      "HIB7-API-REMOVAL-008",
+      "HIB7-ORACLE-DDL-009",
+      "HIB7-ARRAY-010",
+      "HIB7-CRITERIA-011",
+      "HIB7-VALIDATION-012",
+      "MYB4-STARTER-001",
+      "MYB4-MAPPER-002",
+      "MYB4-HANDLER-003",
+      "MYB4-CONFIG-004",
+      "MYB4-MULTIDS-005",
+      "MYB4-BATCH-006",
+      "MYB4-SQL-007",
+      "MYB4-RESULT-008",
+      "MYB4-PLUS-009",
+      "SB4-MODULAR-001",
+      "SB4-PACKAGE-002",
+      "SB4-TEST-003",
+      "SB4-PROPERTIES-004",
+      "SB4-JACKSON-MODULE-005",
+      "SB4-JACKSON-API-006",
+      "SB4-HTTP-CONVERTER-007",
+      "SB4-RESTCLIENT-008",
+      "SB4-ACTUATOR-009",
+      "SB4-ENTITYSCAN-010",
+      "SB4-SECURITY-011",
+      "SB4-SESSION-012",
+      "SB4-SERVLET-013",
+      "SB4-TOMCAT-WAR-014",
+      "ECO4-SPRINGDOC-001",
+      "ECO4-SPRINGDOC-002",
+      "ECO4-CLOUD-003",
+      "ECO4-CLOUD-004",
+      "ECO4-BATCH-005",
+      "ECO4-BATCH-006",
+      "ECO4-REDIS-007",
+      "ECO4-REDIS-008",
+      "ECO4-GRAPHQL-009",
+      "ECO4-VALIDATION-010",
+      "ECO4-OBSERV-011",
+      "ECO4-TEST-012",
+      "SEC7-DSL-001",
+      "SEC7-ACCESS-002",
+      "SEC7-MATCHER-003",
+      "SEC7-METHOD-004",
+      "SEC7-JACKSON-005",
+      "SEC7-JWT-006",
+      "SEC7-JWK-007",
+      "SEC7-OPAQUE-008",
+      "SEC7-CONTEXT-009",
+      "SEC7-CSRF-010",
+      "SEC7-TEST-011",
+      "SEC7-AUTHZSRV-012",
+      "WEB-UNDERTOW-001",
+      "WEB-UNDERTOW-002",
+      "WEB-UNDERTOW-003",
+      "WEB-UNDERTOW-004",
+      "HCP7-SCHEMA-001",
+      "HCP7-CONFIG-002",
+      "HCP7-STARTUP-003",
+      "HCP7-TXN-004",
+      "HCP7-METRICS-005",
+      "HCP7-LOAD-006",
+      "OJDBC239-ARTIFACT-001",
+      "OJDBC239-DB-002",
+      "OJDBC239-DATETIME-003",
+      "OJDBC239-GETOBJECT-004",
+      "OJDBC239-NULL-005",
+      "OJDBC239-BATCH-006",
+      "OJDBC239-RAC-007",
+      "OJDBC239-COMPANION-008",
+      "JCK3-NULL-PRIMITIVES-001",
+      "JCK3-POJO-ORDER-002",
+      "JCK3-MAPPER-TOPOLOGY-003",
+      "WEB-UNDERTOW-005",
+      "WEB-UNDERTOW-006",
+      "SB41-DEPRECATED-001",
+      "SB41-LAYERTOOLS-002",
+      "SB41-TESTAOT-003",
+      "SB41-JPA-DEFERRED-004",
+      "SB41-JPA-LAZY-005",
+      "SB41-TOMCAT-TMP-006",
+      "SB41-REACTOR-PROXY-007",
+      "SB41-JOOQ-JDK-008",
+      "SB41-JACKSON-HANDLER-009",
+      "SB41-GRADLE-BUILDINFO-010",
+      "SB41-DEPENDENCY-BOM-011"
+    ],
+    "issues": [],
+    "automatic_patch": false,
+    "notes": [
+      "Rules crossing 4.0 do not require an actual 4.0 deploy.",
+      "Each finding still requires project usage, effective config and evidence; no automatic edits."
+    ]
+  },
+  "preflight": {
+    "schema_version": "0.9",
+    "version_stages": [
+      "spring-boot-3.5-to-4.0",
+      "spring-boot-4.0-to-4.1"
+    ],
+    "selected_rule_count": 93,
+    "migration_id": "demo-java17-boot413",
+    "resolved_target_java": 17,
+    "expected_classfile_major_max": 61,
+    "status": "REVIEW_REQUIRED",
+    "scope": "STATIC_VERSION_ONLY",
+    "runtime_and_regression_tests": "NOT_RUN",
+    "issues": [
+      {
+        "level": "REVIEW",
+        "code": "DEPENDENCY_GRAPH_UNVERIFIED",
+        "detail": "Declared component input is not independently collected dependency evidence. No static config alone may pass."
+      },
+      {
+        "level": "REVIEW",
+        "code": "BOOT41_DEPENDENCY_GRAPH_UNVERIFIED",
+        "detail": "Boot 4.1 may manage jOOQ OSS requiring Java 21; resolve the dependency graph and confirm jOOQ absence/edition."
+      }
+    ],
+    "notes": [
+      "Actual Maven/Gradle dependency graph and CI/Docker configuration must be verified.",
+      "PRECHECK_PASS is not proof of successful migration."
+    ]
+  },
+  "legacy": {
+    "schema_version": "0.7.0",
+    "generated_at": "2026-11-25T10:46:22.830864+00:00",
+    "project": "/mnt/data/v09-work/enterprise-modernization-knowledge-v0.9/examples/springboot3-undertow-demo",
+    "scanner_scope": "STATIC_READ_ONLY",
+    "project_has_undertow_hints": true,
+    "dependencies": [
+      {
+        "artifact": "org.springframework.boot:spring-boot-starter-undertow",
+        "declared_version": "BOM/inherited/unknown",
+        "source": "/mnt/data/v09-work/enterprise-modernization-knowledge-v0.9/examples/springboot3-undertow-demo/pom.xml",
+        "note": "POM declaration only; not resolved runtime dependency"
+      }
+    ],
+    "configuration_observations": [
+      {
+        "key": "server.undertow.accesslog.dir",
+        "value": "[REDACTED]",
+        "line": 4,
+        "document": 1,
+        "file": "src/main/resources/application-prod.yml",
+        "profile_hint": "prod",
+        "is_dynamic": false
+      },
+      {
+        "key": "server.undertow.options.socket.TCP_NODELAY",
+        "value": "[REDACTED]",
+        "line": 7,
+        "document": 1,
+        "file": "src/main/resources/application-prod.yml",
+        "profile_hint": "prod",
+        "is_dynamic": false
+      },
+      {
+        "key": "server.undertow.threads.worker",
+        "value": "16",
+        "line": 1,
+        "file": "src/main/resources/application.properties",
+        "profile_hint": "default_or_document_conditions",
+        "is_dynamic": false
+      },
+      {
+        "key": "server.undertow.threads.io",
+        "value": "4",
+        "line": 2,
+        "file": "src/main/resources/application.properties",
+        "profile_hint": "default_or_document_conditions",
+        "is_dynamic": false
+      },
+      {
+        "key": "server.undertow.accesslog.enabled",
+        "value": "true",
+        "line": 3,
+        "file": "src/main/resources/application.properties",
+        "profile_hint": "default_or_document_conditions",
+        "is_dynamic": false
+      },
+      {
+        "key": "server.undertow.no-request-timeout",
+        "value": "30s",
+        "line": 4,
+        "file": "src/main/resources/application.properties",
+        "profile_hint": "default_or_document_conditions",
+        "is_dynamic": false
+      },
+      {
+        "key": "server.undertow.max-http-post-size",
+        "value": "5MB",
+        "line": 5,
+        "file": "src/main/resources/application.properties",
+        "profile_hint": "default_or_document_conditions",
+        "is_dynamic": false
+      }
+    ],
+    "java_candidates": [
+      {
+        "type": "MANUAL_OBJECTMAPPER",
+        "file": "src/main/java/demo/JsonUtil.java",
+        "line": 4,
+        "confidence": "TEXT_CANDIDATE_ONLY"
+      }
+    ],
+    "findings": [
+      {
+        "rule_id": "WEB-UNDERTOW-001",
+        "category": "BREAKING_CHANGE",
+        "decision": "REVIEW_REQUIRED",
+        "confidence": "DECLARATION_OR_STATIC_HINT",
+        "message": "Undertow usage detected; Boot 4 no longer supports embedded Undertow. Confirm effective container and replace supported starter if applicable.",
+        "locations": [
+          "/mnt/data/v09-work/enterprise-modernization-knowledge-v0.9/examples/springboot3-undertow-demo/pom.xml"
+        ],
+        "automatic_patch": false
+      },
+      {
+        "rule_id": "WEB-UNDERTOW-005",
+        "category": "BEHAVIOR_CHANGE",
+        "decision": "REVIEW_REQUIRED",
+        "confidence": "STATIC_CONFIG_OBSERVED",
+        "message": "Undertow-specific setting server.undertow.accesslog.dir will not configure Tomcat; suggested target is a review candidate only",
+        "locations": [
+          "src/main/resources/application-prod.yml:4"
+        ],
+        "automatic_patch": false
+      },
+      {
+        "rule_id": "WEB-UNDERTOW-005",
+        "category": "BEHAVIOR_CHANGE",
+        "decision": "MANUAL_REVIEW",
+        "confidence": "STATIC_CONFIG_OBSERVED",
+        "message": "Undertow-specific setting server.undertow.options.socket.TCP_NODELAY will not configure Tomcat; suggested target is a review candidate only",
+        "locations": [
+          "src/main/resources/application-prod.yml:7"
+        ],
+        "automatic_patch": false
+      },
+      {
+        "rule_id": "WEB-UNDERTOW-005",
+        "category": "BEHAVIOR_CHANGE",
+        "decision": "MANUAL_REVIEW",
+        "confidence": "STATIC_CONFIG_OBSERVED",
+        "message": "Undertow-specific setting server.undertow.threads.worker will not configure Tomcat; suggested target is a review candidate only",
+        "locations": [
+          "src/main/resources/application.properties:1"
+        ],
+        "automatic_patch": false
+      },
+      {
+        "rule_id": "WEB-UNDERTOW-005",
+        "category": "BEHAVIOR_CHANGE",
+        "decision": "MANUAL_REVIEW",
+        "confidence": "STATIC_CONFIG_OBSERVED",
+        "message": "Undertow-specific setting server.undertow.threads.io will not configure Tomcat; suggested target is a review candidate only",
+        "locations": [
+          "src/main/resources/application.properties:2"
+        ],
+        "automatic_patch": false
+      },
+      {
+        "rule_id": "WEB-UNDERTOW-005",
+        "category": "BEHAVIOR_CHANGE",
+        "decision": "REVIEW_REQUIRED",
+        "confidence": "STATIC_CONFIG_OBSERVED",
+        "message": "Undertow-specific setting server.undertow.accesslog.enabled will not configure Tomcat; suggested target is a review candidate only",
+        "locations": [
+          "src/main/resources/application.properties:3"
+        ],
+        "automatic_patch": false
+      },
+      {
+        "rule_id": "WEB-UNDERTOW-005",
+        "category": "BEHAVIOR_CHANGE",
+        "decision": "MANUAL_REVIEW",
+        "confidence": "STATIC_CONFIG_OBSERVED",
+        "message": "Undertow-specific setting server.undertow.no-request-timeout will not configure Tomcat; suggested target is a review candidate only",
+        "locations": [
+          "src/main/resources/application.properties:4"
+        ],
+        "automatic_patch": false
+      },
+      {
+        "rule_id": "WEB-UNDERTOW-005",
+        "category": "BEHAVIOR_CHANGE",
+        "decision": "MANUAL_REVIEW",
+        "confidence": "STATIC_CONFIG_OBSERVED",
+        "message": "Undertow-specific setting server.undertow.max-http-post-size will not configure Tomcat; suggested target is a review candidate only",
+        "locations": [
+          "src/main/resources/application.properties:5"
+        ],
+        "automatic_patch": false
+      },
+      {
+        "rule_id": "WEB-UNDERTOW-006",
+        "category": "VALIDATION_ONLY",
+        "decision": "COMPARE_SOURCE_TARGET_BEHAVIOR",
+        "confidence": "DOCUMENTED_DEFAULTS_ONLY",
+        "message": "Compare documented defaults with the measured source/target runtime; do not equate values across servers",
+        "locations": [],
+        "automatic_patch": false
+      },
+      {
+        "rule_id": "JCK3-MAPPER-TOPOLOGY-003",
+        "category": "VALIDATION_ONLY",
+        "decision": "RESOLVE_MAPPER_ORIGIN_AND_CALLS",
+        "confidence": "TEXT_CANDIDATE_ONLY",
+        "message": "MANUAL_OBJECTMAPPER: check whether Spring properties can reach this mapper",
+        "locations": [
+          "src/main/java/demo/JsonUtil.java:4"
+        ],
+        "automatic_patch": false
+      }
+    ],
+    "undertow_to_tomcat": [
+      {
+        "source_key": "server.undertow.accesslog.dir",
+        "source_value": "[REDACTED]",
+        "source_location": "src/main/resources/application-prod.yml:4",
+        "target_key": "server.tomcat.accesslog.directory",
+        "candidate_value": null,
+        "mapping": "REVIEW_SEMANTICS",
+        "decision": "REVIEW_REQUIRED",
+        "note": "Tomcat relative paths are interpreted relative to its base directory.",
+        "automatic_patch": false,
+        "existing_target": []
+      },
+      {
+        "source_key": "server.undertow.options.socket.TCP_NODELAY",
+        "source_value": "[REDACTED]",
+        "source_location": "src/main/resources/application-prod.yml:7",
+        "target_key": null,
+        "candidate_value": null,
+        "mapping": "NO_SAFE_MAPPING",
+        "decision": "MANUAL_REVIEW",
+        "note": "Undertow/XNIO option has no documented one-to-one Tomcat mapping; review manually.",
+        "automatic_patch": false,
+        "existing_target": []
+      },
+      {
+        "source_key": "server.undertow.threads.worker",
+        "source_value": "16",
+        "source_location": "src/main/resources/application.properties:1",
+        "target_key": "server.tomcat.threads.max",
+        "candidate_value": null,
+        "mapping": "NO_SAFE_MAPPING",
+        "decision": "MANUAL_REVIEW",
+        "note": "Worker models differ. Never copy worker count directly; load-test and consider virtual threads.",
+        "automatic_patch": false,
+        "existing_target": []
+      },
+      {
+        "source_key": "server.undertow.threads.io",
+        "source_value": "4",
+        "source_location": "src/main/resources/application.properties:2",
+        "target_key": null,
+        "candidate_value": null,
+        "mapping": "NO_SAFE_MAPPING",
+        "decision": "MANUAL_REVIEW",
+        "note": "Undertow I/O threads have no direct Tomcat property equivalent.",
+        "automatic_patch": false,
+        "existing_target": []
+      },
+      {
+        "source_key": "server.undertow.accesslog.enabled",
+        "source_value": "true",
+        "source_location": "src/main/resources/application.properties:3",
+        "target_key": "server.tomcat.accesslog.enabled",
+        "candidate_value": "true",
+        "mapping": "SAME_PURPOSE_CANDIDATE",
+        "decision": "REVIEW_REQUIRED",
+        "note": "Both enable access logging; compare actual logging behaviour.",
+        "automatic_patch": false,
+        "existing_target": []
+      },
+      {
+        "source_key": "server.undertow.no-request-timeout",
+        "source_value": "30s",
+        "source_location": "src/main/resources/application.properties:4",
+        "target_key": "server.tomcat.keep-alive-timeout",
+        "candidate_value": null,
+        "mapping": "NO_SAFE_MAPPING",
+        "decision": "MANUAL_REVIEW",
+        "note": "Idle-without-request and keep-alive timeouts are not an exact semantic match. Do not auto-copy.",
+        "automatic_patch": false,
+        "existing_target": []
+      },
+      {
+        "source_key": "server.undertow.max-http-post-size",
+        "source_value": "5MB",
+        "source_location": "src/main/resources/application.properties:5",
+        "target_key": "server.tomcat.max-http-form-post-size",
+        "candidate_value": null,
+        "mapping": "NO_SAFE_MAPPING",
+        "decision": "MANUAL_REVIEW",
+        "note": "Undertow HTTP POST size and Tomcat FORM POST size have different scopes.",
+        "automatic_patch": false,
+        "existing_target": []
+      }
+    ],
+    "default_comparisons": [
+      {
+        "source": "server.undertow.threads.io",
+        "source_default": "derived from available processors",
+        "target": "server.tomcat.threads.max",
+        "target_default": "UNKNOWN_FOR_EXACT_4.1_TARGET (4.0 reference: 200)",
+        "equivalence": "NO_DIRECT_EQUIVALENCE",
+        "note": "Undertow I/O threads are not Tomcat request workers.",
+        "source_observation": "EXPLICIT_STATIC_CONFIG",
+        "target_observation": "NO_STATIC_OVERRIDE_FOUND",
+        "source_observed": [
+          "src/main/resources/application.properties:2=4"
+        ],
+        "target_observed": [],
+        "effective_status": "NOT_RUNTIME_VERIFIED",
+        "automatic_patch": false
+      },
+      {
+        "source": "server.undertow.threads.worker",
+        "source_default": "8 × effective Undertow I/O thread count",
+        "target": "server.tomcat.threads.max",
+        "target_default": "UNKNOWN_FOR_EXACT_4.1_TARGET (4.0 reference: 200)",
+        "equivalence": "NOT_EQUAL_BY_COUNT",
+        "note": "Tomcat worker model; with virtual threads enabled max does not control the same thing.",
+        "source_observation": "EXPLICIT_STATIC_CONFIG",
+        "target_observation": "NO_STATIC_OVERRIDE_FOUND",
+        "source_observed": [
+          "src/main/resources/application.properties:1=16"
+        ],
+        "target_observed": [],
+        "effective_status": "NOT_RUNTIME_VERIFIED",
+        "automatic_patch": false
+      },
+      {
+        "source": "server.undertow.max-http-post-size",
+        "source_default": "2MB",
+        "target": "server.tomcat.max-http-form-post-size",
+        "target_default": "UNKNOWN_FOR_EXACT_4.1_TARGET (4.0 reference: 2MB)",
+        "equivalence": "DIFFERENT_SCOPE",
+        "note": "Equal-looking default size does not mean equivalent request-body semantics.",
+        "source_observation": "EXPLICIT_STATIC_CONFIG",
+        "target_observation": "NO_STATIC_OVERRIDE_FOUND",
+        "source_observed": [
+          "src/main/resources/application.properties:5=5MB"
+        ],
+        "target_observed": [],
+        "effective_status": "NOT_RUNTIME_VERIFIED",
+        "automatic_patch": false
+      },
+      {
+        "source": "server.undertow.accesslog.enabled",
+        "source_default": "false",
+        "target": "server.tomcat.accesslog.enabled",
+        "target_default": "UNKNOWN_FOR_EXACT_4.1_TARGET (4.0 reference: false)",
+        "equivalence": "SIMILAR_INTENT",
+        "note": "Explicit configuration and log output format still need examination.",
+        "source_observation": "EXPLICIT_STATIC_CONFIG",
+        "target_observation": "NO_STATIC_OVERRIDE_FOUND",
+        "source_observed": [
+          "src/main/resources/application.properties:3=true"
+        ],
+        "target_observed": [],
+        "effective_status": "NOT_RUNTIME_VERIFIED",
+        "automatic_patch": false
+      },
+      {
+        "source": "server.undertow.accesslog.prefix",
+        "source_default": "access_log.",
+        "target": "server.tomcat.accesslog.prefix",
+        "target_default": "UNKNOWN_FOR_EXACT_4.1_TARGET (4.0 reference: access_log)",
+        "equivalence": "DIFFERENT_DEFAULT",
+        "note": "File name and rotation may change without explicit settings.",
+        "source_observation": "NO_STATIC_OVERRIDE_FOUND",
+        "target_observation": "NO_STATIC_OVERRIDE_FOUND",
+        "source_observed": [],
+        "target_observed": [],
+        "effective_status": "NOT_RUNTIME_VERIFIED",
+        "automatic_patch": false
+      },
+      {
+        "source": "server.undertow.accesslog.suffix",
+        "source_default": "log",
+        "target": "server.tomcat.accesslog.suffix",
+        "target_default": "UNKNOWN_FOR_EXACT_4.1_TARGET (4.0 reference: .log)",
+        "equivalence": "DIFFERENT_DEFAULT",
+        "note": "Do not add properties unless filename contract requires it.",
+        "source_observation": "NO_STATIC_OVERRIDE_FOUND",
+        "target_observation": "NO_STATIC_OVERRIDE_FOUND",
+        "source_observed": [],
+        "target_observed": [],
+        "effective_status": "NOT_RUNTIME_VERIFIED",
+        "automatic_patch": false
+      },
+      {
+        "source": "server.undertow.url-charset",
+        "source_default": "UTF-8",
+        "target": "server.tomcat.uri-encoding",
+        "target_default": "UNKNOWN_FOR_EXACT_4.1_TARGET (4.0 reference: UTF-8)",
+        "equivalence": "SIMILAR_INTENT",
+        "note": "Actual decoded request behavior must still be compared.",
+        "source_observation": "NO_STATIC_OVERRIDE_FOUND",
+        "target_observation": "NO_STATIC_OVERRIDE_FOUND",
+        "source_observed": [],
+        "target_observed": [],
+        "effective_status": "NOT_RUNTIME_VERIFIED",
+        "automatic_patch": false
+      },
+      {
+        "source": "server.undertow.no-request-timeout",
+        "source_default": "not documented at Spring property level; server runtime dependent",
+        "target": "server.tomcat.keep-alive-timeout",
+        "target_default": "UNKNOWN_FOR_EXACT_4.1_TARGET (4.0 reference: derived from connection-timeout unless overridden)",
+        "equivalence": "NOT_DIRECTLY_EQUIVALENT",
+        "note": "Do not fabricate a numeric timeout from absent config.",
+        "source_observation": "EXPLICIT_STATIC_CONFIG",
+        "target_observation": "NO_STATIC_OVERRIDE_FOUND",
+        "source_observed": [
+          "src/main/resources/application.properties:4=30s"
+        ],
+        "target_observed": [],
+        "effective_status": "NOT_RUNTIME_VERIFIED",
+        "automatic_patch": false
+      }
+    ],
+    "default_preservation_candidates": [],
+    "source_references": {
+      "boot35": "https://docs.spring.io/spring-boot/3.5/appendix/application-properties/index.html",
+      "boot40": "https://docs.spring.io/spring-boot/4.0/appendix/application-properties/index.html",
+      "migration": "https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide"
+    },
+    "warnings": [
+      "Static application files are NOT sufficient to establish effective configuration: environment, profile activation, @Bean customizers, config server, command-line, Kubernetes and JVM options may override.",
+      "Maven POM entries are declarations, not a resolved dependency tree. Run Maven with the project's approved repositories for exact artifact versions.",
+      "Scanner never edits source files or auto-applies candidate Tomcat properties."
+    ],
+    "scan_counts": {
+      "files_considered": 4
+    },
+    "redacted_or_omitted_config_entries": 3
+  },
+  "boot41": {
+    "schema_version": "0.8",
+    "route": {
+      "status": "CANDIDATES_SELECTED",
+      "stages": [
+        "spring-boot-3.5-to-4.0",
+        "spring-boot-4.0-to-4.1"
+      ],
+      "rule_ids": [
+        "HIB7-NATIVE-DATETIME-001",
+        "HIB7-ORACLE-DATE-002",
+        "HIB7-CASCADE-MAPSID-003",
+        "HIB7-DETACHED-004",
+        "HIB7-RAW-HQL-005",
+        "HIB7-IMMUTABLE-006",
+        "HIB7-STATELESS-007",
+        "HIB7-API-REMOVAL-008",
+        "HIB7-ORACLE-DDL-009",
+        "HIB7-ARRAY-010",
+        "HIB7-CRITERIA-011",
+        "HIB7-VALIDATION-012",
+        "MYB4-STARTER-001",
+        "MYB4-MAPPER-002",
+        "MYB4-HANDLER-003",
+        "MYB4-CONFIG-004",
+        "MYB4-MULTIDS-005",
+        "MYB4-BATCH-006",
+        "MYB4-SQL-007",
+        "MYB4-RESULT-008",
+        "MYB4-PLUS-009",
+        "SB4-MODULAR-001",
+        "SB4-PACKAGE-002",
+        "SB4-TEST-003",
+        "SB4-PROPERTIES-004",
+        "SB4-JACKSON-MODULE-005",
+        "SB4-JACKSON-API-006",
+        "SB4-HTTP-CONVERTER-007",
+        "SB4-RESTCLIENT-008",
+        "SB4-ACTUATOR-009",
+        "SB4-ENTITYSCAN-010",
+        "SB4-SECURITY-011",
+        "SB4-SESSION-012",
+        "SB4-SERVLET-013",
+        "SB4-TOMCAT-WAR-014",
+        "ECO4-SPRINGDOC-001",
+        "ECO4-SPRINGDOC-002",
+        "ECO4-CLOUD-003",
+        "ECO4-CLOUD-004",
+        "ECO4-BATCH-005",
+        "ECO4-BATCH-006",
+        "ECO4-REDIS-007",
+        "ECO4-REDIS-008",
+        "ECO4-GRAPHQL-009",
+        "ECO4-VALIDATION-010",
+        "ECO4-OBSERV-011",
+        "ECO4-TEST-012",
+        "SEC7-DSL-001",
+        "SEC7-ACCESS-002",
+        "SEC7-MATCHER-003",
+        "SEC7-METHOD-004",
+        "SEC7-JACKSON-005",
+        "SEC7-JWT-006",
+        "SEC7-JWK-007",
+        "SEC7-OPAQUE-008",
+        "SEC7-CONTEXT-009",
+        "SEC7-CSRF-010",
+        "SEC7-TEST-011",
+        "SEC7-AUTHZSRV-012",
+        "WEB-UNDERTOW-001",
+        "WEB-UNDERTOW-002",
+        "WEB-UNDERTOW-003",
+        "WEB-UNDERTOW-004",
+        "HCP7-SCHEMA-001",
+        "HCP7-CONFIG-002",
+        "HCP7-STARTUP-003",
+        "HCP7-TXN-004",
+        "HCP7-METRICS-005",
+        "HCP7-LOAD-006",
+        "OJDBC239-ARTIFACT-001",
+        "OJDBC239-DB-002",
+        "OJDBC239-DATETIME-003",
+        "OJDBC239-GETOBJECT-004",
+        "OJDBC239-NULL-005",
+        "OJDBC239-BATCH-006",
+        "OJDBC239-RAC-007",
+        "OJDBC239-COMPANION-008",
+        "JCK3-NULL-PRIMITIVES-001",
+        "JCK3-POJO-ORDER-002",
+        "JCK3-MAPPER-TOPOLOGY-003",
+        "WEB-UNDERTOW-005",
+        "WEB-UNDERTOW-006",
+        "SB41-DEPRECATED-001",
+        "SB41-LAYERTOOLS-002",
+        "SB41-TESTAOT-003",
+        "SB41-JPA-DEFERRED-004",
+        "SB41-JPA-LAZY-005",
+        "SB41-TOMCAT-TMP-006",
+        "SB41-REACTOR-PROXY-007",
+        "SB41-JOOQ-JDK-008",
+        "SB41-JACKSON-HANDLER-009",
+        "SB41-GRADLE-BUILDINFO-010",
+        "SB41-DEPENDENCY-BOM-011"
+      ],
+      "issues": [],
+      "automatic_patch": false,
+      "notes": [
+        "Rules crossing 4.0 do not require an actual 4.0 deploy.",
+        "Each finding still requires project usage, effective config and evidence; no automatic edits."
+      ]
+    },
+    "project": "/mnt/data/v09-work/enterprise-modernization-knowledge-v0.9/examples/springboot3-undertow-demo",
+    "scanner_scope": "STATIC_TEXT_ONLY",
+    "findings": [
+      {
+        "rule_id": "SB41-JACKSON-HANDLER-009",
+        "classification": "VALIDATION_ONLY",
+        "location": "src/main/java/demo/JsonUtil.java:4",
+        "confidence": "TEXT_CANDIDATE_ONLY",
+        "decision": "REVIEW_REQUIRED",
+        "effective_configuration": "UNKNOWN",
+        "source_behavior": "NOT_MEASURED",
+        "target_behavior": "NOT_MEASURED",
+        "automatic_patch": false
+      }
+    ],
+    "scan_counts": {
+      "files_considered": 4
+    },
+    "unresolved_rules": [
+      "SB41-DEPRECATED-001",
+      "SB41-DEPENDENCY-BOM-011"
+    ],
+    "limitations": [
+      "No Maven/Gradle resolved dependency graph; Java/Jackson handler origins and JPA runtime bean availability are unverified.",
+      "A text match never proves a breaking change or need to patch.",
+      "No match is NOT proof that an API or behavior is compatible.",
+      "Does not change project files."
+    ]
+  },
+  "inventory": null,
+  "evaluations": [
+    {
+      "rule_id": "HIB7-NATIVE-DATETIME-001",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB7-ORACLE-DATE-002",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB7-CASCADE-MAPSID-003",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB7-DETACHED-004",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB7-RAW-HQL-005",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB7-IMMUTABLE-006",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB7-STATELESS-007",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB7-API-REMOVAL-008",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB7-ORACLE-DDL-009",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB7-ARRAY-010",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB7-CRITERIA-011",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB7-VALIDATION-012",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "MYB4-STARTER-001",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "MYB4-MAPPER-002",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "MYB4-HANDLER-003",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "MYB4-CONFIG-004",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "MYB4-MULTIDS-005",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "MYB4-BATCH-006",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "MYB4-SQL-007",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "MYB4-RESULT-008",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "MYB4-PLUS-009",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB4-MODULAR-001",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB4-PACKAGE-002",
+      "detector": "text",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB4-TEST-003",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB4-PROPERTIES-004",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB4-JACKSON-MODULE-005",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB4-JACKSON-API-006",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB4-HTTP-CONVERTER-007",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB4-RESTCLIENT-008",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB4-ACTUATOR-009",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB4-ENTITYSCAN-010",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB4-SECURITY-011",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB4-SESSION-012",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB4-SERVLET-013",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB4-TOMCAT-WAR-014",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "ECO4-SPRINGDOC-001",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "ECO4-SPRINGDOC-002",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "ECO4-CLOUD-003",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "ECO4-CLOUD-004",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "ECO4-BATCH-005",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "ECO4-BATCH-006",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "ECO4-REDIS-007",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "ECO4-REDIS-008",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "ECO4-GRAPHQL-009",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "ECO4-VALIDATION-010",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "ECO4-OBSERV-011",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "ECO4-TEST-012",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SEC7-DSL-001",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SEC7-ACCESS-002",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SEC7-MATCHER-003",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SEC7-METHOD-004",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SEC7-JACKSON-005",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SEC7-JWT-006",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SEC7-JWK-007",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SEC7-OPAQUE-008",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SEC7-CONTEXT-009",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SEC7-CSRF-010",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SEC7-TEST-011",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SEC7-AUTHZSRV-012",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "WEB-UNDERTOW-001",
+      "detector": "legacy",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [
+        "/mnt/data/v09-work/enterprise-modernization-knowledge-v0.9/examples/springboot3-undertow-demo/pom.xml"
+      ],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "WEB-UNDERTOW-002",
+      "detector": "text",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [
+        "src/main/resources/application.properties:1",
+        "src/main/resources/application.properties:2",
+        "src/main/resources/application.properties:3",
+        "src/main/resources/application.properties:4",
+        "src/main/resources/application.properties:5"
+      ],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "WEB-UNDERTOW-003",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "WEB-UNDERTOW-004",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HCP7-SCHEMA-001",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HCP7-CONFIG-002",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HCP7-STARTUP-003",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HCP7-TXN-004",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HCP7-METRICS-005",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HCP7-LOAD-006",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "OJDBC239-ARTIFACT-001",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "OJDBC239-DB-002",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "OJDBC239-DATETIME-003",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "OJDBC239-GETOBJECT-004",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "OJDBC239-NULL-005",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "OJDBC239-BATCH-006",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "OJDBC239-RAC-007",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "OJDBC239-COMPANION-008",
+      "detector": "none",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "JCK3-NULL-PRIMITIVES-001",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "JCK3-POJO-ORDER-002",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "JCK3-MAPPER-TOPOLOGY-003",
+      "detector": "legacy",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [
+        "src/main/java/demo/JsonUtil.java:4"
+      ],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "WEB-UNDERTOW-005",
+      "detector": "legacy",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [
+        "src/main/resources/application-prod.yml:4",
+        "src/main/resources/application-prod.yml:7",
+        "src/main/resources/application.properties:1",
+        "src/main/resources/application.properties:2",
+        "src/main/resources/application.properties:3",
+        "src/main/resources/application.properties:4",
+        "src/main/resources/application.properties:5"
+      ],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "WEB-UNDERTOW-006",
+      "detector": "legacy",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB41-DEPRECATED-001",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB41-LAYERTOOLS-002",
+      "detector": "boot41",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB41-TESTAOT-003",
+      "detector": "boot41",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB41-JPA-DEFERRED-004",
+      "detector": "boot41",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB41-JPA-LAZY-005",
+      "detector": "boot41",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB41-TOMCAT-TMP-006",
+      "detector": "boot41",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB41-REACTOR-PROXY-007",
+      "detector": "boot41",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB41-JOOQ-JDK-008",
+      "detector": "boot41",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB41-JACKSON-HANDLER-009",
+      "detector": "boot41",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [
+        "src/main/java/demo/JsonUtil.java:4"
+      ],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB41-GRADLE-BUILDINFO-010",
+      "detector": "boot41",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "SB41-DEPENDENCY-BOM-011",
+      "detector": "none",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "NOT_EVALUATED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB71-LOCKOPTIONS-001",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB72-REGISTRY-001",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB73-COLUMNS-001",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB73-SINGLE-RESULT-002",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB73-SCHEMA-003",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "HIB74-ORACLE-DATE-001",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    },
+    {
+      "rule_id": "JCK31-NULLNODE-001",
+      "detector": "text",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "UNKNOWN",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED"
+    }
+  ],
+  "findings": [
+    {
+      "rule_id": "WEB-UNDERTOW-001",
+      "detector": "legacy",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [
+        "/mnt/data/v09-work/enterprise-modernization-knowledge-v0.9/examples/springboot3-undertow-demo/pom.xml"
+      ],
+      "location_module_binding": "NOT_VERIFIED",
+      "confidence": "STATIC_CANDIDATE_ONLY"
+    },
+    {
+      "rule_id": "WEB-UNDERTOW-002",
+      "detector": "text",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [
+        "src/main/resources/application.properties:1",
+        "src/main/resources/application.properties:2",
+        "src/main/resources/application.properties:3",
+        "src/main/resources/application.properties:4",
+        "src/main/resources/application.properties:5"
+      ],
+      "location_module_binding": "NOT_VERIFIED",
+      "confidence": "STATIC_CANDIDATE_ONLY"
+    },
+    {
+      "rule_id": "JCK3-MAPPER-TOPOLOGY-003",
+      "detector": "legacy",
+      "applicability": "UNKNOWN_COMPONENT_PAIR",
+      "status": "DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [
+        "src/main/java/demo/JsonUtil.java:4"
+      ],
+      "location_module_binding": "NOT_VERIFIED",
+      "confidence": "STATIC_CANDIDATE_ONLY"
+    },
+    {
+      "rule_id": "WEB-UNDERTOW-005",
+      "detector": "legacy",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [
+        "src/main/resources/application-prod.yml:4",
+        "src/main/resources/application-prod.yml:7",
+        "src/main/resources/application.properties:1",
+        "src/main/resources/application.properties:2",
+        "src/main/resources/application.properties:3",
+        "src/main/resources/application.properties:4",
+        "src/main/resources/application.properties:5"
+      ],
+      "location_module_binding": "NOT_VERIFIED",
+      "confidence": "STATIC_CANDIDATE_ONLY"
+    },
+    {
+      "rule_id": "WEB-UNDERTOW-006",
+      "detector": "legacy",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [],
+      "location_module_binding": "NOT_VERIFIED",
+      "confidence": "STATIC_CANDIDATE_ONLY"
+    },
+    {
+      "rule_id": "SB41-JACKSON-HANDLER-009",
+      "detector": "boot41",
+      "applicability": "BOOT_ROUTE_ONLY",
+      "status": "DETECTED",
+      "decision": "REVIEW_REQUIRED",
+      "automatic_patch": false,
+      "locations": [
+        "src/main/java/demo/JsonUtil.java:4"
+      ],
+      "location_module_binding": "NOT_VERIFIED",
+      "confidence": "STATIC_CANDIDATE_ONLY"
+    }
+  ],
+  "coverage": {
+    "DETECTED": 6,
+    "NOT_DETECTED": 9,
+    "UNKNOWN": 20,
+    "NOT_EVALUATED": 65
+  },
+  "unrouted_component_rules_pending_inventory": [],
+  "scan_counts": {
+    "files_considered": 4
+  },
+  "migration_gate": "BLOCKED_PENDING_VERIFIED_EVIDENCE",
+  "automatic_patch": false
+}

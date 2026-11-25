@@ -1,0 +1,1 @@
+PASS: 100 rules; 135 acceptance cases; Counter({'VALIDATION_ONLY': 43, 'BEHAVIOR_CHANGE': 28, 'BREAKING_CHANGE': 28, 'REGRESSION': 1})

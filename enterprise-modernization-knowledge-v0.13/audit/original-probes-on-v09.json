@@ -1,0 +1,70 @@
+[
+  {
+    "id": "A01-patch-downgrade",
+    "observed": "BLOCK",
+    "expected": "BLOCK or explicit patch-policy review",
+    "defect_reproduced": false
+  },
+  {
+    "id": "A02-prerelease",
+    "observed": "REVIEW_REQUIRED",
+    "expected": "REVIEW unless explicitly permitted",
+    "defect_reproduced": false
+  },
+  {
+    "id": "A03-route-filter",
+    "observed": [],
+    "expected": "No out-of-route rule findings (or separate out-of-scope diagnostic)",
+    "defect_reproduced": false
+  },
+  {
+    "id": "A04-builder-pattern",
+    "observed": [
+      "JSONMAPPER_BUILDER",
+      "OBJECTMAPPER_BUILDER"
+    ],
+    "expected": "One JsonMapper builder match; ObjectMapper pattern must differ",
+    "defect_reproduced": false
+  },
+  {
+    "id": "A05-secret-disclosure",
+    "observed": false,
+    "expected": "Sensitive values redacted",
+    "defect_reproduced": false
+  },
+  {
+    "id": "A06-cross-profile-conflict",
+    "observed": [
+      "application-prod.properties:1=false"
+    ],
+    "expected": "Record existing target in another profile as possible conflict",
+    "defect_reproduced": false
+  },
+  {
+    "id": "A07-unbound-evidence",
+    "observed": {
+      "preflight": "REVIEW_REQUIRED",
+      "jooq_candidate": true
+    },
+    "expected": "Require resolved graph evidence or REVIEW on contradiction",
+    "defect_reproduced": false
+  },
+  {
+    "id": "A08-dockerfile-variant",
+    "observed": true,
+    "expected": "Flag layertools in Dockerfile.dev",
+    "defect_reproduced": false
+  },
+  {
+    "id": "A09-unimplemented-legacy-detectors",
+    "observed": false,
+    "expected": "Report rule NOT_EVALUATED if unsupported; do not imply coverage",
+    "defect_reproduced": true
+  },
+  {
+    "id": "A10-symlink-scope",
+    "observed": false,
+    "expected": "Do not follow out-of-root links",
+    "defect_reproduced": false
+  }
+]

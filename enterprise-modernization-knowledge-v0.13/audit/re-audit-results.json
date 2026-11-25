@@ -1,0 +1,81 @@
+[
+  {
+    "id": "R01-no-raw-secrets-in-sample",
+    "status": "PASS",
+    "observed": "no sample sentinel in output",
+    "detail": "Synthetic secret across config, Java and Docker; not a guarantee for arbitrary secret encoding or path names."
+  },
+  {
+    "id": "R02-stage-isolation",
+    "status": "PASS",
+    "observed": 0,
+    "detail": "Boot 4.0→4.1 without imported component pair does not publish old migration findings."
+  },
+  {
+    "id": "R03-pending-component-coverage",
+    "status": "PASS",
+    "observed": 50,
+    "detail": "Unselected component rules requiring inventory are explicit."
+  },
+  {
+    "id": "R04-cross-route-component",
+    "status": "PASS",
+    "observed": [
+      "JCK3-MAPPER-TOPOLOGY-003",
+      "SB41-LAYERTOOLS-002",
+      "SB41-JACKSON-HANDLER-009"
+    ],
+    "detail": "Component transition independent of Boot delta."
+  },
+  {
+    "id": "R05-evidence-fail-closed",
+    "status": "PASS",
+    "observed": "REVIEW_REQUIRED",
+    "detail": "Even imported tree with SHA-256 cannot assert genuine Maven execution or complete profiles."
+  },
+  {
+    "id": "R06-invalid-approval",
+    "status": "PASS",
+    "observed": "BLOCK",
+    "detail": "Schema rejects truthy string approval."
+  },
+  {
+    "id": "R07-output-path",
+    "status": "PASS",
+    "observed": true,
+    "detail": "Output inside source rejected."
+  },
+  {
+    "id": "R08-patch-guard",
+    "status": "PASS",
+    "observed": "BLOCKED_PENDING_HUMAN_REVIEW",
+    "detail": "Reject automatic sign-off even if only tests change."
+  },
+  {
+    "id": "R09-lexical-comment-false-positive",
+    "status": "PASS",
+    "observed": false,
+    "detail": "Generic textual detector matches comments; still a candidate. Need Java AST or lexical filters per detector."
+  },
+  {
+    "id": "R10-module-to-file-binding",
+    "status": "RESIDUAL",
+    "observed": true,
+    "detail": "Graph pairs are module-scoped, but source locations are not bound to module inventory. Candidate only; potential false positive across modules."
+  },
+  {
+    "id": "R11-detector-coverage",
+    "status": "RESIDUAL",
+    "observed": {
+      "unimplemented": 65,
+      "total": 100
+    },
+    "detail": "No detector is honestly NOT_EVALUATED; must not infer compatibility."
+  },
+  {
+    "id": "R12-runtime-proof",
+    "status": "RESIDUAL",
+    "observed": "NOT_RUN",
+    "detail": "No Maven, target Java17 runtime, real Oracle DB, Spring Context or OpenRewrite execution available. Runtime sign-off not possible."
+  }
+]

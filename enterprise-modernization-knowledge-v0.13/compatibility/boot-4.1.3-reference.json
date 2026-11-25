@@ -1,0 +1,16 @@
+{
+  "status": "DOCUMENTATION_REFERENCE_ONLY_NOT_RESOLVED_BOM",
+  "version": "4.1.3",
+  "source": "https://docs.spring.io/spring-boot/4.1/appendix/dependency-versions/coordinates.html",
+  "reviewed_on": "2026-11-25",
+  "coordinates": {
+    "org.hibernate.orm:hibernate-core": "7.4.15.Final",
+    "tools.jackson.core:jackson-databind": "3.1.8",
+    "com.fasterxml.jackson.core:jackson-databind": "2.21.8",
+    "com.oracle.database.jdbc:ojdbc11": "23.26.4.0.0",
+    "com.zaxxer:HikariCP": "7.0.2",
+    "org.springframework.security:spring-security-core": "7.1.3",
+    "org.jooq:jooq": "3.21.9"
+  },
+  "note": "Reference only, not a pinned BOM artifact, dependency tree, or proof of effective version. Do not use as automatic target inventory. Private BOM, overrides, profiles and patch updates may differ."
+}

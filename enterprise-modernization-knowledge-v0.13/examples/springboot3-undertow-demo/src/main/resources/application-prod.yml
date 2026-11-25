@@ -1,0 +1,7 @@
+server:
+  undertow:
+    accesslog:
+      dir: /var/log/my-service
+    options:
+      socket:
+        TCP_NODELAY: true
